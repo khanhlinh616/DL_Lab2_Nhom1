@@ -14,12 +14,12 @@ Tài liệu này ghi nhận kết quả kiểm toán hiện trạng của reposi
 | STT | Hạng mục | Trạng thái | Bằng chứng (Lệnh thực thi & Kết quả thật) |
 |:---:|:---|:---:|:---|
 | 1 | Môi trường & Dependencies | **Xong** | `py -m pip install -r requirements.txt` (đáp ứng 100% không thiếu package). `py -c "import torch..."` -> `torch 2.14.1+cpu`, `cuda: False`. |
-| 2 | Unit Tests | **Xong** | `py -m pytest -v` -> Thu thập 14 items, **14 passed** trong 7.37s. |
+| 2 | Unit Tests | **Xong** | `py -m pytest -v` -> 37 passed trong 9.00s (bao gồm test mô hình, checkpoint, data, training, config, evaluate, reporting, và hparam). |
 | 3 | Inspect Models (Kiến trúc & Tham số) | **Xong** | `py scripts/inspect_models.py` -> In đủ 4 cấu hình: ResNet18 Transfer (5.130 trainable), ResNet18 Fine-tune (8.398.858 trainable), DenseNet121 Transfer (10.250 trainable), DenseNet121 Fine-tune (2.170.378 trainable). |
-| 4 | Smoke Test (Kiểm thử nhanh pipeline) | **Xong** | `py scripts/run_experiments.py --smoke-test --experiment resnet18_transfer` -> Chạy 1 epoch trên subset 120 train / 30 val / 30 test. Tạo checkpoint (`checkpoints/resnet18_transfer_best.pth`), metrics (`outputs/metrics/resnet18_transfer_test_metrics.json`), figure (`outputs/figures/resnet18_transfer_confusion_matrix.png`), event log (`runs/resnet18_transfer/events.out.tfevents...`). |
+| 4 | Smoke Test (Kiểm thử nhanh pipeline) | **Xong** | `py scripts/run_experiments.py --smoke-test --experiment resnet18_transfer` và `resnet18_transfer_lr1e4` -> Chạy 1 epoch trên subset 120 train / 30 val / 30 test, xuất checkpoint, metrics, figure và event logs thành công. |
 | 5 | Kiểm tra bí mật & File nhạy cảm | **Xong** | `git grep -n -i -E "api[_-]?key\|secret\|token\|password"` -> 0 kết quả. `git ls-files` không có file > 100KB, không có file nhạy cảm. |
 | 6 | 4 Thí nghiệm Full (5 epochs) | **Chưa làm** | Chờ thực thi ở Phase 5 (máy tính sinh viên chạy nền để tránh quá tải CPU). Bảng trong `docs/results.md` hiện là "*Chờ chạy full*". |
-| 7 | Thí nghiệm Hyperparameter (Bài tập 2) | **Chưa làm** | Chưa có cấu hình và script hỗ trợ nhóm `hparam` trong `config.yaml` và `run_experiments.py` (nhiệm vụ của Phase 4). |
+| 7 | Thí nghiệm Hyperparameter (Bài tập 2) | **Xong (Code & Config)** | Đã thêm nhóm `hparam` gồm `resnet18_transfer_lr1e4` và `resnet18_transfer_bs32` vào `config.yaml`, hỗ trợ cờ `--group core\|hparam` trong `run_experiments.py`, hoàn thành smoke test và 3 unit test xác minh (chờ chạy full ở Phase 5). |
 | 8 | TensorBoard Screenshots | **Chưa làm** | Thư mục `docs/figures/` chưa có ảnh chụp TensorBoard thật (chờ Phase 5 sau khi chạy xong full thí nghiệm). |
 | 9 | Notebook Chính (`Lab2_Practice2_Main.ipynb`) | **Chưa làm** | Thư mục `notebooks/` chưa có file này (nhiệm vụ của Phase 7). |
 | 10 | Notebook Phân tích (`Lab2_Results_Analysis.ipynb`) | **Chưa làm** | Thư mục `notebooks/` chưa có file này (nhiệm vụ của Phase 8). |

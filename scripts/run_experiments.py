@@ -115,7 +115,8 @@ def run_single_experiment(
 def main():
     parser = argparse.ArgumentParser(description="Run Lab 2 CIFAR-10 Transfer Learning / Fine-Tuning Experiments.")
     parser.add_argument("--experiment", type=str, help="Specific experiment ID to run (e.g. resnet18_transfer).")
-    parser.add_argument("--all", action="store_true", help="Run all 4 experiments sequentially.")
+    parser.add_argument("--all", action="store_true", help="Run all 4 core experiments sequentially.")
+    parser.add_argument("--group", type=str, choices=["core", "hparam"], default=None, help="Run all experiments in a specific group (core or hparam).")
     parser.add_argument("--config", type=str, default="./configs/config.yaml", help="Path to config.yaml file.")
     parser.add_argument("--smoke-test", action="store_true", help="Run rapid smoke test on tiny subset (1 epoch) for pipeline verification.")
     parser.add_argument("--epochs", type=int, default=None, help="Override number of epochs.")
@@ -123,14 +124,18 @@ def main():
 
     args = parser.parse_args()
 
-    available_experiments = get_all_experiment_names(args.config)
-
-    if not args.experiment and not args.all:
-        print("Please specify --experiment <ID> or --all.")
-        print(f"Available experiments in {args.config}: {available_experiments}")
+    if not args.experiment and not args.all and not args.group:
+        all_available = get_all_experiment_names(args.config)
+        print("Please specify --experiment <ID>, --group <core|hparam>, or --all.")
+        print(f"Available experiments in {args.config}: {all_available}")
         sys.exit(1)
 
-    experiments_to_run = available_experiments if args.all else [args.experiment]
+    if args.experiment:
+        experiments_to_run = [args.experiment]
+    elif args.group:
+        experiments_to_run = get_all_experiment_names(args.config, group=args.group)
+    elif args.all:
+        experiments_to_run = get_all_experiment_names(args.config, group="core")
 
     all_results = []
     for exp_id in experiments_to_run:

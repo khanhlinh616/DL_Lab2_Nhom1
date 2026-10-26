@@ -31,9 +31,12 @@ class ExperimentConfig:
     runs_dir: str = "./runs"
     outputs_dir: str = "./outputs"
     checkpoint_metric: str = "val_acc"
+    group: str = "core"
 
     def validate(self) -> None:
         """Validates configuration parameters, raising ValueError with clear message if invalid."""
+        if self.group not in ["core", "hparam"]:
+            raise ValueError(f"group must be 'core' or 'hparam', got '{self.group}'")
         if self.model_name not in ["resnet18", "densenet121"]:
             raise ValueError(
                 f"Invalid model_name '{self.model_name}'. Supported models: ['resnet18', 'densenet121']"
@@ -73,11 +76,22 @@ def load_yaml(config_path: str) -> dict:
     return data
 
 
-def get_all_experiment_names(config_path: str = "./configs/config.yaml") -> List[str]:
-    """Returns list of all experiment IDs defined in config.yaml."""
+def get_all_experiment_names(
+    config_path: str = "./configs/config.yaml",
+    group: Optional[str] = None
+) -> List[str]:
+    """
+    Returns list of experiment IDs defined in config.yaml.
+    Optionally filters by group (e.g. 'core' or 'hparam').
+    """
     data = load_yaml(config_path)
     experiments = data.get("experiments", {})
-    return list(experiments.keys())
+    if group is None:
+        return list(experiments.keys())
+    return [
+        eid for eid, exp_cfg in experiments.items()
+        if (exp_cfg.get("group", "core") if isinstance(exp_cfg, dict) else "core") == group
+    ]
 
 
 def load_config(
@@ -123,6 +137,7 @@ def load_config(
         "runs_dir": global_cfg.get("runs_dir", "./runs"),
         "outputs_dir": global_cfg.get("outputs_dir", "./outputs"),
         "checkpoint_metric": global_cfg.get("checkpoint_metric", "val_acc"),
+        "group": exp_cfg.get("group", "core"),
     }
 
     if overrides:

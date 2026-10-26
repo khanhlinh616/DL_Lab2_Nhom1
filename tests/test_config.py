@@ -117,6 +117,7 @@ def test_load_config_nonexistent_experiment(tmp_path):
     ("learning_rate", 0.0, "learning_rate must be > 0"),
     ("model_name", "alexnet", "Invalid model_name"),
     ("method", "pretrain", "Invalid method"),
+    ("group", "invalid_group", "group must be 'core' or 'hparam'"),
 ])
 def test_load_config_invalid_values(tmp_path, invalid_field, invalid_val, expected_match):
     """Verify invalid configuration values raise ValueError."""
@@ -142,3 +143,55 @@ def test_load_config_invalid_values(tmp_path, invalid_field, invalid_val, expect
 
     with pytest.raises(ValueError, match=expected_match):
         load_config("exp_test", config_path=str(config_file), overrides={invalid_field: invalid_val})
+
+
+def test_experiment_group_default_and_filtering():
+    """Verify default group is 'core' and get_all_experiment_names correctly filters groups."""
+    cfg = load_config("resnet18_transfer")
+    assert cfg.group == "core"
+
+    core_names = get_all_experiment_names(group="core")
+    hparam_names = get_all_experiment_names(group="hparam")
+    all_names = get_all_experiment_names()
+
+    # --all (core) must contain only the 4 core experiments and NOT hparam
+    assert len(core_names) == 4
+    for exp in ["resnet18_transfer", "resnet18_finetune", "densenet121_transfer", "densenet121_finetune"]:
+        assert exp in core_names
+    assert "resnet18_transfer_lr1e4" not in core_names
+    assert "resnet18_transfer_bs32" not in core_names
+
+    # hparam group must contain exactly the 2 new hparam experiments
+    assert len(hparam_names) == 2
+    assert "resnet18_transfer_lr1e4" in hparam_names
+    assert "resnet18_transfer_bs32" in hparam_names
+
+    # Total experiments must equal core + hparam
+    assert len(all_names) == 6
+    assert set(core_names).isdisjoint(set(hparam_names))
+    assert set(core_names).union(set(hparam_names)) == set(all_names)
+
+
+def test_hparam_configs_differ_by_single_field():
+    """Verify hparam configs only differ from resnet18_transfer by exactly one hyperparameter."""
+    yaml_data = load_yaml("./configs/config.yaml")
+    exps = yaml_data["experiments"]
+
+    base = exps["resnet18_transfer"]
+    lr_exp = exps["resnet18_transfer_lr1e4"]
+    bs_exp = exps["resnet18_transfer_bs32"]
+
+    # Verify lr1e4 differs only in learning_rate
+    assert lr_exp["learning_rate"] == 0.0001
+    assert base["learning_rate"] == 0.001
+    assert lr_exp["group"] == "hparam"
+    for k in ["model_name", "method", "epochs", "batch_size", "optimizer", "weight_decay"]:
+        assert lr_exp[k] == base[k], f"Field '{k}' differed unexpectedly"
+
+    # Verify bs32 differs only in batch_size
+    assert bs_exp["batch_size"] == 32
+    assert base["batch_size"] == 16
+    assert bs_exp["group"] == "hparam"
+    for k in ["model_name", "method", "epochs", "learning_rate", "optimizer", "weight_decay"]:
+        assert bs_exp[k] == base[k], f"Field '{k}' differed unexpectedly"
+

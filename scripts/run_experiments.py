@@ -17,7 +17,7 @@ from lab2.evaluate import evaluate_checkpoint_file
 from lab2.models import build_model, count_parameters
 from lab2.tensorboard_logger import TensorBoardLogger
 from lab2.train import run_training
-from lab2.utils import set_seed
+from lab2.utils import set_seed, save_history_json
 
 
 def run_single_experiment(
@@ -88,6 +88,10 @@ def run_single_experiment(
             val_loader=val_loader,
             logger=logger
         )
+
+        # Save training history JSON
+        history_path = os.path.join(cfg.outputs_dir, "metrics", f"{cfg.name}_history.json")
+        save_history_json(results=train_results, cfg=cfg, path=history_path)
 
         # Evaluate Best Checkpoint on Test Set (Practice 2 Step 7)
         best_checkpoint_path = train_results["best_checkpoint_path"]

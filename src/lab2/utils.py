@@ -87,3 +87,40 @@ def plot_confusion_matrix(
     fig.tight_layout()
     plt.savefig(save_path, dpi=200)
     plt.close(fig)
+
+
+def save_history_json(results: dict, cfg, path: str) -> None:
+    """
+    Saves training history, configuration, environment metadata, and summary metrics to a JSON file.
+    """
+    import json
+    import torchvision
+
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+
+    config_dict = vars(cfg) if hasattr(cfg, "__dict__") else (cfg if isinstance(cfg, dict) else {})
+    history_data = results.get("history", {})
+
+    payload = {
+        "experiment_name": getattr(cfg, "name", results.get("experiment_name", "unknown")),
+        "config": config_dict,
+        "history": {
+            "train_loss": history_data.get("train_loss", []),
+            "train_acc": history_data.get("train_acc", []),
+            "val_loss": history_data.get("val_loss", []),
+            "val_acc": history_data.get("val_acc", []),
+            "epoch_times": history_data.get("epoch_times", [])
+        },
+        "best_epoch": results.get("best_epoch"),
+        "best_metric": results.get("best_metric"),
+        "total_time_seconds": results.get("total_time_seconds"),
+        "environment": {
+            "torch_version": torch.__version__,
+            "torchvision_version": torchvision.__version__,
+            "device": str(getattr(cfg, "device", "cpu"))
+        }
+    }
+
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+

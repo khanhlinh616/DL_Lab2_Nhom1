@@ -1,7 +1,7 @@
 # Project Design — Lab 2: Pretrained Models, Transfer Learning & Fine-Tuning
 
 ## 1. Kiến trúc hệ thống tổng thể (System Architecture)
-Hệ thống được thiết kế theo mô hình **Modular PyTorch Architecture** (lấy cảm hứng từ *mrdbourke/pytorch-deep-learning* và các nguyên lý của Software Quality Engineering):
+Hệ thống được thiết kế theo mô hình **Modular PyTorch Architecture** (lấy cảm hứng từ *mrdbourke/pytorch-deep-learning* và các nguyên lý Software Quality Engineering):
 
 ```
                         ┌────────────────────────┐
@@ -31,77 +31,91 @@ Hệ thống được thiết kế theo mô hình **Modular PyTorch Architecture
                                             Confusion Matrix, Metrics JSON)
 ```
 
-## 2. Chi tiết các thành phần (Module Details)
+---
 
-### 2.1. `src/lab2/config.py` (Cấu hình và Kiểm thực)
-- Sử dụng Python `dataclass` (`ExperimentConfig`) ánh xạ trực tiếp từ file `configs/config.yaml`.
-- Cơ chế xác thực chặt chẽ (`validate()`):
-  - Kiểm tra `model_name` trong `['resnet18', 'densenet121']`.
-  - Kiểm tra `method` trong `['transfer', 'finetune']`.
-  - Kiểm tra số nguyên dương cho `epochs`, `batch_size`, `num_classes`, `image_size`.
-  - Kiểm tra dải hợp lệ cho `learning_rate > 0`, `val_split` nằm trong khoảng $(0, 0.5)$.
+## 2. Bảng giao diện các Module (Module Interfaces & Function Signatures)
 
-### 2.2. `src/lab2/data.py` (Quản lý Dữ liệu và Pipeline Tiền xử lý)
-- **Tải và Cache:** Tự động kiểm tra tính sẵn sàng của CIFAR-10 trong `./data`. Xử lý chứng chỉ SSL ngoại lệ trên Windows đảm bảo tải tin cậy.
-- **Phân tách Tập dữ liệu (Reproducible Data Splitting):**
-  - Tập huấn luyện gốc 50.000 ảnh được chia thành 45.000 ảnh (Train) và 5.000 ảnh (Validation) với tỷ lệ `val_split=0.1`.
-  - Sử dụng `torch.Generator().manual_seed(seed)` để phân chia ngẫu nhiên nhưng có thể tái lập tuyệt đối trên mọi lần chạy.
-  - Tập kiểm thử chính thức (10.000 ảnh) được giữ độc lập, không tham gia vào bất kỳ khâu huấn luyện hay chọn checkpoint nào.
-- **Biến đổi Dữ liệu (Transforms):**
-  - Chuẩn hóa ImageNet: `mean=[0.485, 0.456, 0.406]`, `std=[0.229, 0.224, 0.225]` phù hợp với các trọng số pretrained.
-  - Tập Train: `Resize((image_size, image_size))` $\to$ `RandomCrop` $\to$ `RandomHorizontalFlip(p=0.5)` $\to$ `ToTensor()` $\to$ `Normalize()`.
-  - Tập Validation & Test: `Resize((image_size, image_size))` $\to$ `ToTensor()` $\to$ `Normalize()`. Tuyệt đối không áp dụng random augmentation trên validation/test.
+Toàn bộ các hàm nòng cốt trong `src/lab2/` tuân thủ nghiêm ngặt type annotations và ràng buộc tham số:
 
-### 2.3. `src/lab2/models.py` (Mô hình và Cơ chế Đóng băng/Mở khóa)
-Mô hình khởi tạo từ `torchvision.models` với `weights=ResNet18_Weights.DEFAULT` và `DenseNet121_Weights.DEFAULT`.
+| Module | Hàm / Lớp | Tham số đầu vào (Input) | Kết quả đầu ra (Output) | Ràng buộc & Ghi chú lỗi |
+|---|---|---|---|---|
+| `config.py` | `ExperimentConfig` (dataclass) | Các trường cấu hình thực nghiệm | Thực thể config đã xác thực | Ràng buộc dải giá trị: `lr > 0`, `val_split in (0, 0.5)`, `method in ['transfer', 'finetune']` |
+| `config.py` | `load_config(path, experiment_name=None)` | `path: str`, `experiment_name: Optional[str]` | `ExperimentConfig` | Ném `FileNotFoundError` nếu sai đường dẫn, `KeyError` nếu thiếu trường |
+| `config.py` | `list_experiments(path)` | `path: str` | `List[str]` | Trả về danh sách tên các cấu hình có trong YAML |
+| `data.py` | `get_transforms(image_size, is_training)` | `image_size: int`, `is_training: bool` | `v2.Compose` | Chuẩn hóa ImageNet; chỉ thêm RandomCrop/Flip khi `is_training=True` |
+| `data.py` | `get_cifar10_datasets(data_dir, val_split, seed, image_size)` | `data_dir: str`, `val_split: float`, `seed: int`, `image_size: int` | `Tuple[Dataset, Dataset, Dataset]` | Chia 45k train / 5k val bằng `torch.Generator().manual_seed(seed)` |
+| `data.py` | `get_dataloaders(...)` | `train_ds, val_ds, test_ds, batch_size, num_workers, pin_memory` | `Tuple[DataLoader, DataLoader, DataLoader]` | `shuffle=True` cho train, `shuffle=False` cho val/test |
+| `models.py` | `count_parameters(model)` | `model: nn.Module` | `Dict[str, int]` | Trả về `{'total': int, 'trainable': int, 'frozen': int}` |
+| `models.py` | `build_model(model_name, method, num_classes, pretrained)` | `model_name: str`, `method: str`, `num_classes: int=10`, `pretrained: bool=True` | `nn.Module` | Ném `ValueError` nếu tên mô hình hoặc method không hỗ trợ |
+| `train.py` | `train_one_epoch(...)` | `model, dataloader, criterion, optimizer, device` | `Tuple[float, float]` (loss, acc) | Gọi `optimizer.zero_grad()`, `loss.backward()`, `optimizer.step()` |
+| `train.py` | `validate(...)` | `model, dataloader, criterion, device` | `Tuple[float, float]` (loss, acc) | Chạy trong `torch.no_grad()`, `model.eval()` |
+| `train.py` | `train(cfg, train_loader, val_loader, model=None, test_loader=None)` | `cfg: ExperimentConfig`, DataLoaders | `Dict[str, Any]` (history, best_acc, best_loss) | Hỗ trợ differential LR; log TensorBoard; checkpoint `_best.pth` |
+| `checkpoint.py`| `save_checkpoint(state, is_best, checkpoint_dir, experiment_name)` | `state: dict, is_best: bool, ...` | `Tuple[Path, Optional[Path]]` | Tạo thư mục nếu chưa có; lưu `_latest.pth` và `_best.pth` |
+| `checkpoint.py`| `load_checkpoint(checkpoint_path, model, optimizer=None)` | `checkpoint_path: str, model: nn.Module, ...` | `dict` (state) | Ném `FileNotFoundError` nếu checkpoint không tồn tại |
+| `tensorboard_logger.py` | `TensorBoardLogger(...)` | `log_dir: str, experiment_name: str` | Đối tượng quản lý logger | Bọc `SummaryWriter` an toàn, hỗ trợ log scalars, graph, images, histograms |
+| `evaluate.py` | `evaluate(model, dataloader, criterion, device, class_names=None)` | `model, dataloader, criterion, device, class_names` | `Dict[str, Any]` | Trả về `loss`, `accuracy`, `per_class_accuracy`, `confusion_matrix` |
+| `evaluate.py` | `plot_confusion_matrix(cm, class_names, save_path)` | `cm: np.ndarray, class_names: list, save_path: str` | `None` | Vẽ seaborn heatmap với hiển thị số và tỷ lệ phần trăm |
+| `utils.py` | `set_seed(seed=42)` | `seed: int` | `None` | Khóa seed cho random, numpy, torch, torch.cuda, benchmark |
+| `utils.py` | `get_device()` | Không tham số | `torch.device` | Trả về `cuda` nếu có, fallback về `cpu` |
+| `utils.py` | `save_metrics_json(metrics, filepath)` | `metrics: dict, filepath: str` | `None` | Lưu dict kết quả ra file JSON với UTF-8 indent=2 |
+| `utils.py` | `save_history_json(history, filepath)` | `history: dict, filepath: str` | `None` | Lưu lịch sử train/val epoch ra file JSON |
 
-| Mô hình | Phương pháp | Cơ chế Đóng băng / Mở khóa | Số tham số Trainable | % Trainable |
-|:---|:---|:---|:---:|:---:|
-| **ResNet18** | Transfer Learning | Đóng băng toàn bộ backbone (`conv1`..`layer4`), chỉ mở khóa `fc` | 5,130 | 0.05% |
-| **ResNet18** | Fine-Tuning | Đóng băng `conv1`..`layer3`, mở khóa `layer4` và `fc` | 8,398,858 | 75.11% |
-| **DenseNet121** | Transfer Learning | Đóng băng toàn bộ `features`, chỉ mở khóa `classifier` | 10,250 | 0.15% |
-| **DenseNet121** | Fine-Tuning | Đóng băng `conv0`..`denseblock3`, mở khóa `denseblock4`, `norm5`, `classifier` | 2,170,378 | 31.17% |
+---
 
-### 2.4. `src/lab2/train.py` (Vòng lặp Huấn luyện & Đánh giá)
-- **Quy trình Huấn luyện (Slide 8-9):**
-  1. `data, labels = data.to(device), labels.to(device)`
-  2. `optimizer.zero_grad()`
-  3. `outputs = model(data)`
-  4. `loss = criterion(outputs, labels)`
-  5. `loss.backward()`
-  6. `optimizer.step()`
-- **Quy trình Validation (Slide 10-11):**
-  - Bật `model.eval()`, bọc trong `with torch.no_grad():`, tính toán `running_loss` và `correct_predictions`, sau đó trả về `model.train()`.
-- **Differential Learning Rates:**
-  - Trong kịch bản Fine-Tuning, classifier mới dùng learning rate cao hơn (e.g. $10^{-3}$) còn các tầng tích chập sâu của backbone dùng learning rate nhỏ hơn (e.g. $10^{-4}$) để không phá vỡ tri thức đã học trước đó.
+## 3. Quyết định Thiết kế Kỹ thuật và Lý do (Design Decisions & Rationales)
 
-### 2.5. `src/lab2/checkpoint.py` (Lưu trữ và Khôi phục Mô hình)
-- Lưu trữ toàn diện thông tin checkpoint:
-  - `model_state_dict`: Trọng số của mô hình.
-  - `optimizer_state_dict`: Trạng thái optimizer (momentum, learning rate).
-  - `epoch`, `train_loss`, `train_acc`, `val_loss`, `val_acc`.
-  - `best_metric`, `best_epoch`, `config` snapshot.
-- Lựa chọn checkpoint tốt nhất: So sánh dựa trên validation accuracy cao nhất (hoặc validation loss thấp nhất) và lưu ra file `*_best.pth`.
+### 3.1. Thuật toán tối ưu: Adam vs SGD with Momentum
+- **Lựa chọn:** Adam (`lr=1e-3` cho transfer learning; `lr_backbone=1e-4`, `lr_head=1e-3` cho fine-tuning).
+- **Lý do:**
+  - Mô hình chạy trên môi trường CPU với số lượng epoch giới hạn (5 epoch).
+  - Adam tính toán tốc độ học thích nghi cho từng trọng số dựa trên mô-men bậc một và bậc hai, giúp mô hình hội tụ nhanh chóng ngay từ những epoch đầu tiên mà không đòi hỏi phải tinh chỉnh kỳ công learning rate schedule hoặc momentum như SGD.
+  - Phù hợp với khuyến nghị trong tài liệu thực hành Practice 2 (Slide 23–24).
 
-### 2.6. `src/lab2/tensorboard_logger.py` (Tích hợp TensorBoard)
-- Theo dõi thời gian thực các đại lượng:
-  - Scalars: `Loss/train`, `Loss/val`, `Accuracy/train`, `Accuracy/val`.
-  - Graphs: `writer.add_graph(model, dummy_input)`.
-  - Sample images: Trực quan hóa batch ảnh đầu tiên bằng grid.
-  - Histograms: Phân phối trọng số của các lớp trainable qua từng epoch.
-- Đóng writer an toàn với `writer.close()`.
+### 3.2. Độ phân giải ảnh đầu vào: 128x128 thay vì 32x32 hoặc 224x224
+- **Lựa chọn:** `image_size = 128`.
+- **Lý do:**
+  - Dữ liệu gốc CIFAR-10 có kích thước 32x32. Tuy nhiên, các kiến trúc pretrained trên ImageNet (ResNet18, DenseNet121) được thiết kế cho kích thước chuẩn 224x224 (có các tầng conv đầu kernel 7x7 stride 2 và max pooling 3x3 stride 2). Nếu đưa trực tiếp ảnh 32x32 vào, bản đồ đặc trưng sau các khối downsampling sẽ bị co cụm quá nhỏ (e.g. 1x1 hoặc nhỏ hơn) làm mất thông tin không gian.
+  - Phóng to lên 224x224 trên CPU làm tăng khối lượng tính toán phép nhân-cộng (FLOPs) lên gấp khoảng 49 lần so với 32x32, khiến thời gian huấn luyện 1 epoch kéo dài hàng chục phút.
+  - Kích thước 128x128 là điểm cân bằng kỹ thuật hoàn hảo giữa việc duy trì độ phân giải đặc trưng cho các kernel tích chập sâu và tốc độ xử lý trên CPU Intel Core i5.
 
-### 2.7. `src/lab2/evaluate.py` (Đánh giá Độc lập trên Tập Test)
-- Nạp checkpoint tốt nhất đã lưu.
-- Tính toán tổng thể `test_loss`, `test_accuracy`.
-- Tính độ chính xác theo từng lớp (`per_class_accuracy`).
-- Sinh ma trận nhầm lẫn (`confusion_matrix`) và xuất biểu đồ nhiệt (heatmap PNG) vào `outputs/figures/`.
-- Xuất file kết quả JSON vào `outputs/metrics/`.
+### 3.3. Phân tách tập dữ liệu: 45.000 Train / 5.000 Validation độc lập
+- **Lựa chọn:** Tách 10% từ tập train chính thức của CIFAR-10 với `seed=42`.
+- **Lý do:**
+  - Tập Test chính thức (10.000 ảnh) phải tuyệt đối được giữ nguyên làm dữ liệu kiểm thử không thiên vị (unbiased evaluation). Nếu sử dụng tập Test để theo dõi quá trình huấn luyện và chọn checkpoint thì checkpoint sẽ bị rò rỉ thông tin gián tiếp (data leakage / metric snooping).
+  - Sử dụng `torch.Generator().manual_seed(seed)` đảm bảo việc phân tách hoàn toàn nhất quán và có thể tái lập trên mọi máy tính khác nhau.
 
-## 3. Thiết kế Kiểm thử (Test Design)
-- Áp dụng phương pháp Test-Driven Development (TDD).
-- Bộ unit test sử dụng dữ liệu giả lập (synthetic data), chạy độc lập và không phụ thuộc vào việc tải dataset lớn:
-  1. `test_data.py`: Kiểm tra shape tensor sau transform, kiểm tra tính không giao thoa giữa train và val split, kiểm tra nhãn CIFAR-10.
-  2. `test_models.py`: Kiểm tra số lượng tham số trainable/frozen của 4 cấu hình, kiểm tra forward pass trả về tensor `(B, 10)`.
-  3. `test_training.py`: Kiểm tra 1 step gradient flow: khẳng định các lớp bị đóng băng không sinh gradient (`grad is None`) và trọng số không đổi, trong khi các lớp trainable được cập nhật thành công.
-  4. `test_checkpoint.py`: Kiểm tra tính toàn vẹn của checkpoint sau khi lưu và nạp lại (`torch.equal`).
+### 3.4. Chiến lược Learning Rate vi phân (Differential Learning Rate) cho Fine-Tuning
+- **Lựa chọn:** `lr_backbone = 1e-4`, `lr_head = 1e-3`.
+- **Lý do:**
+  - Backbone đã nắm giữ các bộ trích xuất đặc trưng bậc cao rất hữu ích từ ImageNet. Nếu cập nhật backbone với learning rate lớn ($10^{-3}$), các trọng số quý giá này sẽ bị "xóa sổ" (catastrophic forgetting).
+  - Classification head mới được khởi tạo ngẫu nhiên nên cần tốc độ học lớn hơn ($10^{-3}$) để nhanh chóng thích nghi với không gian 10 nhãn mới của CIFAR-10.
+
+### 3.5. Tiêu chí lưu Checkpoint tốt nhất
+- **Lựa chọn:** Theo dõi `val_acc` cao nhất (với cơ chế dự phòng `val_loss`).
+- **Lý do:**
+  - Trong bài toán phân loại đa lớp cân bằng như CIFAR-10, `val_acc` phản ánh trực tiếp mục tiêu phân loại chính xác mẫu. Khi `val_acc` đạt mức cao nhất mới, trạng thái toàn diện của mô hình và optimizer được lưu tức thời thành `_best.pth`.
+
+### 3.6. Phân nhóm Thực nghiệm: Core vs Hyperparameter
+- **Lựa chọn:** Bổ sung trường `group: "core" | "hparam"` trong `configs/config.yaml`.
+- **Lý do:**
+  - Tách bạch 4 thực nghiệm cơ sở đối đầu (ResNet18 vs DenseNet121, Transfer vs Fine-tune) với 2 thực nghiệm khảo sát siêu tham số (Learning Rate và Batch Size).
+  - CLI `scripts/run_experiments.py` hỗ trợ `--group core` hoặc `--group hparam` giúp linh hoạt thực thi mà không gây nhầm lẫn.
+
+---
+
+## 4. Rủi ro Kỹ thuật Đã biết và Phát hiện Thực nghiệm (Known Technical Risks & Empirical Findings)
+
+### Hành vi cập nhật bộ đệm BatchNorm khi đóng băng Backbone (Phase 6 Audit)
+- **Bản chất kỹ thuật:**
+  Trong PyTorch, khi thực hiện `param.requires_grad = False` cho một tầng tích chập hoặc tầng BatchNorm, ta chỉ đóng băng các tham số học được là trọng số (`weight`) và độ lệch (`bias`). Các tham số này sẽ có `grad is None` và không bị cập nhật bởi optimizer.
+  Tuy nhiên, các tầng `BatchNorm2d` còn chứa các bộ đệm trạng thái (buffers) bao gồm `running_mean`, `running_var` và `num_batches_tracked`. Khi mô hình ở trạng thái `model.train()`, dù `requires_grad = False`, PyTorch vẫn tự động tính toán thống kê mini-batch hiện tại và cập nhật vào `running_mean` và `running_var` theo công thức exponential moving average.
+- **Dữ liệu đo lường thực tế (`scripts/check_frozen_bn.py`):**
+  - Trong chế độ `model.train()` (quy trình tiêu chuẩn của bài Lab):
+    - **ResNet18:** 60/60 bộ đệm BatchNorm trong backbone (100%) bị thay đổi giá trị sau 1 batch forward pass.
+    - **DenseNet121:** 363/363 bộ đệm BatchNorm trong backbone (100%) bị thay đổi giá trị sau 1 batch forward pass.
+  - Trong chế độ `model.eval()`:
+    - 0/60 bộ đệm của ResNet18 và 0/363 bộ đệm của DenseNet121 thay đổi (0%).
+- **Tác động & Giải pháp tương lai:**
+  - Việc cập nhật thống kê running mean/var của CIFAR-10 lên các tầng đóng băng vốn được huấn luyện trên ImageNet có thể gây ra hiện tượng trôi phân phối đặc trưng (covariate shift) ở các tầng đầu.
+  - Dự án hiện giữ nguyên quy trình PyTorch chuẩn mực của bài thực hành (`model.train()`) để đảm bảo tính nhất quán với giáo trình, đồng thời ghi nhận và chứng minh rõ ràng hiện tượng này trong tài liệu kỹ thuật và bộ test tự động (`tests/test_frozen_bn.py`).
+  - Hướng cải tiến: Cung cấp tùy chọn gọi tường minh `module.eval()` riêng cho các tầng BatchNorm bị đóng băng trong giai đoạn train.

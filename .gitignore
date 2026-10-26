@@ -1,0 +1,35 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Datasets
+data/*
+!data/.gitkeep
+
+# Checkpoints
+checkpoints/*
+!checkpoints/.gitkeep
+
+# Tensorboard runs
+runs/*
+!runs/.gitkeep
+
+# Outputs
+outputs/metrics/*
+outputs/figures/*
+!outputs/metrics/.gitkeep
+!outputs/figures/.gitkeep
+
+# Environment
+.venv/
+env/
+venv/
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp

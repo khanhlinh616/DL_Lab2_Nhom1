@@ -1,6 +1,5 @@
 # Lab 2: Pretrained Models, Transfer Learning & Fine-Tuning (CIFAR-10)
 
-Dự án hoàn chỉnh triển khai theo yêu cầu thực hành **Practice 2 — Hands-on practice with pre-trained neural network architectures** và lý thuyết **Chương 3 — Training Deep Neural Networks** (PhD. Nguyễn Thị Khánh Tiên, ĐH Giao thông Vận tải TP.HCM).
 
 Dự án được xây dựng theo chuẩn công nghiệp: **Source-First, Design-First, Test-Driven, Reproducible và CPU-First**.
 

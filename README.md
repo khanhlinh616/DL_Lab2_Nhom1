@@ -1,7 +1,7 @@
 # Lab 2: Pretrained Models, Transfer Learning & Fine-Tuning (CIFAR-10)
 
 
-Dự án được xây dựng theo chuẩn công nghiệp: **Source-First, Design-First, Test-Driven, Reproducible và CPU-First**.
+Dự án tuân thủ các nguyên tắc kỹ thuật: **Source-First, Design-First, Test-Driven, Reproducible và CPU-First**.
 
 ---
 
@@ -27,13 +27,13 @@ Hệ thống được thiết kế tối ưu hóa cho môi trường CPU-First, 
 
 ## 3. Main Features
 
-- **Kiến trúc mã nguồn chuẩn hóa (Modular Architecture):** Tách biệt rõ ràng các tầng trách nhiệm: cấu hình (`config.py`), dữ liệu (`data.py`), kiến trúc mô hình (`models.py`), huấn luyện (`train.py`), đánh giá (`evaluate.py`), checkpoint (`checkpoint.py`), và giám sát (`tensorboard_logger.py`).
+- **Kiến trúc mã nguồn theo module (Modular Architecture):** Tách biệt các tầng trách nhiệm: cấu hình (`config.py`), dữ liệu (`data.py`), kiến trúc mô hình (`models.py`), huấn luyện (`train.py`), đánh giá (`evaluate.py`), checkpoint (`checkpoint.py`), và giám sát (`tensorboard_logger.py`).
 - **Quy trình huấn luyện tuân thủ 6 bước chuẩn (Slide 8–9):** Thực thi đúng trình tự `model.train()` $\to$ `zero_grad()` $\to$ forward pass $\to$ compute loss $\to$ backward pass $\to$ `optimizer.step()`.
 - **Hỗ trợ đầy đủ 3 bài tập của Practice 2 (Slide 23):**
   - *Exercise 1:* So sánh đối chứng ResNet-18 và DenseNet-121.
   - *Exercise 2:* Khảo sát tác động khi thay đổi siêu tham số (Learning Rate $10^{-4}$ và Batch Size $32$) với cấu hình kiểm soát biến độc lập nghiêm ngặt.
-  - *Exercise 3:* Tích hợp toàn diện TensorBoard (Scalars, Graphs, Images, Histograms).
-- **Bộ kiểm thử tự động toàn diện (Test-Driven):** 51 unit tests độc lập chạy offline hoàn toàn (không cần tải dataset hay pre-trained weights).
+  - *Exercise 3:* Tích hợp giám sát TensorBoard (Scalars, Graphs, Images, Histograms).
+- **Bộ kiểm thử tự động (Test-Driven):** 51 tests độc lập chạy offline (không yêu cầu tải dữ liệu hay trọng số pre-trained khi chạy test).
 - **Tự động hóa kết quả (Automated Reporting):** Tự động lưu lịch sử huấn luyện dạng JSON và script `make_results_table.py` tự động xuất bảng CSV và Markdown đối chiếu.
 
 ---
@@ -333,7 +333,7 @@ Bảng kết quả tổng hợp chính thức được quản lý tự động t
 
 1. **Ràng buộc phần cứng CPU:** Quá trình huấn luyện trên phần cứng CPU (không có card đồ họa GPU rời tăng tốc CUDA) đòi hỏi thời gian tính toán kéo dài khi huấn luyện 5 epochs trên toàn bộ 45.000 mẫu của CIFAR-10.
 2. **Ảnh hưởng của phép nội suy phóng đại ảnh:** Ảnh gốc CIFAR-10 có kích thước $32 \times 32$. Phép biến đổi bilinear resize lên $128 \times 128$ nhằm tương thích trường tiếp nhận của mạng nạp sẵn từ ImageNet có thể gây mờ một số biên cạnh chi tiết tự nhiên.
-3. **Hiện tượng cập nhật buffer của BatchNorm trong backbone đóng băng (Đã đo đạc thực nghiệm):** Phép đo tại Phase 6 (`scripts/check_frozen_bn.py`) xác nhận rằng khi gọi `model.train()`, toàn bộ 20 lớp BatchNorm (60 buffers) của ResNet18 và 121 lớp BatchNorm (363 buffers) của DenseNet121 trong phần backbone vẫn cập nhật `running_mean` và `running_var` dù tham số trọng số có `requires_grad=False`.
+3. **Hiện tượng cập nhật buffer của BatchNorm trong backbone đóng băng (Đã đo đạc thực nghiệm):** Thực nghiệm kiểm tra (`scripts/check_frozen_bn.py`) xác nhận rằng khi mô hình ở trạng thái `model.train()`, toàn bộ 20 lớp BatchNorm (60 buffers) của ResNet18 và 121 lớp BatchNorm (363 buffers) của DenseNet121 trong phần backbone vẫn cập nhật `running_mean` và `running_var` dù tham số trọng số có `requires_grad=False`.
 4. **Giới hạn thực nghiệm đơn seed:** Toàn bộ dữ liệu được đo lường trên một hạt giống ngẫu nhiên duy nhất (`seed=42`). Mọi sự chênh lệch nhỏ về điểm số cần được nhìn nhận trong khoảng phương sai thống kê.
 
 ---
@@ -349,4 +349,4 @@ Bảng kết quả tổng hợp chính thức được quản lý tự động t
 
 ## 13. AI Usage
 
-Chi tiết về mục đích sử dụng, các thành phần do AI hỗ trợ, đóng góp của sinh viên và nhật ký hội thoại kiểm chứng được ghi nhận minh bạch tại [docs/AI_Usage.md](docs/AI_Usage.md).
+Khai báo công cụ và phạm vi hỗ trợ của AI được trình bày tại [docs/AI_Usage.md](docs/AI_Usage.md).

@@ -1,8 +1,8 @@
 # Experimental Results & Analysis — Lab 2
 
-## 1. Giới thiệu và Nguyên tắc Ghi nhận Kết quả
-Báo cáo này tuân thủ nguyên tắc **Source-of-Truth**: Chỉ ghi nhận các kết quả đã thực sự được thực thi, kiểm tra và xác thực trên máy phát triển thực tế (Intel Core i5-12450HX, 24 GB RAM, Windows 11).
-Tuyệt đối không bịa đặt số liệu hoặc giả định kết quả khi chưa thực nghiệm. Các trường chưa thực nghiệm đầy đủ được ghi nhận trung thực bằng nhãn `*Chờ chạy full*` hoặc `[SV điền: ...]`.
+## 1. Giới thiệu và Phương pháp Ghi nhận Kết quả
+Báo cáo ghi nhận các kết quả đo đạc thực nghiệm trên môi trường tính toán CPU (Intel Core i5-12450HX, 24 GB RAM, Windows 11).
+Các trường dữ liệu chưa hoàn thành đủ 5 epochs được ghi nhận bằng nhãn `*Chờ kết quả thực nghiệm*`.
 
 ---
 
@@ -53,21 +53,21 @@ Tuyệt đối không bịa đặt số liệu hoặc giả định kết quả 
 ### 4.1. So sánh 4 Thí nghiệm Nòng cốt (Core Experiments)
 - **Transfer Learning vs Fine-Tuning trên ResNet18:**
   - *Nhận xét kỳ vọng:* Fine-Tuning cho phép cập nhật tầng tích chập sâu `layer4` nên thường đạt Test Accuracy cao hơn từ 3% đến 6% so với Feature Extraction thuần túy, nhưng đòi hỏi thời gian huấn luyện mỗi epoch dài hơn do phải lan truyền ngược qua 8.4 triệu tham số.
-  - *Số liệu thực tế:* `[SV điền sau khi chạy full]`
+  - *Số liệu thực tế:* *Chờ kết quả sau khi hoàn thành huấn luyện đủ epochs*
 - **ResNet18 vs DenseNet121 trong Transfer Learning:**
   - *Nhận xét kỳ vọng:* DenseNet121 trích xuất đặc trưng có độ phong phú cao nhờ ghép nối các bản đồ đặc trưng từ tất cả các khối trước (dense connectivity), do đó phân loại trên vector đặc trưng 1024 chiều thường nhỉnh hơn một chút so với 512 chiều của ResNet18.
-  - *Số liệu thực tế:* `[SV điền sau khi chạy full]`
+  - *Số liệu thực tế:* *Chờ kết quả sau khi hoàn thành huấn luyện đủ epochs*
 - **Nguy cơ Overfitting:**
   - *Dấu hiệu:* Khoảng cách giữa Train Loss và Validation Loss. Trong Fine-Tuning với số tham số trainable lớn (75.11% ở ResNet18), nếu không có điều chuẩn đủ mạnh thì Train Loss sẽ giảm rất nhanh trong khi Val Loss có thể chững lại hoặc tăng nhẹ ở các epoch cuối.
-  - *Số liệu thực tế:* `[SV điền sau khi chạy full]`
+  - *Số liệu thực tế:* *Chờ kết quả sau khi hoàn thành huấn luyện đủ epochs*
 
 ### 4.2. Khảo sát Siêu tham số (Hyperparameter Experiments)
 - **Tốc độ học (Learning Rate: `1e-3` vs `1e-4`):**
   - Khi chỉ huấn luyện classification head (`fc`), tốc độ học `1e-3` thường hội tụ nhanh và đạt độ chính xác tốt hơn trong 5 epochs so với `1e-4` (vốn quá nhỏ khiến đầu phân loại chưa hội tụ hoàn toàn).
-  - *Số liệu thực tế:* `[SV điền sau khi chạy full]`
+  - *Số liệu thực tế:* *Chờ kết quả sau khi hoàn thành huấn luyện đủ epochs*
 - **Kích thước Batch (Batch Size: `16` vs `32`):**
   - Tăng batch size lên 32 giúp tăng thông lượng xử lý tính toán trên CPU (giảm số lần gọi forward/backward mỗi epoch), nhưng trên CPU có thể đòi hỏi bộ nhớ đệm lớn hơn và gradient có thể phẳng hơn.
-  - *Số liệu thực tế:* `[SV điền sau khi chạy full]`
+  - *Số liệu thực tế:* *Chờ kết quả sau khi hoàn thành huấn luyện đủ epochs*
 
 ---
 
@@ -110,7 +110,7 @@ Phân tích từ ma trận nhầm lẫn dự kiến:
    Ảnh gốc CIFAR-10 có độ phân giải gốc $32 \times 32$. Khi phóng to 4 lần lên $128 \times 128$ để nạp vào các mô hình pretrained ImageNet, các chi tiết tần số cao bị mờ hóa (blurring), khiến mô hình khó phân biệt các đặc trưng vi mô của các lớp tương đồng.
 3. **Giới hạn hạt giống ngẫu nhiên đơn lẻ (Single-Seed Limitation):**
    Mọi thực nghiệm hiện tại được kiểm soát ở một hạt giống cố định (`seed=42`). Do đó, số liệu đo lường chưa thể hiện khoảng tin cậy hay phương sai thống kê (mean ± standard deviation) qua nhiều lần chạy ngẫu nhiên độc lập.
-4. **Hành vi cập nhật bộ đệm BatchNorm khi đóng băng Backbone (Phase 6 Audit):**
+4. **Hành vi cập nhật bộ đệm BatchNorm khi đóng băng Backbone (Thực nghiệm kiểm tra):**
    Đo lường thực nghiệm (`scripts/check_frozen_bn.py`) chỉ ra rằng trong chế độ `model.train()`, 100% bộ đệm BatchNorm (`running_mean`, `running_var`) của backbone đóng băng vẫn bị cập nhật theo batch CIFAR-10 hiện tại. Điều này có thể dẫn đến trôi phân phối đặc trưng đã học từ ImageNet.
 
 ---

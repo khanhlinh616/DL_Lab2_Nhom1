@@ -9,17 +9,10 @@ def create_notebook():
 
     # Cell 0: Header & Info
     cells.append(nbf.v4.new_markdown_cell("""# BÁO CÁO THỰC HÀNH PRACTICE 2: PRE-TRAINED MODELS, TRANSFER LEARNING & FINE-TUNING
-**Môn học:** Deep Learning (Chương 3: Training Deep Neural Networks)  
-**Giảng viên hướng dẫn:** PhD. Nguyễn Thị Khánh Tiên  
-**Đơn vị:** Trường Đại học Giao thông Vận tải TP.HCM  
+**Chủ đề:** Deep Learning — Pre-trained Models, Transfer Learning & Fine-Tuning trên CIFAR-10  
+**Tài liệu tham chiếu:** Chương 3 — Training Deep Neural Networks (Practice 2)  
 
 ---
-
-### Thông tin nhóm sinh viên
-- **Nhóm thực hiện:** Nhóm 1  
-- **Thành viên 1:** [SV điền: Họ và tên 1] — MSSV: [SV điền: MSSV 1]  
-- **Thành viên 2:** [SV điền: Họ và tên 2] — MSSV: [SV điền: MSSV 2]  
-- **Thành viên 3:** [SV điền: Họ và tên 3] — MSSV: [SV điền: MSSV 3]  
 
 ### Mục tiêu thực hành (Objectives từ Slide 23)
 1. **Làm quen với Pre-trained Models:** Nạp và sử dụng các kiến trúc mạng nơ-ron tích chập hiện đại từ thư viện chính thức `torchvision.models` với trọng số huấn luyện sẵn trên tập ImageNet.
@@ -369,12 +362,12 @@ for path, desc in tb_figures:
 
 if not found_fig:
     print("Chưa tìm thấy ảnh chụp TensorBoard trong thư mục docs/figures/.")
-    print("Sau khi chạy full huấn luyện ở Phase 5, nhóm sinh viên sẽ chụp màn hình TensorBoard thật và lưu vào docs/figures/.")"""))
+    print("Để hiển thị tại đây, lưu ảnh chụp màn hình giao diện TensorBoard vào docs/figures/.")"""))
 
     # Cell 23: Limitations & Future Work Markdown
     cells.append(nbf.v4.new_markdown_cell("""## 11. Giới hạn Kỹ thuật và Hướng Phát triển
-### Giới hạn kỹ thuật đã phát hiện qua đo đạc thực nghiệm (Phase 6):
-1. **Hành vi BatchNorm trong Backbone đóng băng:** Khi đóng băng backbone bằng `requires_grad=False`, vòng lặp huấn luyện gọi `model.train()`. Phép đo thực nghiệm tại Phase 6 chứng minh rằng toàn bộ 20 lớp BatchNorm (60 buffers) của ResNet18 và 121 lớp BatchNorm (363 buffers) của DenseNet121 **vẫn tiếp tục cập nhật `running_mean` và `running_var`** theo từng batch dữ liệu mới của CIFAR-10.
+### Giới hạn kỹ thuật đã phát hiện qua đo đạc thực nghiệm :
+1. **Hành vi BatchNorm trong Backbone đóng băng:** Khi đóng băng backbone bằng `requires_grad=False`, vòng lặp huấn luyện gọi `model.train()`. Thực nghiệm kiểm tra chứng minh rằng toàn bộ 20 lớp BatchNorm (60 buffers) của ResNet18 và 121 lớp BatchNorm (363 buffers) của DenseNet121 **vẫn tiếp tục cập nhật `running_mean` và `running_var`** theo từng batch dữ liệu mới của CIFAR-10.
 2. **Ràng buộc phần cứng CPU:** Thiếu vắng tăng tốc phần cứng CUDA khiến thời gian huấn luyện 5 epochs trên tập 45.000 mẫu kéo dài đáng kể.
 3. **Phóng đại kích thước ảnh (Interpolation artifacts):** Phóng to ảnh từ 32x32 lên 128x128 có thể gây mờ chi tiết cạnh sắc nét.
 4. **Giới hạn một seed duy nhất:** Kết quả thực nghiệm đo trên một hạt giống ngẫu nhiên (`seed=42`).
@@ -383,7 +376,7 @@ if not found_fig:
 1. Đặt tường minh các lớp BatchNorm đóng băng ở chế độ `eval` (`module.eval()`) trong suốt quá trình fine-tuning để bảo toàn thống kê đặc trưng ImageNet.
 2. Thử nghiệm bộ điều chỉnh tốc độ học (Learning Rate Scheduler như `CosineAnnealingLR`).
 3. Chạy thực nghiệm trên nhiều seed độc lập (ví dụ 3-5 seeds) và báo cáo giá trị trung bình kèm độ lệch chuẩn.
-4. [SV điền nhận xét và đề xuất cá nhân]"""))
+"""))
 
     # Cell 24: References Markdown
     cells.append(nbf.v4.new_markdown_cell("""## 12. Tài liệu Tham khảo

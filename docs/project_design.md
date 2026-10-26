@@ -105,7 +105,7 @@ Toàn bộ các hàm nòng cốt trong `src/lab2/` tuân thủ nghiêm ngặt ty
 
 ## 4. Rủi ro Kỹ thuật Đã biết và Phát hiện Thực nghiệm (Known Technical Risks & Empirical Findings)
 
-### Hành vi cập nhật bộ đệm BatchNorm khi đóng băng Backbone (Phase 6 Audit)
+### Hành vi cập nhật bộ đệm BatchNorm khi đóng băng Backbone (Thực nghiệm kiểm tra)
 - **Bản chất kỹ thuật:**
   Trong PyTorch, khi thực hiện `param.requires_grad = False` cho một tầng tích chập hoặc tầng BatchNorm, ta chỉ đóng băng các tham số học được là trọng số (`weight`) và độ lệch (`bias`). Các tham số này sẽ có `grad is None` và không bị cập nhật bởi optimizer.
   Tuy nhiên, các tầng `BatchNorm2d` còn chứa các bộ đệm trạng thái (buffers) bao gồm `running_mean`, `running_var` và `num_batches_tracked`. Khi mô hình ở trạng thái `model.train()`, dù `requires_grad = False`, PyTorch vẫn tự động tính toán thống kê mini-batch hiện tại và cập nhật vào `running_mean` và `running_var` theo công thức exponential moving average.

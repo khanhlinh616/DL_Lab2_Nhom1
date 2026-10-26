@@ -13,7 +13,7 @@ def clean_output(out):
     if text is not None:
         raw = text if isinstance(text, str) else ''.join(text)
         
-        if 'C:\\Users\\Hp\\AppData' in raw or 'C:\\\\Users\\\\Hp' in raw:
+        if 'C:\Users\<USER>' in raw or 'C:\\\\Users\\\\Hp' in raw:
             # Drop entire FutureWarning outputs from TensorBoard
             if 'FutureWarning' in raw or 'site-packages' in raw:
                 return None, True  # signal: drop this output
@@ -79,7 +79,7 @@ for nb_path in [main_nb, analysis_nb]:
     for i, cell in enumerate(nb['cells']):
         for out in cell.get('outputs', []):
             text = ''.join(out.get('text', [])) if isinstance(out.get('text', ''), list) else out.get('text', '')
-            if 'C:\\Users\\Hp' in text:
+            if 'C:\Users\<USER>' in text:
                 print(f"  REMAINING: {os.path.basename(nb_path)} cell {i}: {text[:100]}")
             if 'C:\\Project\\lab 2' in text:
                 print(f"  REMAINING: {os.path.basename(nb_path)} cell {i}: {text[:100]}")

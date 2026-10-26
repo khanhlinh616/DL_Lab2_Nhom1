@@ -9,17 +9,10 @@ def create_analysis_notebook():
 
     # Cell 0: Header & Info
     cells.append(nbf.v4.new_markdown_cell("""# BÁO CÁO PHÂN TÍCH KẾT QUẢ THỰC NGHIỆM CHUYÊN SÂU (RESULTS ANALYSIS) — LAB 2
-**Môn học:** Deep Learning (Chương 3: Training Deep Neural Networks)  
-**Giảng viên hướng dẫn:** PhD. Nguyễn Thị Khánh Tiên  
-**Đơn vị:** Trường Đại học Giao thông Vận tải TP.HCM  
+**Chủ đề:** Deep Learning — Phân tích Định lượng Kết quả Thực nghiệm trên CIFAR-10  
+**Tài liệu tham chiếu:** Chương 3 — Training Deep Neural Networks  
 
 ---
-
-### Thông tin nhóm sinh viên
-- **Nhóm thực hiện:** Nhóm 1  
-- **Thành viên 1:** [SV điền: Họ và tên 1] — MSSV: [SV điền: MSSV 1]  
-- **Thành viên 2:** [SV điền: Họ và tên 2] — MSSV: [SV điền: MSSV 2]  
-- **Thành viên 3:** [SV điền: Họ và tên 3] — MSSV: [SV điền: MSSV 3]  
 
 ### Mục tiêu phân tích
 Notebook này được thiết kế chuyên biệt để phân tích định lượng toàn diện kết quả thực nghiệm từ các tệp `outputs/metrics/*.json` và `outputs/metrics/summary.csv`:
@@ -275,7 +268,7 @@ else:
 2. **Quá khớp (Overfitting):** Train Accuracy tiếp tục tăng cao trong khi Validation Accuracy bão hòa hoặc suy giảm; Train Loss giảm sâu nhưng Validation Loss bắt đầu tăng ngược trở lại (phân kỳ giữa Train và Val).
 
 ### Ghi nhận thực tế từ dữ liệu huấn luyện:
-[SV điền nhận xét phân tích chi tiết dựa trên các đồ thị Loss/Accuracy ở Mục 3 sau khi chạy xong full 5 epochs]
+Dựa trên đồ thị Loss và Accuracy ở Mục 3:\n- Nếu Validation Loss bắt đầu phân kỳ và tăng trong khi Train Loss tiếp tục giảm, mô hình có biểu hiện overfitting; khi đó cần bổ sung kỹ thuật điều chuẩn (weight decay, dropout, hoặc data augmentation mạnh hơn).\n- Nếu cả Train Loss và Validation Loss đều đang trên đà giảm ổn định sau 5 epochs, mô hình đang hội tụ tốt và có thể đạt độ chính xác cao hơn khi kéo dài số epoch huấn luyện.
 
 > **Lưu ý nguyên tắc nghiên cứu:** Toàn bộ kết quả thực nghiệm trong bài báo cáo này được thực hiện trên một hạt giống ngẫu nhiên duy nhất (`seed=42`). Do đó, các kết luận chỉ mang tính ghi nhận thực nghiệm trong phạm vi cấu hình kiểm thử, không thể ngoại suy tuyệt đối cho mọi điều kiện nếu chưa kiểm định thống kê qua nhiều lượt chạy độc lập."""))
 
@@ -285,10 +278,10 @@ else:
 1. **Kiến trúc mạng:** So sánh giữa ResNet18 và DenseNet121 về độ chính xác và hiệu suất tham số.
 2. **Phương pháp thích nghi:** Hiệu quả của Fine-Tuning so với Transfer Learning thuần túy.
 3. **Siêu tham số:** Tác động của Learning Rate ($10^{-3}$ vs. $10^{-4}$) và Batch Size ($16$ vs. $32$) đối với tốc độ học và độ ổn định trên CPU.
-4. [SV điền nhận xét tổng kết cá nhân]
+
 
 ---
-*Báo cáo được hoàn thành tự động với nguồn dữ liệu thực nghiệm trung thực từ repo `khanhlinh616/DL_Lab2_Nhom1`.*"""))
+*Báo cáo tổng hợp số liệu thực nghiệm từ các tệp cấu hình và metric trong repository `DL_Lab2_Nhom1`.*"""))
 
     nb.cells = cells
     return nb

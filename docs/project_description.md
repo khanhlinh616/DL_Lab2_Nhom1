@@ -49,7 +49,7 @@ Bảng dưới đây đối chiếu chi tiết giữa các mục tiêu, 7 bướ
 | **Bài tập 3** | Phân tích lỗi & độ chính xác từng lớp | Tính per-class accuracy, tìm các cặp lớp nhầm lẫn nhiều nhất từ Confusion Matrix và phân tích nguyên nhân thị giác | [`notebooks/Lab2_Results_Analysis.ipynb`](../notebooks/Lab2_Results_Analysis.ipynb), [`src/lab2/evaluate.py`](../src/lab2/evaluate.py) | Đã hoàn thành |
 
 ### Giải trình về lựa chọn kiến trúc trong Bài tập 1 (Tại sao không dùng VGG16)
-Trong đề cương thực hành gợi ý các kiến trúc như ResNet18, VGG16, DenseNet121. Nhóm quyết định lựa chọn **ResNet18** và **DenseNet121**, không triển khai **VGG16** vì các lý do kỹ thuật sau:
+Trong đề cương thực hành gợi ý các kiến trúc như ResNet18, VGG16, DenseNet121. Dự án lựa chọn **ResNet18** và **DenseNet121**, không triển khai **VGG16** vì các lý do kỹ thuật sau:
 1. **Quy mô tham số và tài nguyên CPU:** VGG16 có hơn 138 triệu tham số, trong đó riêng 3 tầng Fully Connected chiếm tới ~120 triệu tham số. Trên môi trường huấn luyện CPU không có GPU rời, việc nạp và lan truyền xuôi/ngược qua 138M tham số tiêu tốn thời gian rất lớn và bộ nhớ RAM cao gấp 12-20 lần so với ResNet18 (11.2M tham số) và DenseNet121 (7.0M tham số).
 2. **Tính đại diện về mặt kiến trúc hiện đại:** 
    - ResNet18 đại diện cho trường phái **Residual Connections (kết nối tắt cộng dồn)** giải quyết triệt để vấn đề triệt tiêu gradient.

@@ -32,7 +32,7 @@ def create_optimizer(
         for name, param in model.named_parameters():
             if not param.requires_grad:
                 continue
-            if "fc" in name or "classifier" in name:
+            if name.startswith("fc.") or name.startswith("classifier."):
                 head_params.append(param)
             else:
                 backbone_params.append(param)

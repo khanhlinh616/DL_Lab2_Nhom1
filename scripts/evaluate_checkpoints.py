@@ -22,6 +22,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="Evaluate all *_best.pth checkpoints in checkpoints/ folder.")
     parser.add_argument("--config", type=str, default="./configs/config.yaml", help="Path to config.yaml.")
     parser.add_argument("--smoke-test", action="store_true", help="Use small subset of test data for fast test evaluation.")
+    parser.add_argument("--batch-size", type=int, default=16, help="Batch size for evaluation dataloader (default: 16).")
 
     args = parser.parse_args()
 
@@ -46,7 +47,7 @@ def main():
     subset_size = 50 if args.smoke_test else None
     _, _, test_loader, class_names = get_dataloaders(
         data_dir=global_cfg.get("data_dir", "./data"),
-        batch_size=global_cfg.get("batch_size", 16),
+        batch_size=args.batch_size,
         val_split=global_cfg.get("val_split", 0.1),
         seed=global_cfg.get("seed", 42),
         image_size=global_cfg.get("image_size", 128),

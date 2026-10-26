@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from lab2.config import ExperimentConfig
 from lab2.models import build_model
-from lab2.train import train_one_epoch, validate
+from lab2.train import train_one_epoch, validate, create_optimizer
 
 
 def test_training_step_gradient_flow_transfer():
@@ -85,3 +85,71 @@ def test_config_validation():
             weight_decay=0.0001
         )
         cfg.validate()
+
+
+@pytest.mark.parametrize("model_name,expected_head_params", [
+    ("resnet18", 5130),
+    ("densenet121", 10250),
+])
+def test_create_optimizer_finetune(model_name, expected_head_params):
+    """Verify finetune creates 2 param groups with differential LR and correct head param count."""
+    cfg = ExperimentConfig(
+        name=f"{model_name}_finetune",
+        model_name=model_name,
+        method="finetune",
+        epochs=5,
+        batch_size=16,
+        learning_rate=0.001,
+        backbone_lr=0.0001,
+        weight_decay=0.0001,
+        optimizer="adam"
+    )
+    model = build_model(model_name, method="finetune", num_classes=10, pretrained=False)
+    opt = create_optimizer(model, cfg)
+
+    assert len(opt.param_groups) == 2
+    # Group 0 is backbone
+    assert opt.param_groups[0]["lr"] == 0.0001
+    assert len(opt.param_groups[0]["params"]) > 0
+    # Group 1 is head
+    assert opt.param_groups[1]["lr"] == 0.001
+    head_numel = sum(p.numel() for p in opt.param_groups[1]["params"])
+    assert head_numel == expected_head_params
+
+
+@pytest.mark.parametrize("model_name", ["resnet18", "densenet121"])
+def test_create_optimizer_transfer(model_name):
+    """Verify transfer learning creates exactly 1 param group with learning_rate."""
+    cfg = ExperimentConfig(
+        name=f"{model_name}_transfer",
+        model_name=model_name,
+        method="transfer",
+        epochs=5,
+        batch_size=16,
+        learning_rate=0.001,
+        weight_decay=0.0001,
+        optimizer="adam"
+    )
+    model = build_model(model_name, method="transfer", num_classes=10, pretrained=False)
+    opt = create_optimizer(model, cfg)
+
+    assert len(opt.param_groups) == 1
+    assert opt.param_groups[0]["lr"] == 0.001
+
+
+def test_create_optimizer_unsupported():
+    """Verify create_optimizer raises ValueError for unsupported optimizer."""
+    cfg = ExperimentConfig(
+        name="test_unsupported_opt",
+        model_name="resnet18",
+        method="transfer",
+        epochs=5,
+        batch_size=16,
+        learning_rate=0.001,
+        weight_decay=0.0001,
+        optimizer="rmsprop"
+    )
+    model = build_model("resnet18", method="transfer", num_classes=10, pretrained=False)
+    with pytest.raises(ValueError, match="Unsupported optimizer"):
+        create_optimizer(model, cfg)
+

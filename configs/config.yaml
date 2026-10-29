@@ -1,0 +1,81 @@
+# Configuration file for Lab 2: Pretrained Models, Transfer Learning & Fine-tuning
+# Dataset: CIFAR-10
+
+global:
+  data_dir: "./data"
+  checkpoints_dir: "./checkpoints"
+  runs_dir: "./runs"
+  outputs_dir: "./outputs"
+  num_classes: 10
+  image_size: 128          # 128x128 for efficient CPU training; can set to 224
+  val_split: 0.1           # 5,000 images validation from 50,000 train set
+  seed: 42
+  device: "cpu"
+  num_workers: 0           # 0 recommended on Windows to avoid multiprocessing issues
+  checkpoint_metric: "val_acc" # Metric for selecting best checkpoint ('val_acc' or 'val_loss')
+
+experiments:
+  resnet18_transfer:
+    model_name: "resnet18"
+    method: "transfer"
+    epochs: 5
+    batch_size: 16
+    optimizer: "adam"
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    description: "ResNet18 with frozen backbone, training only classification head"
+
+  resnet18_finetune:
+    model_name: "resnet18"
+    method: "finetune"
+    epochs: 5
+    batch_size: 16
+    optimizer: "adam"
+    learning_rate: 0.001       # Used for new classifier head
+    backbone_lr: 0.0001        # Lower learning rate for unfrozen layer4
+    weight_decay: 0.0001
+    description: "ResNet18 fine-tuning with layer4 and classification head unfrozen"
+
+  densenet121_transfer:
+    model_name: "densenet121"
+    method: "transfer"
+    epochs: 5
+    batch_size: 16
+    optimizer: "adam"
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    description: "DenseNet121 with frozen backbone, training only classification head"
+
+  densenet121_finetune:
+    model_name: "densenet121"
+    method: "finetune"
+    epochs: 5
+    batch_size: 16
+    optimizer: "adam"
+    learning_rate: 0.001       # Used for new classifier head
+    backbone_lr: 0.0001        # Lower learning rate for unfrozen denseblock4 + norm5
+    weight_decay: 0.0001
+    description: "DenseNet121 fine-tuning with denseblock4, norm5, and classifier unfrozen"
+
+  resnet18_transfer_lr1e4:
+    model_name: "resnet18"
+    method: "transfer"
+    epochs: 5
+    batch_size: 16
+    optimizer: "adam"
+    learning_rate: 0.0001
+    weight_decay: 0.0001
+    group: "hparam"
+    description: "ResNet18 transfer learning with lower learning rate (1e-4)"
+
+  resnet18_transfer_bs32:
+    model_name: "resnet18"
+    method: "transfer"
+    epochs: 5
+    batch_size: 32
+    optimizer: "adam"
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    group: "hparam"
+    description: "ResNet18 transfer learning with larger batch size (32)"
+

@@ -11,7 +11,7 @@ Dự án nghiên cứu, thực nghiệm và so sánh đối chứng việc áp d
 - **Transfer Learning (Feature Extraction):** Đóng băng toàn bộ các tầng trích xuất đặc trưng của backbone, chỉ huấn luyện lại tầng phân loại mới (classifier head).
 - **Fine-Tuning:** Đóng băng các tầng đầu và mở khóa các khối tích chập sâu nhất cùng với classifier head, kết hợp với kỹ thuật **Differential Learning Rate** (tốc độ học backbone nhỏ hơn 10 lần so với head) để tinh chỉnh biểu diễn đặc trưng theo miền dữ liệu mới mà không làm mất tri thức học sẵn.
 
-Hệ thống được thiết kế tối ưu hóa cho môi trường CPU-First, cung cấp đầy đủ mã nguồn modular, kịch bản dòng lệnh CLI, kịch bản sinh bảng kết quả tự động, 2 Jupyter Notebooks chuẩn hóa và bộ kiểm thử tự động 51 unit tests.
+Hệ thống được thiết kế tối ưu hóa cho môi trường CPU-First, cung cấp đầy đủ mã nguồn modular, kịch bản dòng lệnh CLI, kịch bản sinh bảng kết quả tự động, Jupyter Notebooks chuẩn hóa, báo cáo HTML thẩm định chuyên nghiệp và bộ kiểm thử tự động 53 unit & integration tests.
 
 ---
 
@@ -33,7 +33,7 @@ Hệ thống được thiết kế tối ưu hóa cho môi trường CPU-First, 
   - *Exercise 1:* So sánh đối chứng ResNet-18 và DenseNet-121.
   - *Exercise 2:* Khảo sát tác động khi thay đổi siêu tham số (Learning Rate $10^{-4}$ và Batch Size $32$) với cấu hình kiểm soát biến độc lập nghiêm ngặt.
   - *Exercise 3:* Tích hợp giám sát TensorBoard (Scalars, Graphs, Images, Histograms).
-- **Bộ kiểm thử tự động (Test-Driven):** 51 tests độc lập chạy offline (không yêu cầu tải dữ liệu hay trọng số pre-trained khi chạy test).
+- **Bộ kiểm thử tự động (Test-Driven):** 53 tests độc lập bao phủ toàn bộ chức năng (checkpoint, config, data, evaluate, models, training, frozen_bn, notebooks, reporting).
 - **Tự động hóa kết quả (Automated Reporting):** Tự động lưu lịch sử huấn luyện dạng JSON và script `make_results_table.py` tự động xuất bảng CSV và Markdown đối chiếu.
 
 ---
@@ -78,13 +78,16 @@ Cấu trúc thư mục được trích xuất trực tiếp từ kho lưu trữ 
 ├── data/
 │   └── .gitkeep                       # Nơi lưu trữ dữ liệu CIFAR-10
 ├── docs/
-│   ├── AI_Usage.md                    # Báo cáo minh bạch sử dụng AI
-│   ├── experiment_plan.md             # Kế hoạch thực nghiệm và biến kiểm soát
-│   ├── progress_status.md             # Bảng theo dõi tiến độ và bằng chứng kiểm toán
-│   ├── project_description.md         # Mô tả bài toán và bảng đối chiếu yêu cầu
-│   ├── project_design.md              # Thiết kế chi tiết hệ thống và interface
-│   └── results.md                     # Báo cáo kết quả và phân tích thực nghiệm
+│   ├── audit-log.md                   # Nhật ký kiểm toán 5 giai đoạn (Description -> Gen -> Smoke -> Run -> Check)
+│   ├── data.md                        # Đặc tả dữ liệu CIFAR-10, tiền xử lý và trực quan hóa
+│   ├── demo.md                        # Hướng dẫn chạy thực nghiệm nhanh và giao diện demo
+│   ├── evaluation.md                  # Đánh giá độc lập trên tập Test và ma trận nhầm lẫn
+│   ├── labs2-description.md           # Mô tả tổng quan bài toán và đối chiếu rubric
+│   ├── model.md                       # Kiến trúc ResNet-18 và DenseNet-121 chi tiết
+│   ├── plan-progress-status.md        # Kế hoạch thực nghiệm, rủi ro, tiến độ 12 mốc và DoD
+│   └── training.md                    # Vòng lặp huấn luyện, Differential LR và BatchNorm
 ├── notebooks/
+│   ├── Lab2.html                      # Báo cáo HTML thẩm định kỹ thuật chuyên nghiệp (Senior Test & QA)
 │   └── Lab2_Practice2_Main.ipynb      # Báo cáo thực nghiệm chuyên sâu toàn diện 13 phần
 ├── outputs/
 │   ├── figures/                       # Hình ảnh ma trận nhầm lẫn (*.png)
@@ -307,14 +310,14 @@ Bảng kết quả tổng hợp chính thức được quản lý tự động t
 
 | Experiment ID | Epochs | Batch | LR | Trainable params | Train Loss/Acc (epoch cuối) | Best Val Acc (epoch) | Test Loss | Test Acc | Thời gian TB mỗi epoch | Tổng thời gian |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| `resnet18_transfer` | 5 | 16 | 0.001 | 5,130 | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* |
-| `resnet18_finetune` | 5 | 16 | 0.001 | 8,398,858 | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* |
-| `densenet121_transfer` | 5 | 16 | 0.001 | 10,250 | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* |
-| `densenet121_finetune` | 5 | 16 | 0.001 | 2,170,378 | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* |
-| `resnet18_transfer_lr1e4` | 5 | 16 | 0.0001 | 5,130 | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* |
-| `resnet18_transfer_bs32` | 5 | 32 | 0.001 | 5,130 | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* | *Chờ chạy full* |
+| `resnet18_transfer` | 5 | 16 | 0.001 | 5,130 | 0.7718 / 73.85% | 77.94% (ep 2) | 0.6644 | **77.98%** | 01m 06s | 05m 35s |
+| `resnet18_finetune` | 5 | 16 | 0.001 | 8,398,858 | 0.2488 / 91.48% | 91.68% (ep 4) | 0.2989 | **90.24%** | 01m 26s | 07m 15s |
+| `densenet121_transfer` | 5 | 16 | 0.001 | 10,250 | 0.6860 / 76.89% | 81.84% (ep 5) | 0.5560 | **81.34%** | 01m 48s | 09m 03s |
+| `densenet121_finetune` | 5 | 16 | 0.001 | 2,170,378 | 0.2912 / 89.94% | 90.78% (ep 5) | 0.2982 | **90.65%** | 02m 08s | 10m 42s |
+| `resnet18_transfer_lr1e4` | 5 | 16 | 0.0001 | 5,130 | 0.7605 / 73.96% | 77.56% (ep 5) | 0.6643 | **78.32%** | 01m 12s | 06m 03s |
+| `resnet18_transfer_bs32` | 5 | 32 | 0.001 | 5,130 | 0.7029 / 76.12% | 78.92% (ep 4) | 0.6276 | **79.04%** | 01m 04s | 05m 21s |
 
-> *Chi tiết báo cáo định lượng và ma trận nhầm lẫn của từng thí nghiệm được trình bày đầy đủ tại [docs/results.md](docs/results.md).*
+> *Chi tiết báo cáo định lượng và ma trận nhầm lẫn của từng thí nghiệm được trình bày đầy đủ tại [docs/evaluation.md](docs/evaluation.md) và [notebooks/Lab2.html](notebooks/Lab2.html).*
 
 ---
 
@@ -338,4 +341,4 @@ Bảng kết quả tổng hợp chính thức được quản lý tự động t
 
 ## 13. AI Usage
 
-Khai báo công cụ và phạm vi hỗ trợ của AI được trình bày tại [docs/AI_Usage.md](docs/AI_Usage.md).
+Khai báo công cụ và phạm vi hỗ trợ của AI được trình bày tại [docs/plan-progress-status.md](docs/plan-progress-status.md#5-báo-cáo-sử-dụng-ai-minh-bạch-ai-usage-log).

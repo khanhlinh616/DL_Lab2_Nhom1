@@ -47,7 +47,7 @@
 | **M9** | Bộ kiểm thử tự động 53 unit & integration tests | [`tests/`](../tests/) | **HOÀN THÀNH 100%** |
 | **M10** | Trực quan hóa dữ liệu thô, PCA và kiến trúc giám sát | [`scripts/visualize_raw_pca.py`](../scripts/visualize_raw_pca.py) | **HOÀN THÀNH 100%** |
 | **M11** | Chạy đầy đủ 6 thí nghiệm và tổng hợp metrics JSON / CSV | [`outputs/metrics/summary.csv`](../outputs/metrics/summary.csv) | **HOÀN THÀNH 100%** |
-| **M12** | Bộ 10 slide thuyết trình kết hợp kiến trúc và code thực tế | [`outputs/figures/slides/`](../outputs/figures/slides/) | **HOÀN THÀNH 100%** |
+| **M12** | Trực quan hóa biểu đồ so sánh và pipeline workflow | [`outputs/figures/`](../outputs/figures/) | **HOÀN THÀNH 100%** |
 
 ---
 

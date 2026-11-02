@@ -59,9 +59,9 @@ def generate_raw_pca_visualization(data_dir: str = "./data", samples_per_class: 
         "#00ACC1", "#6D4C41", "#F4511E", "#3949AB", "#546E7A"
     ]
 
-    fig = plt.figure(figsize=(19, 9.5), dpi=220)
+    fig = plt.figure(figsize=(19, 10.0), dpi=220)
     fig.patch.set_facecolor("#FFFFFF")
-    gs = fig.add_gridspec(2, 2, width_ratios=[1.3, 0.9], height_ratios=[1.0, 1.0], hspace=0.35, wspace=0.25)
+    gs = fig.add_gridspec(2, 2, width_ratios=[1.3, 0.9], height_ratios=[1.0, 1.0], hspace=0.35, wspace=0.25, top=0.82, bottom=0.08, left=0.06, right=0.96)
 
     # ==================== SUBPLOT 1: 2D PCA Scatter ====================
     ax1 = fig.add_subplot(gs[:, 0])
@@ -182,7 +182,7 @@ def generate_raw_pca_visualization(data_dir: str = "./data", samples_per_class: 
     fig.suptitle(
         "PHÂN TÍCH THÀNH PHẦN CHÍNH (PCA) TRÊN DỮ LIỆU THÔ CIFAR-10\n"
         "Minh chứng thực nghiệm: Không gian pixel thô không phân tách được ngữ nghĩa -> Cần Pretrained CNN Backbone",
-        fontsize=13.5, fontweight="bold", color="#0D47A1", y=0.98
+        fontsize=13.5, fontweight="bold", color="#0D47A1", y=0.96
     )
 
     save_path = os.path.join(FIGURES_DIR, "cifar10_raw_pca.png")

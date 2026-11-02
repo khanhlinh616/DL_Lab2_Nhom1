@@ -22,7 +22,7 @@ os.makedirs(FIGURES_DIR, exist_ok=True)
 
 def draw_pipeline_workflow():
     """Vẽ sơ đồ quy trình thực nghiệm End-to-End của Lab 2."""
-    fig, ax = plt.subplots(figsize=(14, 4.5), dpi=300)
+    fig, ax = plt.subplots(figsize=(15.5, 4.6), dpi=300)
     ax.axis("off")
 
     stages = [
@@ -35,31 +35,31 @@ def draw_pipeline_workflow():
     ]
 
     n = len(stages)
-    box_w = 1.8
-    box_h = 2.4
-    spacing = 0.5
-    start_x = 0.5
-    y = 1.0
+    box_w = 2.05
+    box_h = 2.45
+    spacing = 0.50
+    start_x = 0.4
+    y = 0.95
 
     for i, s in enumerate(stages):
         x = start_x + i * (box_w + spacing)
-        rect = patches.FancyBboxPatch((x, y), box_w, box_h, boxstyle="round,pad=0.12",
-                                      facecolor=s["color"], edgecolor=s["border"], linewidth=2)
+        rect = patches.FancyBboxPatch((x, y), box_w, box_h, boxstyle="round,pad=0.08",
+                                      facecolor=s["color"], edgecolor=s["border"], linewidth=1.8)
         ax.add_patch(rect)
-        ax.text(x + box_w / 2, y + box_h - 0.45, s["title"], ha="center", va="center",
-                fontsize=9.5, fontweight="bold", color=s["border"])
-        ax.text(x + box_w / 2, y + box_h / 2 - 0.3, s["desc"], ha="center", va="center",
-                fontsize=8, color="#212121", linespacing=1.35)
+        ax.text(x + box_w / 2, y + box_h - 0.42, s["title"], ha="center", va="center",
+                fontsize=8.8, fontweight="bold", color=s["border"])
+        ax.text(x + box_w / 2, y + box_h / 2 - 0.28, s["desc"], ha="center", va="center",
+                fontsize=8.0, color="#212121", linespacing=1.35)
 
         if i < n - 1:
             arrow_start = x + box_w + 0.08
             arrow_end = arrow_start + spacing - 0.16
             ax.annotate("", xy=(arrow_end, y + box_h / 2), xytext=(arrow_start, y + box_h / 2),
-                        arrowprops=dict(arrowstyle="->,head_width=0.35,head_length=0.45",
-                                        color="#455A64", lw=2))
+                        arrowprops=dict(arrowstyle="->,head_width=0.32,head_length=0.40",
+                                        color="#455A64", lw=1.8))
 
-    ax.set_xlim(0, start_x + n * box_w + (n - 1) * spacing + 0.5)
-    ax.set_ylim(0.5, 4.0)
+    ax.set_xlim(0, start_x + n * box_w + (n - 1) * spacing + 0.4)
+    ax.set_ylim(0.4, 3.9)
     plt.title("QUY TRÌNH THỰC NGHIỆM TỔNG THỂ (LAB 2 WORKFLOW PIPELINE)",
               fontsize=12, fontweight="bold", pad=15, color="#263238")
     save_path = os.path.join(FIGURES_DIR, "pipeline_workflow.png")

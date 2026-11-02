@@ -1,6 +1,6 @@
 """
 Script to generate the Experiment Monitoring Architecture Diagram for Lab 2.
-Generates: outputs/figures/monitoring_architecture.png
+Generates: outputs/figures/monitoring_architecture.png and monitors_diagram.png
 Visualizes:
 - Training & Validation Engine
 - TensorBoardLogger Streams (Scalars, Histograms, Images, Graph)
@@ -10,6 +10,7 @@ Visualizes:
 
 import os
 import sys
+import shutil
 
 if hasattr(sys.stdout, "reconfigure"):
     try:
@@ -34,19 +35,25 @@ def generate_monitoring_diagram():
     ax.set_facecolor("#FFFFFF")
     ax.axis("off")
 
+    ax.set_xlim(0, 16.2)
+    ax.set_ylim(0, 9.6)
+
     # Header
-    ax.text(0.8, 9.0, "KIẾN TRÚC GIÁM SÁT THỰC NGHIỆM THỜI GIAN THỰC (MONITORING ARCHITECTURE)",
-            fontsize=18, fontweight="bold", color="#0D47A1")
-    ax.text(0.8, 8.6, "Hệ thống logging đa luồng qua TensorBoard: Giám sát Loss, Accuracy, Phân phối Trọng số, Ảnh Augmentation & Đồ thị Tính toán",
-            fontsize=11.5, fontstyle="italic", color="#546E7A")
-    ax.axhline(8.4, xmin=0.04, xmax=0.96, color="#CFD8DC", linewidth=1.5)
+    ax.text(0.8, 9.25, "KIẾN TRÚC GIÁM SÁT THỰC NGHIỆM THỜI GIAN THỰC (MONITORING ARCHITECTURE)",
+            fontsize=17, fontweight="bold", color="#0D47A1", va="top")
+    ax.text(0.8, 8.85, "Hệ thống logging đa luồng qua TensorBoard: Giám sát Loss, Accuracy, Phân phối Trọng số, Ảnh Augmentation & Đồ thị Tính toán",
+            fontsize=11, fontstyle="italic", color="#546E7A", va="top")
+    ax.axhline(8.55, xmin=0.04, xmax=0.96, color="#CFD8DC", linewidth=1.5)
 
     # ========================== CỘT 1: NGUỒN PHÁT DỮ LIỆU (TRAINING ENGINE) ==========================
-    engine_card = patches.FancyBboxPatch((0.8, 1.2), 3.6, 6.8, boxstyle="round,pad=0.15",
+    # Ends at 0.7 + 3.4 = 4.1 (with pad=0.08 -> 4.18)
+    engine_card = patches.FancyBboxPatch((0.7, 1.15), 3.4, 7.1, boxstyle="round,pad=0.08",
                                          facecolor="#E3F2FD", edgecolor="#1976D2", linewidth=2.0)
     ax.add_patch(engine_card)
-    ax.text(2.6, 7.6, "TIẾN TRÌNH HUẤN LUYỆN\n(TRAINING ENGINE)", ha="center", fontsize=12, fontweight="bold", color="#0D47A1")
-    ax.text(2.6, 7.15, "src/lab2/train.py", ha="center", fontsize=9.5, fontweight="bold", color="#1565C0")
+    ax.text(2.4, 8.0, "TIẾN TRÌNH HUẤN LUYỆN\n(TRAINING ENGINE)", ha="center", va="top",
+            fontsize=11.5, fontweight="bold", color="#0D47A1", linespacing=1.2)
+    ax.text(2.4, 7.42, "src/lab2/train.py", ha="center", va="top",
+            fontsize=9.2, fontweight="bold", color="#1565C0")
 
     sub_blocks = [
         {"title": "1. Khởi tạo & Dữ liệu", "lines": ["• DataLoader (Batch 16/32)", "• Model (ResNet18 / DenseNet)", "• ImageNet Weights V1"], "bg": "#FFFFFF", "border": "#90CAF9"},
@@ -56,27 +63,31 @@ def generate_monitoring_diagram():
     ]
 
     for idx, sb in enumerate(sub_blocks):
-        by = 5.75 - idx * 1.45
-        box = patches.FancyBboxPatch((1.0, by), 3.2, 1.2, boxstyle="round,pad=0.1",
+        by = 5.95 - idx * 1.45
+        box = patches.FancyBboxPatch((0.85, by), 3.1, 1.25, boxstyle="round,pad=0.06",
                                      facecolor=sb["bg"], edgecolor=sb["border"], linewidth=1.4)
         ax.add_patch(box)
-        ax.text(1.15, by + 0.95, sb["title"], fontsize=9.5, fontweight="bold", color="#0D47A1")
-        ly = by + 0.68
+        ax.text(1.0, by + 1.12, sb["title"], fontsize=9.2, fontweight="bold", color="#0D47A1", va="top")
+        ly = by + 0.84
         for line in sb["lines"]:
-            ax.text(1.15, ly, line, fontsize=8.2, color="#37474F")
-            ly -= 0.28
+            ax.text(1.0, ly, line, fontsize=8.0, color="#37474F", va="top")
+            ly -= 0.25
 
     # Arrow 1: Engine -> TensorBoard Logger
-    ax.annotate("", xy=(5.0, 4.6), xytext=(4.5, 4.6),
-                arrowprops=dict(arrowstyle="->,head_width=0.4,head_length=0.45", color="#1565C0", lw=2.5))
-    ax.text(4.75, 4.85, "Telemetry\nStream", ha="center", fontsize=8.5, fontweight="bold", color="#1565C0")
+    # Gap from 4.18 to 5.22. Center is 4.70.
+    ax.annotate("", xy=(5.2, 4.5), xytext=(4.3, 4.5),
+                arrowprops=dict(arrowstyle="->,head_width=0.35,head_length=0.4", color="#1565C0", lw=2.2))
+    ax.text(4.75, 4.72, "Telemetry\nStream", ha="center", va="bottom", fontsize=8.0, fontweight="bold", color="#1565C0")
 
     # ========================== CỘT 2: MODULE LOGGING (TENSORBOARD LOGGER) ==========================
-    logger_card = patches.FancyBboxPatch((5.1, 1.2), 5.4, 6.8, boxstyle="round,pad=0.15",
+    # Starts at 5.3, width 5.4 -> ends at 10.7 (with pad=0.08 -> 5.22 to 10.78)
+    logger_card = patches.FancyBboxPatch((5.3, 1.15), 5.4, 7.1, boxstyle="round,pad=0.08",
                                          facecolor="#F3E5F5", edgecolor="#7B1FA2", linewidth=2.0)
     ax.add_patch(logger_card)
-    ax.text(7.8, 7.6, "TENSORBOARD LOGGER MODULE", ha="center", fontsize=12, fontweight="bold", color="#4A148C")
-    ax.text(7.8, 7.15, "src/lab2/tensorboard_logger.py (SummaryWriter)", ha="center", fontsize=9.5, fontweight="bold", color="#6A1B9A")
+    ax.text(8.0, 8.0, "TENSORBOARD LOGGER MODULE", ha="center", va="top",
+            fontsize=11.5, fontweight="bold", color="#4A148C")
+    ax.text(8.0, 7.55, "src/lab2/tensorboard_logger.py (SummaryWriter)", ha="center", va="top",
+            fontsize=9.2, fontweight="bold", color="#6A1B9A")
 
     streams = [
         {
@@ -102,31 +113,35 @@ def generate_monitoring_diagram():
     ]
 
     for idx, st in enumerate(streams):
-        sy = 5.75 - idx * 1.45
-        box = patches.FancyBboxPatch((5.3, sy), 5.0, 1.25, boxstyle="round,pad=0.1",
+        sy = 5.95 - idx * 1.45
+        box = patches.FancyBboxPatch((5.5, sy), 5.0, 1.25, boxstyle="round,pad=0.06",
                                      facecolor=st["bg"], edgecolor=st["border"], linewidth=1.5)
         ax.add_patch(box)
-        ax.text(5.45, sy + 1.0, st["tag"], fontsize=9.2, fontweight="bold", color=st["c_tag"])
-        ax.text(5.45, sy + 0.52, st["desc"], fontsize=8.0, color="#212121", linespacing=1.35)
+        ax.text(5.65, sy + 1.12, st["tag"], fontsize=9.0, fontweight="bold", color=st["c_tag"], va="top")
+        ax.text(5.65, sy + 0.86, st["desc"], fontsize=7.8, color="#212121", linespacing=1.3, va="top")
 
     # Arrow 2: Logger -> Storage & Dashboard
-    ax.annotate("", xy=(11.1, 4.6), xytext=(10.6, 4.6),
-                arrowprops=dict(arrowstyle="->,head_width=0.4,head_length=0.45", color="#7B1FA2", lw=2.5))
-    ax.text(10.85, 4.85, "Atomic\nWrite", ha="center", fontsize=8.5, fontweight="bold", color="#7B1FA2")
+    # Gap from 10.78 to 11.82. Center is 11.30.
+    ax.annotate("", xy=(11.8, 4.5), xytext=(10.9, 4.5),
+                arrowprops=dict(arrowstyle="->,head_width=0.35,head_length=0.4", color="#7B1FA2", lw=2.2))
+    ax.text(11.35, 4.72, "Atomic\nWrite", ha="center", va="bottom", fontsize=8.0, fontweight="bold", color="#7B1FA2")
 
     # ========================== CỘT 3: LƯU TRỮ VÀ DASHBOARD ==========================
-    dash_card = patches.FancyBboxPatch((11.2, 1.2), 4.0, 6.8, boxstyle="round,pad=0.15",
+    # Starts at 11.9, width 3.6 -> ends at 15.5 (with pad=0.08 -> 11.82 to 15.58)
+    dash_card = patches.FancyBboxPatch((11.9, 1.15), 3.6, 7.1, boxstyle="round,pad=0.08",
                                        facecolor="#ECEFF1", edgecolor="#455A64", linewidth=2.0)
     ax.add_patch(dash_card)
-    ax.text(13.2, 7.6, "LƯU TRỮ & GIAO DIỆN\n(STORAGE & DASHBOARD)", ha="center", fontsize=12, fontweight="bold", color="#263238")
-    ax.text(13.2, 7.15, "Local Disk & Web UI (Port 6006)", ha="center", fontsize=9.5, fontweight="bold", color="#37474F")
+    ax.text(13.7, 8.0, "LƯU TRỮ & GIAO DIỆN\n(STORAGE & DASHBOARD)", ha="center", va="top",
+            fontsize=11.5, fontweight="bold", color="#263238", linespacing=1.2)
+    ax.text(13.7, 7.42, "Local Disk & Web UI (Port 6006)", ha="center", va="top",
+            fontsize=9.2, fontweight="bold", color="#37474F")
 
     # Storage Box
-    store_box = patches.FancyBboxPatch((11.4, 4.2), 3.6, 2.7, boxstyle="round,pad=0.1",
+    store_box = patches.FancyBboxPatch((12.05, 4.45), 3.3, 2.75, boxstyle="round,pad=0.06",
                                        facecolor="#FFFFFF", edgecolor="#78909C", linewidth=1.5)
     ax.add_patch(store_box)
-    ax.text(11.6, 6.55, "CẤU TRÚC LOG TRÊN ĐĨA:", fontsize=9.5, fontweight="bold", color="#37474F")
-    ax.text(11.6, 5.25,
+    ax.text(12.2, 7.05, "CẤU TRÚC LOG TRÊN ĐĨA:", fontsize=9.2, fontweight="bold", color="#37474F", va="top")
+    ax.text(12.2, 6.70,
             "runs/\n"
             "├── resnet18_transfer/\n"
             "│   └── events.out.tfevents.*\n"
@@ -135,33 +150,38 @@ def generate_monitoring_diagram():
             "├── densenet121_finetune/\n"
             "├── resnet18_transfer_lr1e4/\n"
             "└── resnet18_transfer_bs32/",
-            fontsize=8.0, fontfamily="monospace", color="#263238", linespacing=1.2)
+            fontsize=8.0, fontfamily="monospace", color="#263238", linespacing=1.2, va="top")
 
     # UI Dashboard Box
-    ui_box = patches.FancyBboxPatch((11.4, 1.45), 3.6, 2.5, boxstyle="round,pad=0.1",
+    ui_box = patches.FancyBboxPatch((12.05, 1.35), 3.3, 2.85, boxstyle="round,pad=0.06",
                                     facecolor="#FFF9C4", edgecolor="#FBC02D", linewidth=1.6)
     ax.add_patch(ui_box)
-    ax.text(11.6, 3.65, "TENSORBOARD DASHBOARD", fontsize=9.5, fontweight="bold", color="#F57F17")
-    ax.text(11.6, 2.55,
+    ax.text(12.2, 4.05, "TENSORBOARD DASHBOARD", fontsize=9.2, fontweight="bold", color="#F57F17", va="top")
+    ax.text(12.2, 3.68,
             "• Khởi chạy trực tiếp bằng lệnh:\n"
-            "  tensorboard --logdir=runs\n"
+            "  tensorboard --logdir=runs\n\n"
             "• Giao diện trực quan trên trình duyệt:\n"
-            "  http://localhost:6006\n"
+            "  http://localhost:6006\n\n"
             "• So sánh song song 6 thí nghiệm\n"
             "• Smoothing loss, tải dữ liệu CSV/SVG",
-            fontsize=8.2, color="#37474F", linespacing=1.35)
+            fontsize=8.0, color="#37474F", linespacing=1.25, va="top")
 
     # Footer note
-    ax.text(0.8, 0.65,
+    ax.text(0.7, 0.75,
             "* Nguyên tắc triển khai: Module TensorBoardLogger tự động đóng luồng an toàn qua khối try...finally logger.close(), "
             "đảm bảo không bị rò rỉ bộ nhớ hay khóa file sự kiện (events file) trên hệ thống.",
-            fontsize=9.2, fontstyle="italic", color="#546E7A")
+            fontsize=9.0, fontstyle="italic", color="#546E7A", va="top")
 
     save_path = os.path.join(FIGURES_DIR, "monitoring_architecture.png")
     plt.tight_layout()
     plt.savefig(save_path, bbox_inches="tight", dpi=300)
     plt.close()
+    
+    # Also update monitors_diagram.png alias
+    alias_path = os.path.join(FIGURES_DIR, "monitors_diagram.png")
+    shutil.copyfile(save_path, alias_path)
     print(f"[OK] Đã lưu sơ đồ giám sát (Monitoring Diagram): {save_path}")
+    print(f"[OK] Đã đồng bộ alias: {alias_path}")
 
 
 if __name__ == "__main__":

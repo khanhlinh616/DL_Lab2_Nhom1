@@ -94,9 +94,9 @@ def visualize_raw_distributions(data_dir: str = "./data"):
     val_counts = [np.sum(train_targets[val_indices] == i) for i in range(10)]
     test_counts = [np.sum(test_targets == i) for i in range(10)]
 
-    fig = plt.figure(figsize=(16, 7.5), dpi=220)
+    fig = plt.figure(figsize=(16, 7.8), dpi=220)
     fig.patch.set_facecolor("#FFFFFF")
-    gs = fig.add_gridspec(1, 2, width_ratios=[1.15, 0.85], wspace=0.28)
+    gs = fig.add_gridspec(1, 2, width_ratios=[1.15, 0.85], wspace=0.28, top=0.80, bottom=0.12, left=0.08, right=0.96)
 
     # Subplot 1: Stacked Bar Chart for Split Distributions
     ax1 = fig.add_subplot(gs[0])
@@ -108,7 +108,7 @@ def visualize_raw_distributions(data_dir: str = "./data"):
     p2 = ax1.bar(x, val_counts, width, bottom=train_counts, label="Validation (5.000)", color="#FFA726", edgecolor="#E65100", alpha=0.9)
     p3 = ax1.bar(x, test_counts, width, bottom=np.array(train_counts) + np.array(val_counts), label="Test (10.000)", color="#66BB6A", edgecolor="#2E7D32", alpha=0.9)
 
-    ax1.set_title("Phân bố số lượng mẫu theo 10 lớp (Tổng: 60.000 ảnh)", fontsize=12, fontweight="bold", color="#0D47A1", pad=12)
+    ax1.set_title("Phân bố số lượng mẫu theo 10 lớp (Tổng: 60.000 ảnh)", fontsize=12, fontweight="bold", color="#0D47A1", pad=8)
     ax1.set_xlabel("Lớp đối tượng CIFAR-10", fontsize=11, fontweight="bold", color="#37474F")
     ax1.set_ylabel("Số lượng mẫu (Ảnh)", fontsize=11, fontweight="bold", color="#37474F")
     ax1.set_xticks(x)
@@ -141,7 +141,7 @@ def visualize_raw_distributions(data_dir: str = "./data"):
     ax2.hist(g_chan, bins=bins, color="#43A047", alpha=0.45, label=f"Kênh G (μ={g_mean:.3f}, σ={g_std:.3f})", density=True)
     ax2.hist(b_chan, bins=bins, color="#1E88E5", alpha=0.45, label=f"Kênh B (μ={b_chan_mean:.3f}, σ={b_chan_std:.3f})", density=True)
 
-    ax2.set_title("Phân bố cường độ điểm ảnh 3 kênh màu (R, G, B)", fontsize=12, fontweight="bold", color="#0D47A1", pad=12)
+    ax2.set_title("Phân bố cường độ điểm ảnh 3 kênh màu (R, G, B)", fontsize=12, fontweight="bold", color="#0D47A1", pad=8)
     ax2.set_xlabel("Giá trị chuẩn hóa [0.0 - 1.0]", fontsize=11, fontweight="bold", color="#37474F")
     ax2.set_ylabel("Mật độ xác suất (Density)", fontsize=11, fontweight="bold", color="#37474F")
     ax2.grid(axis="both", linestyle="--", alpha=0.5)
@@ -150,7 +150,7 @@ def visualize_raw_distributions(data_dir: str = "./data"):
     fig.suptitle(
         "THỐNG KÊ PHÂN BỐ DỮ LIỆU THÔ CIFAR-10\n"
         "Độ cân bằng lớp hoàn hảo • Đặc tính phân phối màu sắc 3 kênh",
-        fontsize=13.5, fontweight="bold", color="#0D47A1", y=0.98
+        fontsize=13.5, fontweight="bold", color="#0D47A1", y=0.96
     )
 
     save_path = os.path.join(FIGURES_DIR, "cifar10_raw_distribution.png")

@@ -17,8 +17,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
-OUTPUT_HTML = os.path.join(PROJECT_ROOT, "notebooks", "Lab2_Senior_Test_Report.html")
-OUTPUT_HTML_SHORT = os.path.join(PROJECT_ROOT, "notebooks", "Lab2.html")
+OUTPUT_HTML = os.path.join(PROJECT_ROOT, "notebooks", "Lab2.html")
 
 def load_metrics():
     summary_path = os.path.join(PROJECT_ROOT, "outputs", "metrics", "summary.csv")
@@ -91,15 +90,13 @@ def build_html():
             padding-bottom: 80px;
         }}
 
-        /* Header Bar */
+        /* Header Bar - Static / Normal Flow (Scrolls naturally with page, NOT sticky/fixed) */
         .top-navbar {{
             background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
             color: #ffffff;
             padding: 24px 40px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            position: relative;
         }}
         .top-navbar .header-meta {{
             display: flex;
@@ -159,8 +156,8 @@ def build_html():
             border-radius: 12px;
             padding: 20px;
             position: sticky;
-            top: 110px;
-            height: calc(100vh - 140px);
+            top: 24px;
+            height: calc(100vh - 48px);
             overflow-y: auto;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }}
@@ -1542,10 +1539,8 @@ for name, module in frozen_bn_layers:
 
     with open(OUTPUT_HTML, "w", encoding="utf-8") as f:
         f.write(html)
-    with open(OUTPUT_HTML_SHORT, "w", encoding="utf-8") as f:
-        f.write(html)
 
-    print(f"Báo cáo thẩm định HTML đã được tạo thành công tại:\n  - {OUTPUT_HTML}\n  - {OUTPUT_HTML_SHORT}")
+    print(f"Báo cáo thẩm định HTML đã được tạo thành công tại: {OUTPUT_HTML}")
 
 if __name__ == "__main__":
     build_html()

@@ -39,15 +39,13 @@
             padding-bottom: 80px;
         }
 
-        /* Header Bar */
+        /* Header Bar - Static / Normal Flow (Scrolls naturally with page, NOT sticky/fixed) */
         .top-navbar {
             background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
             color: #ffffff;
             padding: 24px 40px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            position: relative;
         }
         .top-navbar .header-meta {
             display: flex;
@@ -107,8 +105,8 @@
             border-radius: 12px;
             padding: 20px;
             position: sticky;
-            top: 110px;
-            height: calc(100vh - 140px);
+            top: 24px;
+            height: calc(100vh - 48px);
             overflow-y: auto;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
@@ -1477,7 +1475,7 @@ for name, module in frozen_bn_layers:
                 </div>
 
                 <div style="text-align: right; margin-top: 24px; font-size: 13px; color: var(--text-muted);">
-                    <em>Báo cáo được khởi tạo tự động bởi Hệ thống Thẩm định Kỹ thuật Lab 2 &mdash; Thời gian ký duyệt: 2026-11-02 08:33:43</em>
+                    <em>Báo cáo được khởi tạo tự động bởi Hệ thống Thẩm định Kỹ thuật Lab 2 &mdash; Thời gian ký duyệt: 2026-11-02 08:42:25</em>
                 </div>
             </section>
 

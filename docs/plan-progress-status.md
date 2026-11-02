@@ -37,23 +37,23 @@
 | Mốc (Milestone) | Nội dung công việc | File kiểm chứng | Trạng thái |
 |:---:|:---|:---|:---:|
 | **M1** | Thiết lập cấu trúc thư mục chuẩn và môi trường ảo | `src/lab2/`, `configs/`, `tests/` | **HOÀN THÀNH 100%** |
-| **M2** | Pipeline nạp dữ liệu CIFAR-10, tiền xử lý và chia train/val/test | [`src/lab2/data.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/data.py) | **HOÀN THÀNH 100%** |
-| **M3** | Module mô hình ResNet-18 & DenseNet-121 với cơ chế freeze/unfreeze | [`src/lab2/models.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/models.py) | **HOÀN THÀNH 100%** |
-| **M4** | Quản lý tham số và kiểm tra cấu trúc qua CLI | [`scripts/inspect_models.py`](file:///d:/Hoc_Sau/Lab 2/scripts/inspect_models.py) | **HOÀN THÀNH 100%** |
-| **M5** | Vòng lặp huấn luyện, validation và cơ chế Differential LR | [`src/lab2/train.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/train.py) | **HOÀN THÀNH 100%** |
-| **M6** | Quản lý checkpoint an toàn nguyên tử (Atomic save) | [`src/lab2/checkpoint.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/checkpoint.py) | **HOÀN THÀNH 100%** |
-| **M7** | Tích hợp hệ thống giám sát đa luồng qua TensorBoard | [`src/lab2/tensorboard_logger.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/tensorboard_logger.py) | **HOÀN THÀNH 100%** |
-| **M8** | Module đánh giá độc lập trên tập Test và ma trận nhầm lẫn | [`src/lab2/evaluate.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/evaluate.py) | **HOÀN THÀNH 100%** |
-| **M9** | Bộ kiểm thử tự động 53 unit & integration tests | [`tests/`](file:///d:/Hoc_Sau/Lab 2/tests/) | **HOÀN THÀNH 100%** |
-| **M10** | Trực quan hóa dữ liệu thô, PCA và kiến trúc giám sát | [`scripts/visualize_raw_pca.py`](file:///d:/Hoc_Sau/Lab 2/scripts/visualize_raw_pca.py) | **HOÀN THÀNH 100%** |
-| **M11** | Chạy đầy đủ 6 thí nghiệm và tổng hợp metrics JSON / CSV | [`outputs/metrics/summary.csv`](file:///d:/Hoc_Sau/Lab 2/outputs/metrics/summary.csv) | **HOÀN THÀNH 100%** |
-| **M12** | Bộ 10 slide thuyết trình kết hợp kiến trúc và code thực tế | [`outputs/figures/slides/`](file:///d:/Hoc_Sau/Lab 2/outputs/figures/slides/) | **HOÀN THÀNH 100%** |
+| **M2** | Pipeline nạp dữ liệu CIFAR-10, tiền xử lý và chia train/val/test | [`src/lab2/data.py`](../src/lab2/data.py) | **HOÀN THÀNH 100%** |
+| **M3** | Module mô hình ResNet-18 & DenseNet-121 với cơ chế freeze/unfreeze | [`src/lab2/models.py`](../src/lab2/models.py) | **HOÀN THÀNH 100%** |
+| **M4** | Quản lý tham số và kiểm tra cấu trúc qua CLI | [`scripts/inspect_models.py`](../scripts/inspect_models.py) | **HOÀN THÀNH 100%** |
+| **M5** | Vòng lặp huấn luyện, validation và cơ chế Differential LR | [`src/lab2/train.py`](../src/lab2/train.py) | **HOÀN THÀNH 100%** |
+| **M6** | Quản lý checkpoint an toàn nguyên tử (Atomic save) | [`src/lab2/checkpoint.py`](../src/lab2/checkpoint.py) | **HOÀN THÀNH 100%** |
+| **M7** | Tích hợp hệ thống giám sát đa luồng qua TensorBoard | [`src/lab2/tensorboard_logger.py`](../src/lab2/tensorboard_logger.py) | **HOÀN THÀNH 100%** |
+| **M8** | Module đánh giá độc lập trên tập Test và ma trận nhầm lẫn | [`src/lab2/evaluate.py`](../src/lab2/evaluate.py) | **HOÀN THÀNH 100%** |
+| **M9** | Bộ kiểm thử tự động 53 unit & integration tests | [`tests/`](../tests/) | **HOÀN THÀNH 100%** |
+| **M10** | Trực quan hóa dữ liệu thô, PCA và kiến trúc giám sát | [`scripts/visualize_raw_pca.py`](../scripts/visualize_raw_pca.py) | **HOÀN THÀNH 100%** |
+| **M11** | Chạy đầy đủ 6 thí nghiệm và tổng hợp metrics JSON / CSV | [`outputs/metrics/summary.csv`](../outputs/metrics/summary.csv) | **HOÀN THÀNH 100%** |
+| **M12** | Bộ 10 slide thuyết trình kết hợp kiến trúc và code thực tế | [`outputs/figures/slides/`](../outputs/figures/slides/) | **HOÀN THÀNH 100%** |
 
 ---
 
 ## 4. XÁC THỰC DEFINITION OF DONE (DoD CHECKLIST)
 
-Theo quy chuẩn kỹ thuật trong [`AGENTS.md`](file:///d:/Hoc_Sau/Lab 2/AGENTS.md), toàn bộ các tiêu chuẩn hoàn thành dự án đã được rà soát và đáp ứng trọn vẹn:
+Theo quy chuẩn kỹ thuật trong [`AGENTS.md`](../AGENTS.md), toàn bộ các tiêu chuẩn hoàn thành dự án đã được rà soát và đáp ứng trọn vẹn:
 
 - [x] **Đủ yêu cầu:** Đạt 100% các tiêu chí thực nghiệm Practice 2 (Pretrained models, Transfer Learning, Fine-Tuning, thay classifier head, khảo sát LR và Batch size).
 - [x] **Code chạy:** Toàn bộ script và module thực thi không có bất kỳ lỗi cú pháp hay runtime exception nào.

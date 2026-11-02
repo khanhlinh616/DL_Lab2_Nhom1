@@ -40,14 +40,14 @@ flowchart LR
 ---
 
 ### GIAI ĐOẠN 2: GEN (SINH MÃ NGUỒN, MODULE & BỘ KIỂM THỬ)
-- **Cấu hình trung tâm:** Tạo [`configs/config.yaml`](file:///d:/Hoc_Sau/Lab 2/configs/config.yaml) quản lý 6 cấu hình thực nghiệm độc lập (`core` và `hparam`).
+- **Cấu hình trung tâm:** Tạo [`configs/config.yaml`](../configs/config.yaml) quản lý 6 cấu hình thực nghiệm độc lập (`core` và `hparam`).
 - **Module lõi (`src/lab2/`):**
-  - [`data.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/data.py): Xử lý nạp dữ liệu, phân chia `random_split`, pipeline transforms (Resize 128x128, Normalize ImageNet, Augmentation trên train).
-  - [`models.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/models.py): Nạp pretrained backbones, thay thế classifier head 10 lớp, thiết lập cơ chế đóng băng (`requires_grad = False`) và mở khóa tầng sâu.
-  - [`train.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/train.py): Vòng lặp huấn luyện chuẩn 6 bước, quản lý Loss & Accuracy, tích hợp TensorBoard và kiểm tra NaN/Inf loss.
-  - [`checkpoint.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/checkpoint.py): Hàm `atomic_save`, `verify_checkpoint_integrity`, phân tách checkpoint `latest`, `best` và metadata verification.
-  - [`evaluate.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/evaluate.py): Đánh giá checkpoint độc lập, tính Loss, Accuracy, Confusion Matrix và Per-class accuracy.
-  - [`tensorboard_logger.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/tensorboard_logger.py): Quản lý luồng Scalars, Histograms, Sample Images, và Computational Graph.
+  - [`data.py`](../src/lab2/data.py): Xử lý nạp dữ liệu, phân chia `random_split`, pipeline transforms (Resize 128x128, Normalize ImageNet, Augmentation trên train).
+  - [`models.py`](../src/lab2/models.py): Nạp pretrained backbones, thay thế classifier head 10 lớp, thiết lập cơ chế đóng băng (`requires_grad = False`) và mở khóa tầng sâu.
+  - [`train.py`](../src/lab2/train.py): Vòng lặp huấn luyện chuẩn 6 bước, quản lý Loss & Accuracy, tích hợp TensorBoard và kiểm tra NaN/Inf loss.
+  - [`checkpoint.py`](../src/lab2/checkpoint.py): Hàm `atomic_save`, `verify_checkpoint_integrity`, phân tách checkpoint `latest`, `best` và metadata verification.
+  - [`evaluate.py`](../src/lab2/evaluate.py): Đánh giá checkpoint độc lập, tính Loss, Accuracy, Confusion Matrix và Per-class accuracy.
+  - [`tensorboard_logger.py`](../src/lab2/tensorboard_logger.py): Quản lý luồng Scalars, Histograms, Sample Images, và Computational Graph.
 - **Bộ kiểm thử tự động (`tests/`):** Xây dựng bộ **53 unit & integration tests** bao phủ toàn bộ chức năng dữ liệu, mô hình, kiểm soát gradient, checkpoint và độ tương thích.
 
 ---

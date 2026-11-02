@@ -1,8 +1,8 @@
 # TÀI LIỆU KIẾN TRÚC MÔ HÌNH: RESNET-18 & DENSENET-121 (MODEL.MD)
 
 **Chủ đề:** Khảo sát kiến trúc mạng dư học sâu (ResNet-18) và mạng kết nối dày đặc (DenseNet-121) tiền huấn luyện trên ImageNet  
-**Module triển khai:** [`src/lab2/models.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/models.py)  
-**Tệp biểu đồ:** [`outputs/figures/model_parameters_comparison.png`](file:///d:/Hoc_Sau/Lab 2/outputs/figures/model_parameters_comparison.png), [`outputs/figures/transfer_vs_finetune.png`](file:///d:/Hoc_Sau/Lab 2/outputs/figures/transfer_vs_finetune.png)
+**Module triển khai:** [`src/lab2/models.py`](../src/lab2/models.py)  
+**Tệp biểu đồ:** [`outputs/figures/model_parameters_comparison.png`](../outputs/figures/model_parameters_comparison.png), [`outputs/figures/transfer_vs_finetune.png`](../outputs/figures/transfer_vs_finetune.png)
 
 ---
 
@@ -80,7 +80,7 @@ model.classifier = nn.Linear(in_features=1024, out_features=10)
 
 ## 3. BẢNG PHÂN RÃ THAM SỐ CHI TIẾT (PARAMETER BREAKDOWN)
 
-Số liệu trích xuất chính xác 100% qua hàm `count_parameters()` trong [`src/lab2/models.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/models.py#L110-L135):
+Số liệu trích xuất chính xác 100% qua hàm `count_parameters()` trong [`src/lab2/models.py`](../src/lab2/models.py#L110-L135):
 
 | Thí nghiệm ID | Mô hình | Phương pháp | Tầng đóng băng (requires_grad=False) | Tầng huấn luyện (requires_grad=True) | Tổng tham số | Tham số Trainable | Tham số Frozen | Tỷ lệ Trainable |
 |:---|:---:|:---:|:---|:---|:---:|:---:|:---:|:---:|
@@ -104,7 +104,7 @@ for param in model.parameters():
 ```
 
 - **Vấn đề:** Lệnh `requires_grad = False` chỉ vô hiệu hóa gradient đối với trọng số tự do `weight` ($\gamma$) và độ lệch `bias` ($\beta$). Lệnh này **không hề đóng băng các buffer thống kê** (`running_mean`, `running_var`, `num_batches_tracked`).
-- **Thực nghiệm kiểm chứng ([`scripts/check_frozen_bn.py`](file:///d:/Hoc_Sau/Lab 2/scripts/check_frozen_bn.py)):**
+- **Thực nghiệm kiểm chứng ([`scripts/check_frozen_bn.py`](../scripts/check_frozen_bn.py)):**
   - Khi gọi `model.train()`: Các tầng BatchNorm trong backbone dù đã set `requires_grad = False` vẫn tự động cập nhật running mean và running variance theo batch dữ liệu CIFAR-10 hiện tại:
     - ResNet-18: **60/60 buffers** thay đổi giá trị.
     - DenseNet-121: **363/363 buffers** thay đổi giá trị.

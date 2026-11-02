@@ -1,8 +1,8 @@
 # TÀI LIỆU ĐÁNH GIÁ & KẾT QUẢ THỰC NGHIỆM ĐỐI CHỨNG (EVALUATION.MD)
 
 **Chủ đề:** Đánh giá độc lập trên tập Test (10.000 ảnh), phân tích đối chứng 6 thí nghiệm, ma trận nhầm lẫn và độ chính xác theo lớp  
-**Module triển khai:** [`src/lab2/evaluate.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/evaluate.py), [`scripts/make_results_table.py`](file:///d:/Hoc_Sau/Lab 2/scripts/make_results_table.py)  
-**Tệp số liệu nguồn:** [`outputs/metrics/summary.csv`](file:///d:/Hoc_Sau/Lab 2/outputs/metrics/summary.csv), [`outputs/metrics/*_test_metrics.json`](file:///d:/Hoc_Sau/Lab 2/outputs/metrics/)
+**Module triển khai:** [`src/lab2/evaluate.py`](../src/lab2/evaluate.py), [`scripts/make_results_table.py`](../scripts/make_results_table.py)  
+**Tệp số liệu nguồn:** [`outputs/metrics/summary.csv`](../outputs/metrics/summary.csv), [`outputs/metrics/*_test_metrics.json`](../outputs/metrics/)
 
 ---
 
@@ -16,7 +16,7 @@
 
 ## 2. BẢNG TỔNG HỢP KẾT QUẢ CHÍNH THỨC (6 THÍ NGHIỆM)
 
-Dữ liệu đối chiếu 100% từ bảng tổng kết [`outputs/metrics/summary.csv`](file:///d:/Hoc_Sau/Lab 2/outputs/metrics/summary.csv):
+Dữ liệu đối chiếu 100% từ bảng tổng kết [`outputs/metrics/summary.csv`](../outputs/metrics/summary.csv):
 
 | STT | Thí nghiệm ID | Nhóm | Mô hình | Phương pháp | LR (Head / Backbone) | Batch | Tham số Trainable (%) | Train Loss / Acc (ep 5) | Best Val Acc (epoch) | Test Loss | **Test Acc (%)** | Thời gian TB/epoch | Tổng thời gian |
 |:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -54,7 +54,7 @@ Dữ liệu đối chiếu 100% từ bảng tổng kết [`outputs/metrics/summa
 
 ## 4. MA TRẬN NHẦM LẪN & ĐỘ CHÍNH XÁC THEO LỚP (PER-CLASS ACCURACY)
 
-Trích xuất trực tiếp từ các file kết quả chi tiết [`outputs/metrics/*_test_metrics.json`](file:///d:/Hoc_Sau/Lab 2/outputs/metrics/):
+Trích xuất trực tiếp từ các file kết quả chi tiết [`outputs/metrics/*_test_metrics.json`](../outputs/metrics/):
 
 | Lớp (Class) | Số mẫu test | ResNet-18 Transfer Acc | ResNet-18 Fine-tune Acc | DenseNet-121 Transfer Acc | DenseNet-121 Fine-tune Acc | Nhận xét đối chiếu |
 |:---|:---:|:---:|:---:|:---:|:---:|:---|
@@ -86,5 +86,5 @@ Trích xuất trực tiếp từ các file kết quả chi tiết [`outputs/metr
 
 1. **Ràng buộc Seed ngẫu nhiên:** Toàn bộ 6 thí nghiệm được thực hiện trên **cùng một hạt giống duy nhất (`seed=42`)**. Do đó, sự chênh lệch nhỏ (như 90,65% vs 90,24%) chưa đủ để khẳng định có ý nghĩa thống kê nếu không đo khoảng tin cậy qua 3-5 seeds.
 2. **Không suy diễn quan hệ nhân quả tuyệt đối:** Chưa đủ căn cứ để kết luận DenseNet luôn vượt trội ResNet trên mọi bài toán; ưu thế ở đây gắn liền với việc các feature maps đa tầng hỗ trợ tốt cho ảnh phân giải nhỏ được nội suy ($128 \times 128$).
-3. **Môi trường thực nghiệm:** Dữ liệu lịch sử [`outputs/metrics/resnet18_transfer_history.json`](file:///d:/Hoc_Sau/Lab 2/outputs/metrics/resnet18_transfer_history.json) ghi nhận runtime sử dụng CUDA backend (`torch 2.6.0+cu124`). Cần nói rõ môi trường thực tế khi thuyết trình để đảm bảo tính trung thực học thuật.
+3. **Môi trường thực nghiệm:** Dữ liệu lịch sử [`outputs/metrics/resnet18_transfer_history.json`](../outputs/metrics/resnet18_transfer_history.json) ghi nhận runtime sử dụng CUDA backend (`torch 2.6.0+cu124`). Cần nói rõ môi trường thực tế khi thuyết trình để đảm bảo tính trung thực học thuật.
 

@@ -77,14 +77,14 @@ Dự án thiết kế ma trận 6 thí nghiệm chặt chẽ kiểm tra 3 khía 
 
 | Yêu cầu Practice 2 | Trạng thái triển khai trong mã nguồn | File kiểm chứng |
 |:---|:---:|:---|
-| **Thử nghiệm nhiều pretrained models** | Đã triển khai hoàn chỉnh **ResNet-18** và **DenseNet-121** | [`src/lab2/models.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/models.py) |
-| **Transfer Learning và Fine-Tuning** | Đầy đủ 2 phương pháp với cơ chế đóng băng và Differential LR | [`src/lab2/models.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/models.py), [`src/lab2/train.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/train.py) |
-| **Thay Classifier theo 10 lớp CIFAR-10** | Thay thế `model.fc` (ResNet) và `model.classifier` (DenseNet) | [`src/lab2/models.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/models.py#L45-L75) |
-| **Khảo sát Learning Rate** | Thử nghiệm $10^{-3}$ vs $10^{-4}$ có kiểm soát biến | [`configs/config.yaml`](file:///d:/Hoc_Sau/Lab 2/configs/config.yaml) |
-| **Khảo sát Batch Size** | Thử nghiệm $16$ vs $32$ có kiểm soát biến | [`configs/config.yaml`](file:///d:/Hoc_Sau/Lab 2/configs/config.yaml) |
-| **Đếm tham số mô hình** | Hàm `count_parameters()` đếm chính xác Trainable / Frozen | [`scripts/inspect_models.py`](file:///d:/Hoc_Sau/Lab 2/scripts/inspect_models.py) |
-| **Tiền xử lý dữ liệu** | Resize $128 \times 128$, chuẩn hóa ImageNet, Data Augmentation | [`src/lab2/data.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/data.py) |
-| **DataLoader & Train/Val/Test split** | 45.000 Train, 5.000 Val, 10.000 Test (seed 42) | [`src/lab2/data.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/data.py#L90-L130) |
-| **Training & Validation loop** | Đầy đủ vòng lặp 6 bước, theo dõi Loss và Accuracy | [`src/lab2/train.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/train.py) |
-| **Giám sát thời gian thực** | TensorBoard Scalars, Histograms, Image Samples, Graphs | [`src/lab2/tensorboard_logger.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/tensorboard_logger.py) |
-| **Đánh giá trên tập Test độc lập** | Chỉ đánh giá checkpoint tốt nhất một lần ở cuối | [`src/lab2/evaluate.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/evaluate.py) |
+| **Thử nghiệm nhiều pretrained models** | Đã triển khai hoàn chỉnh **ResNet-18** và **DenseNet-121** | [`src/lab2/models.py`](../src/lab2/models.py) |
+| **Transfer Learning và Fine-Tuning** | Đầy đủ 2 phương pháp với cơ chế đóng băng và Differential LR | [`src/lab2/models.py`](../src/lab2/models.py), [`src/lab2/train.py`](../src/lab2/train.py) |
+| **Thay Classifier theo 10 lớp CIFAR-10** | Thay thế `model.fc` (ResNet) và `model.classifier` (DenseNet) | [`src/lab2/models.py`](../src/lab2/models.py#L45-L75) |
+| **Khảo sát Learning Rate** | Thử nghiệm $10^{-3}$ vs $10^{-4}$ có kiểm soát biến | [`configs/config.yaml`](../configs/config.yaml) |
+| **Khảo sát Batch Size** | Thử nghiệm $16$ vs $32$ có kiểm soát biến | [`configs/config.yaml`](../configs/config.yaml) |
+| **Đếm tham số mô hình** | Hàm `count_parameters()` đếm chính xác Trainable / Frozen | [`scripts/inspect_models.py`](../scripts/inspect_models.py) |
+| **Tiền xử lý dữ liệu** | Resize $128 \times 128$, chuẩn hóa ImageNet, Data Augmentation | [`src/lab2/data.py`](../src/lab2/data.py) |
+| **DataLoader & Train/Val/Test split** | 45.000 Train, 5.000 Val, 10.000 Test (seed 42) | [`src/lab2/data.py`](../src/lab2/data.py#L90-L130) |
+| **Training & Validation loop** | Đầy đủ vòng lặp 6 bước, theo dõi Loss và Accuracy | [`src/lab2/train.py`](../src/lab2/train.py) |
+| **Giám sát thời gian thực** | TensorBoard Scalars, Histograms, Image Samples, Graphs | [`src/lab2/tensorboard_logger.py`](../src/lab2/tensorboard_logger.py) |
+| **Đánh giá trên tập Test độc lập** | Chỉ đánh giá checkpoint tốt nhất một lần ở cuối | [`src/lab2/evaluate.py`](../src/lab2/evaluate.py) |

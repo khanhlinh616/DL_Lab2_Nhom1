@@ -1,8 +1,8 @@
 # TÀI LIỆU QUY TRÌNH HUẤN LUYỆN: THIẾT KẾ, OPTIMIZER & CHECKPOINT (TRAINING.MD)
 
 **Chủ đề:** Thiết kế vòng lặp huấn luyện, tối ưu hóa tốc độ học vi phân (Differential LR), kiểm soát an toàn nguyên tử (Atomic Checkpoint) và hệ thống giám sát TensorBoard  
-**Module triển khai:** [`src/lab2/train.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/train.py), [`src/lab2/checkpoint.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/checkpoint.py), [`src/lab2/tensorboard_logger.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/tensorboard_logger.py)  
-**Tệp sơ đồ:** [`outputs/figures/monitoring_architecture.png`](file:///d:/Hoc_Sau/Lab 2/outputs/figures/monitoring_architecture.png), [`outputs/figures/slide_08_train_validation_checkpoint.png`](file:///d:/Hoc_Sau/Lab 2/outputs/figures/slides/slide_08_train_validation_checkpoint.png)
+**Module triển khai:** [`src/lab2/train.py`](../src/lab2/train.py), [`src/lab2/checkpoint.py`](../src/lab2/checkpoint.py), [`src/lab2/tensorboard_logger.py`](../src/lab2/tensorboard_logger.py)  
+**Tệp sơ đồ:** [`outputs/figures/monitoring_architecture.png`](../outputs/figures/monitoring_architecture.png), [`outputs/figures/slide_08_train_validation_checkpoint.png`](../outputs/figures/slides/slide_08_train_validation_checkpoint.png)
 
 ---
 
@@ -83,7 +83,7 @@ checkpoints/
 ```
 
 ### 4.1. Cơ chế ghi nguyên tử (Atomic Save)
-Để ngăn ngừa tình trạng file checkpoint bị lỗi hoặc hỏng hoàn toàn khi xảy ra sự cố ngắt nguồn hoặc dừng đột ngột, hàm `atomic_save()` trong [`src/lab2/checkpoint.py`](file:///d:/Hoc_Sau/Lab 2/src/lab2/checkpoint.py#L17-L44) thực hiện:
+Để ngăn ngừa tình trạng file checkpoint bị lỗi hoặc hỏng hoàn toàn khi xảy ra sự cố ngắt nguồn hoặc dừng đột ngột, hàm `atomic_save()` trong [`src/lab2/checkpoint.py`](../src/lab2/checkpoint.py#L17-L44) thực hiện:
 1. Ghi toàn bộ dữ liệu ra một file tạm thời tiền tố `tmp_*.tmp` cùng thư mục.
 2. Gọi hàm hệ thống `os.replace(tmp_path, target_path)` để hoán đổi file tức thời.
 
@@ -109,9 +109,9 @@ if is_best:
 
 ## 5. HỆ THỐNG GIÁM SÁT THỜI GIAN THỰC (TENSORBOARD MONITORING)
 
-Tệp sơ đồ kiến trúc: [`outputs/figures/monitoring_architecture.png`](file:///d:/Hoc_Sau/Lab 2/outputs/figures/monitoring_architecture.png)
+Tệp sơ đồ kiến trúc: [`outputs/figures/monitoring_architecture.png`](../outputs/figures/monitoring_architecture.png)
 
-Hệ thống tích hợp module [`TensorBoardLogger`](file:///d:/Hoc_Sau/Lab 2/src/lab2/tensorboard_logger.py) truyền phát 4 luồng dữ liệu song song:
+Hệ thống tích hợp module [`TensorBoardLogger`](../src/lab2/tensorboard_logger.py) truyền phát 4 luồng dữ liệu song song:
 1. **Scalars Monitor:** Theo dõi đường cong `Loss/train`, `Loss/val`, `Accuracy/train`, `Accuracy/val` và thời gian thực thi từng epoch, cho phép phát hiện sớm hiện tượng quá khớp.
 2. **Histograms Monitor:** Theo dõi sự tiến hóa của phân phối trọng số và gradient ở từng tầng (`conv1`, `layer1-4`, `fc`, `features`, `classifier`), kiểm chứng các tầng bị khóa không có gradient.
 3. **Image Batch Monitor:** Hiển thị ảnh sau khi qua pipeline tiền xử lý và augmentation (Resize 128x128), đảm bảo hình ảnh đầu vào không bị méo lệch phân phối.

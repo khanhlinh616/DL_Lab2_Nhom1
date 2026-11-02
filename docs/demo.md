@@ -2,7 +2,7 @@
 
 **Chủ đề:** Hướng dẫn cài đặt, chạy thực nghiệm CLI, sinh biểu đồ trực quan, khởi chạy TensorBoard và thực hiện suy luận (Inference Demo)  
 **Môi trường:** Python 3.10+, PyTorch 2.x, Torchvision, CUDA hoặc CPU  
-**Tập lệnh CLI:** Thư mục [`scripts/`](file:///d:/Hoc_Sau/Lab 2/scripts/)
+**Tập lệnh CLI:** Thư mục [`scripts/`](../scripts/)
 
 ---
 

@@ -55,6 +55,16 @@ def build_html():
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BÁO CÁO THẨM ĐỊNH TOÀN DIỆN LAB 2 — SENIOR TEST & QA BENCHMARK AUDIT</title>
+    <!-- MathJax for rendering MathML / OMML equation compatibility -->
+    <script>
+        window.MathJax = {{
+            loader: {{ load: ['input/mml', 'output/chtml'] }},
+            mml: {{
+                parseAs: 'html'
+            }}
+        }};
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/mml-chtml.js"></script>
     <style>
         :root {{
             --primary: #1976d2;
@@ -74,6 +84,11 @@ def build_html():
             --text-muted: #64748b;
             --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             --code-font: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        }}
+
+        math {{
+            font-family: "Cambria Math", "Latin Modern Math", STIXGeneral, serif;
+            font-size: 1.05em;
         }}
 
         * {{
@@ -677,8 +692,8 @@ def build_html():
                     <div class="figure-caption">Hình 1: Sơ đồ luồng thực thi vòng đời 6 bước chuẩn hóa của hệ thống Lab 2</div>
                     <div class="figure-explanation">
                         <strong>Giải thích kiến trúc luồng kiểm thử:</strong> Pipeline được chuẩn hóa thành 6 pha khép kín:
-                        (1) <em>Data Ingestion</em>: Nạp 60.000 ảnh CIFAR-10 thô $32\times 32$; 
-                        (2) <em>Preprocessing &amp; Partitioning</em>: Resize $128\times 128$, chuẩn hóa ImageNet, phân chia độc lập 45k train, 5k val, 10k test;
+                        (1) <em>Data Ingestion</em>: Nạp 60.000 ảnh CIFAR-10 thô <math xmlns="http://www.w3.org/1998/Math/MathML"><mn>32</mn><mo>&times;</mo><mn>32</mn></math>; 
+                        (2) <em>Preprocessing &amp; Partitioning</em>: Resize <math xmlns="http://www.w3.org/1998/Math/MathML"><mn>128</mn><mo>&times;</mo><mn>128</mn></math>, chuẩn hóa ImageNet, phân chia độc lập 45k train, 5k val, 10k test;
                         (3) <em>Model Construction</em>: Nạp ImageNet weights, thay thế FC head 10 classes, đóng băng/mở khóa tham số;
                         (4) <em>Training Loop</em>: 5 epochs, Adam optimizer, CrossEntropyLoss, logging TensorBoard đồng thời;
                         (5) <em>Validation &amp; Atomic Checkpoint</em>: Đánh giá không tính gradient (`torch.no_grad()`), lưu Best Checkpoint nguyên tử;
@@ -790,9 +805,9 @@ def build_html():
                 <div class="image-grid-2">
                     <div class="figure-block">
                         <img src="{img_base}/cifar10_raw_samples_grid.png" alt="CIFAR-10 Samples Grid">
-                        <div class="figure-caption">Hình 3A: Lưới 50 mẫu ảnh thô đại diện 10 lớp CIFAR-10 ($32\times 32$)</div>
+                        <div class="figure-caption">Hình 3A: Lưới 50 mẫu ảnh thô đại diện 10 lớp CIFAR-10 (<math xmlns="http://www.w3.org/1998/Math/MathML"><mn>32</mn><mo>&times;</mo><mn>32</mn></math>)</div>
                         <div class="figure-explanation">
-                            <strong>Thẩm định chất lượng mẫu:</strong> Ảnh $32\times 32$ pixels có độ phân giải rất thấp. Khi nạp vào mạng ImageNet ($224\times 224$ mặc định), hệ thống áp dụng kỹ thuật phóng to song tuyến (Bilinear Interpolation) lên $128\times 128$, vừa đảm bảo không mất mát ngữ nghĩa cấu trúc, vừa cân bằng tốc độ tính toán trên CPU/GPU.
+                            <strong>Thẩm định chất lượng mẫu:</strong> Ảnh <math xmlns="http://www.w3.org/1998/Math/MathML"><mn>32</mn><mo>&times;</mo><mn>32</mn></math> pixels có độ phân giải rất thấp. Khi nạp vào mạng ImageNet (<math xmlns="http://www.w3.org/1998/Math/MathML"><mn>224</mn><mo>&times;</mo><mn>224</mn></math> mặc định), hệ thống áp dụng kỹ thuật phóng to song tuyến (Bilinear Interpolation) lên <math xmlns="http://www.w3.org/1998/Math/MathML"><mn>128</mn><mo>&times;</mo><mn>128</mn></math>, vừa đảm bảo không mất mát ngữ nghĩa cấu trúc, vừa cân bằng tốc độ tính toán trên CPU/GPU.
                         </div>
                     </div>
                     <div class="figure-block">
@@ -1046,7 +1061,7 @@ def build_html():
                                 <td>60 buffers</td>
                                 <td><strong style="color: #d32f2f;">60 / 60 (100%)</strong></td>
                                 <td><strong style="color: #2e7d32;">0 / 60 (0%)</strong></td>
-                                <td>&Delta; = 0.3687</td>
+                                <td><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>&Delta;</mi><mo>=</mo><mn>0.3687</mn></math></td>
                             </tr>
                             <tr>
                                 <td><strong>DenseNet-121 (Transfer)</strong></td>
@@ -1054,7 +1069,7 @@ def build_html():
                                 <td>363 buffers</td>
                                 <td><strong style="color: #d32f2f;">363 / 363 (100%)</strong></td>
                                 <td><strong style="color: #2e7d32;">0 / 363 (0%)</strong></td>
-                                <td>&Delta; = 0.4192</td>
+                                <td><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>&Delta;</mi><mo>=</mo><mn>0.4192</mn></math></td>
                             </tr>
                         </tbody>
                     </table>
@@ -1139,7 +1154,7 @@ for name, module in frozen_bn_layers:
                 </div>
                 <div class="callout callout-info">
                     <div>
-                        <strong>Xác nhận chuẩn mực phân phối (Distribution Check):</strong> Trọng số được phân bổ chuẩn Gaussian hẹp, không xuất hiện hiện tượng triệt tiêu gradient (Vanishing Gradient) hay bùng nổ gradient (Exploding Gradient). Tham số Weight Decay ($10^{-4}$) đã kiểm soát hiệu quả biên độ trọng số trong khoảng $[-0.1, 0.1]$.
+                        <strong>Xác nhận chuẩn mực phân phối (Distribution Check):</strong> Trọng số được phân bổ chuẩn Gaussian hẹp, không xuất hiện hiện tượng triệt tiêu gradient (Vanishing Gradient) hay bùng nổ gradient (Exploding Gradient). Tham số Weight Decay (<math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>10</mn><mrow><mo>&minus;</mo><mn>4</mn></mrow></msup></math>) đã kiểm soát hiệu quả biên độ trọng số trong khoảng <math xmlns="http://www.w3.org/1998/Math/MathML"><mo>[</mo><mo>&minus;</mo><mn>0.1</mn><mo>,</mo><mn>0.1</mn><mo>]</mo></math>.
                     </div>
                 </div>
 
@@ -1267,8 +1282,8 @@ for name, module in frozen_bn_layers:
                     <div>
                         <strong>Phân tích nguyên nhân gốc rễ lỗi nhận diện (Root-Cause Failure Mode Analysis):</strong>
                         <ol style="margin-left: 20px; margin-top: 6px;">
-                            <li><strong>Cặp nhầm lẫn <code>automobile</code> &rarr; <code>truck</code> (174 mẫu ở ResNet-18 Fine-tune):</strong> Do góc chụp nghiêng và độ phân giải gốc $32\times 32$ bị mất chi tiết thùng xe/thân xe, các xe bán tải (pickup truck) và SUV có đặc điểm hình học rất giống xe tải nhỏ.</li>
-                            <li><strong>Cặp nhầm lẫn <code>cat</code> &harr; <code>dog</code> (138 mèo thành chó, 59 chó thành mèo):</strong> Cả hai loài đều là động vật bốn chân có lông, cùng tư thế xuất hiện (nằm/ngồi trên thảm cỏ), hình thái tai và mõm khi hạ độ phân giải xuống $32\times 32$ trở nên khó phân biệt với bộ trích xuất đặc trưng tích chập.</li>
+                            <li><strong>Cặp nhầm lẫn <code>automobile</code> &rarr; <code>truck</code> (174 mẫu ở ResNet-18 Fine-tune):</strong> Do góc chụp nghiêng và độ phân giải gốc <math xmlns="http://www.w3.org/1998/Math/MathML"><mn>32</mn><mo>&times;</mo><mn>32</mn></math> bị mất chi tiết thùng xe/thân xe, các xe bán tải (pickup truck) và SUV có đặc điểm hình học rất giống xe tải nhỏ.</li>
+                            <li><strong>Cặp nhầm lẫn <code>cat</code> &harr; <code>dog</code> (138 mèo thành chó, 59 chó thành mèo):</strong> Cả hai loài đều là động vật bốn chân có lông, cùng tư thế xuất hiện (nằm/ngồi trên thảm cỏ), hình thái tai và mõm khi hạ độ phân giải xuống <math xmlns="http://www.w3.org/1998/Math/MathML"><mn>32</mn><mo>&times;</mo><mn>32</mn></math> trở nên khó phân biệt với bộ trích xuất đặc trưng tích chập.</li>
                         </ol>
                     </div>
                 </div>

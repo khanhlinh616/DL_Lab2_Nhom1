@@ -97,12 +97,19 @@ def build_html():
             padding: 0;
         }}
 
+        html, body {{
+            max-width: 100%;
+            overflow-x: hidden;
+        }}
+
         body {{
             font-family: var(--font-family);
             background-color: var(--bg-body);
             color: var(--text-main);
             line-height: 1.6;
             padding-bottom: 80px;
+            width: 100%;
+            word-wrap: break-word;
         }}
 
         /* Header Bar - Static / Normal Flow (Scrolls naturally with page, NOT sticky/fixed) */
@@ -148,16 +155,17 @@ def build_html():
         /* Main Layout */
         .container {{
             max-width: 1400px;
+            width: 100%;
             margin: 32px auto;
             padding: 0 24px;
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 280px minmax(0, 1fr);
             gap: 32px;
         }}
 
         @media (max-width: 1080px) {{
             .container {{
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
             }}
             .sidebar {{
                 display: none;
@@ -212,6 +220,8 @@ def build_html():
             display: flex;
             flex-direction: column;
             gap: 36px;
+            min-width: 0;
+            width: 100%;
         }}
 
         /* Cards */
@@ -221,6 +231,8 @@ def build_html():
             border-radius: 12px;
             padding: 32px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            max-width: 100%;
+            overflow-x: hidden;
         }}
         .card-header {{
             border-bottom: 2px solid var(--primary-light);
@@ -285,12 +297,15 @@ def build_html():
         /* Tables */
         .table-responsive {{
             overflow-x: auto;
+            max-width: 100%;
             margin: 20px 0;
             border-radius: 8px;
             border: 1px solid var(--border-color);
+            -webkit-overflow-scrolling: touch;
         }}
         table {{
             width: 100%;
+            max-width: 100%;
             border-collapse: collapse;
             font-size: 13px;
             text-align: left;
@@ -418,6 +433,7 @@ def build_html():
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid #cbd5e1;
+            max-width: 100%;
         }}
         .code-header {{
             background: #1e293b;
@@ -429,6 +445,8 @@ def build_html():
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #334155;
+            flex-wrap: wrap;
+            gap: 8px;
         }}
         pre {{
             background: #0f172a;
@@ -437,7 +455,10 @@ def build_html():
             font-family: var(--code-font);
             font-size: 12.5px;
             overflow-x: auto;
+            max-width: 100%;
             line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
         }}
 
         /* Sub-sections */

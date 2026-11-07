@@ -1,113 +1,68 @@
-# TÀI LIỆU KIẾN TRÚC MÔ HÌNH: RESNET-18 & DENSENET-121 (MODEL.MD)
+# Model Documentation
 
-**Chủ đề:** Khảo sát kiến trúc mạng dư học sâu (ResNet-18) và mạng kết nối dày đặc (DenseNet-121) tiền huấn luyện trên ImageNet  
-**Module triển khai:** [`src/lab2/models.py`](../src/lab2/models.py)  
-**Tệp biểu đồ:** [`outputs/figures/model_parameters_comparison.png`](../outputs/figures/model_parameters_comparison.png), [`outputs/figures/transfer_vs_finetune.png`](../outputs/figures/transfer_vs_finetune.png)
+## 1. Created Date
+- 2026-10-27
 
----
+## 2. Updated Date
+- 2026-11-07
 
-## 1. SO SÁNH NGUYÊN LÝ KIẾN TRÚC CỐT LÕI
+## 3. Purpose
+- **Objective:** Nghiên cứu, thực nghiệm và so sánh đối chứng có hệ thống khả năng chuyển giao tri thức (Transfer Learning) từ các mô hình học sâu thị giác tiền huấn luyện trên ImageNet-1K sang bài toán phân loại ảnh CIFAR-10 trong môi trường CPU-First, giải quyết bài toán chống quá khớp (Overfitting) và tối ưu hóa tài nguyên tính toán.
+- **Task:** Xây dựng, điều chỉnh hai kiến trúc ResNet-18 và DenseNet-121, so sánh 2 phương pháp thích nghi (Transfer Learning vs Fine-Tuning với Differential LR), khảo sát độ nhạy siêu tham số (LR $10^{-3}$ vs $10^{-4}$, Batch Size $16$ vs $32$), và hoàn thành Bước 3 Khám phá kiến trúc mô hình (in cấu trúc, xác định layers và tham số).
+- **Expected Outcome:** Đạt độ chính xác kiểm thử Test Accuracy $> 90\%$ trên tập Test 10.000 ảnh độc lập khi Fine-Tuning, làm sáng tỏ sự đánh đổi giữa hiệu quả tham số và chi phí tính toán thực tế, đảm bảo Zero Data Leakage, lưu trữ checkpoint an toàn nguyên tử và vượt qua 100% bài kiểm thử tự động pytest.
 
-```mermaid
-flowchart TD
-    classDef resnetBox fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#0d47a1;
-    classDef denseBox fill:#ede7f6,stroke:#512da8,stroke-width:2px,color:#311b92;
-    classDef mathBox fill:#ffffff,stroke:#37474f,stroke-width:1.5px,color:#263238;
+## 4. Initial Model
+- **Model Name:** ResNet-18 (He et al., CVPR 2016) và DenseNet-121 (Huang et al., CVPR 2017).
+- **Pretrained Weights:** `ResNet18_Weights.IMAGENET1K_V1` (Top-1 Acc: 69,758%) và `DenseNet121_Weights.IMAGENET1K_V1` (Top-1 Acc: 74,434%).
+- **Source:** Thư viện học sâu chuẩn `torchvision.models` (Torchvision 0.29.1+cpu).
+- **Initialization Strategy:** Giữ nguyên trọng số pretrained ImageNet-1K V1 cho backbone; khởi tạo ngẫu nhiên tầng phân loại 10 lớp mới theo phân phối Kaiming Uniform (`weight` $\sim \mathcal{U}(-\sqrt{k}, \sqrt{k})$ với $k = \frac{1}{\text{in\_features}}$) và `bias` $\sim \mathcal{U}(-\sqrt{k}, \sqrt{k})$. Khóa backbone đối với Transfer Learning và mở khóa khối sâu nhất (`layer4` hoặc `denseblock4` + `norm5`) đối với Fine-Tuning.
 
-    subgraph R ["KIẾN TRÚC RESNET-18 (RESIDUAL ADDITION)"]
-        R_IN["Đầu vào x"]:::resnetBox --> R_CONV["Khối tích chập F(x)<br/>2 tầng Conv 3x3 + BN + ReLU"]:::resnetBox
-        R_IN -->|Skip Connection| R_ADD["Cộng phần dư (Addition):<br/>y = F(x) + x"]:::mathBox
-        R_CONV --> R_ADD
-        R_ADD --> R_OUT["Kích hoạt ReLU(y)"]:::resnetBox
-    end
+## 5. Model Architecture
+- **Architecture Overview:** ResNet-18 (Residual Networks với đường tắt cộng dồn $\mathbf{y} = \mathcal{F}(\mathbf{x}) + \mathbf{x}$ chống suy biến gradient) và DenseNet-121 (Densely Connected Networks với ghép nối kênh đặc trưng $\mathbf{x}_\ell = H_\ell([\mathbf{x}_0, \dots, \mathbf{x}_{\ell-1}])$ tối đa hóa tái sử dụng đặc trưng). Cả hai mô hình đại diện cho hai triết lý thiết kế mạng nơ-ron học sâu đối lập kinh điển, được lựa chọn nhờ sự tương thích tối ưu với quy mô dữ liệu CIFAR-10 ($32 \times 32$, 45k train) nhằm chống quá khớp (Overfitting), đồng thời làm rõ sự đánh đổi giữa số lượng tham số và chi phí tính toán thực tế. Quy trình Bước 3 (Explore the Model Architecture) được thực thi hoàn chỉnh qua `scripts/inspect_models.py` (`--print-model`, `--layers`, `--params`).
+- **Backbone:**
+  - *ResNet-18:* Input Stem (`conv1` $7 \times 7$ + `bn1` + `maxpool` $3 \times 3$, 9.536 params) kết hợp 4 khối dư phân cấp: `layer1` (2 BasicBlocks, 147.968 params), `layer2` (2 BasicBlocks, 525.568 params), `layer3` (2 BasicBlocks, 2.099.712 params), `layer4` (2 BasicBlocks, 8.393.728 params), và `avgpool` (`AdaptiveAvgPool2d((1, 1))`) xuất ra feature vector 512 chiều.
+  - *DenseNet-121:* Input Stem (`conv0` $7 \times 7$ + `norm0` + `pool0`, 9.536 params) kết hợp 4 khối kết nối dày đặc và 3 tầng chuyển tiếp: `denseblock1` (6 dense layers) + `transition1` (368.320 params), `denseblock2` (12 dense layers) + `transition2` (1.051.776 params), `denseblock3` (24 dense layers) + `transition3` (3.364.096 params), `denseblock4` (16 dense layers, 2.158.080 params), và `norm5` (`BatchNorm2d(1024)` + `relu` + `AdaptiveAvgPool2d((1, 1))`, 2.048 params) xuất ra feature vector 1.024 chiều.
+- **Main Components:**
+  - *ResNet-18:* Tầng nông (`conv1`, `bn1`, `layer1..3`) trích xuất hoa văn, đường nét và kết cấu cục bộ; Tầng sâu (`layer4`) trích xuất ngữ nghĩa cấp cao; Tầng kết thúc (`avgpool` + `fc`) phân loại 10 lớp.
+  - *DenseNet-121:* Tầng nông (`conv0`, `norm0`, `denseblock1..3`, `transition1..3`) trích xuất đặc trưng đa tầng với hệ số tăng trưởng $k=32$; Tầng sâu (`denseblock4`, `norm5`) tổng hợp đặc trưng ngữ nghĩa trừu tượng; Tầng kết thúc (`classifier`) phân loại 10 lớp.
+- **Classification / Prediction Head:**
+  - *ResNet-18 Head:* `model.fc = nn.Linear(in_features=512, out_features=10)` ($512 \times 10 + 10 = 5.130$ tham số).
+  - *DenseNet-121 Head:* `model.classifier = nn.Linear(in_features=1024, out_features=10)` ($1024 \times 10 + 10 = 10.250$ tham số).
+- **Trainable Parameters:**
+  - `resnet18_transfer`: **5.130** tham số trainable (0,05%) / 11.176.512 tham số frozen / 11.181.642 tổng.
+  - `resnet18_finetune`: **8.398.858** tham số trainable (75,11% - mở khóa `layer4` và `fc`) / 2.782.784 tham số frozen / 11.181.642 tổng.
+  - `densenet121_transfer`: **10.250** tham số trainable (0,15%) / 6.953.856 tham số frozen / 6.964.106 tổng.
+  - `densenet121_finetune`: **2.170.378** tham số trainable (31,17% - mở khóa `denseblock4`, `norm5`, `classifier`) / 4.793.728 tham số frozen / 6.964.106 tổng.
+  - *Kiểm toán hành vi BatchNorm buffer:* `requires_grad=False` chỉ khóa trọng số tự do; ở `train()` mode, 100% buffer running stats trong backbone vẫn cập nhật theo batch; ở `eval()` mode, 100% buffer hoàn toàn đóng băng tĩnh (xác thực qua [`scripts/check_frozen_bn.py`](../scripts/check_frozen_bn.py)).
 
-    subgraph D ["KIẾN TRÚC DENSENET-121 (DENSE CONCATENATION)"]
-        D_IN["Đầu vào x_0"]:::denseBox --> D_L1["Tầng 1: H_1(x_0)"]:::denseBox
-        D_IN --> D_CAT1["Ghép kênh: [x_0, x_1]"]:::mathBox
-        D_L1 --> D_CAT1
-        D_CAT1 --> D_L2["Tầng 2: H_2([x_0, x_1])"]:::denseBox
-        D_CAT1 --> D_CAT2["Ghép kênh: [x_0, x_1, x_2]"]:::mathBox
-        D_L2 --> D_CAT2
-    end
-```
+## 6. Model Input / Output
 
-### 1.1. ResNet-18 (Residual Networks - He et al., CVPR 2016)
-- **Vấn đề giải quyết:** Hiện tượng suy biến gradient (vanishing gradient) khi mạng tích chập phát triển quá sâu.
-- **Cơ chế kết nối tắt phần dư (Residual Skip Connection):**
-  $$\mathbf{y} = \mathcal{F}(\mathbf{x}, \{W_i\}) + \mathbf{x}$$
-  Thay vì bắt các tầng nơ-ron học ánh xạ gốc $\mathcal{H}(\mathbf{x})$, mạng học phần dư $\mathcal{F}(\mathbf{x}) = \mathcal{H}(\mathbf{x}) - \mathbf{x}$. Nhờ phép cộng trực tiếp $\mathbf{x}$, gradient trong quá trình lan truyền ngược có thể truyền thẳng qua nhánh tắt về các tầng nông mà không bị suy giảm theo cấp số nhân:
-  $$\frac{\partial \mathcal{E}}{\partial \mathbf{x}} = \frac{\partial \mathcal{E}}{\partial \mathbf{y}} \left( \frac{\partial \mathcal{F}}{\partial \mathbf{x}} + \mathbf{I} \right)$$
-- **Cấu trúc ResNet-18:**
-  - `conv1` ($7 \times 7$, stride 2, 64 channels) + `bn1` + `maxpool` ($3 \times 3$, stride 2)
-  - `layer1`: 2 BasicBlocks (64 channels)
-  - `layer2`: 2 BasicBlocks (128 channels)
-  - `layer3`: 2 BasicBlocks (256 channels)
-  - `layer4`: 2 BasicBlocks (512 channels)
-  - `avgpool`: AdaptiveAvgPool2d((1, 1)) $\to$ Feature vector 512 chiều.
+### Input
+- **Data Type:** `torch.float32` (Tensor dấu phẩy động 32-bit).
+- **Shape:** `[B, 3, 128, 128]` (Batch size $B \in \{16, 32\}$, 3 kênh màu RGB, chiều cao $H=128$, chiều rộng $W=128$).
+- **Preprocessing:**
+  1. *Spatial Resizing:* Ảnh gốc CIFAR-10 $32 \times 32$ pixels được phóng đại lên $128 \times 128$ qua nội suy song tuyến (Bilinear Interpolation) để tương thích trường tiếp nhận (Receptive Field) của backbone ImageNet.
+  2. *Data Augmentation (chỉ trên tập Train):* `RandomCrop(128, padding=16, padding_mode='reflect')` và `RandomHorizontalFlip(p=0.5)` chống quá khớp.
+  3. *Tensor Conversion:* `ToTensor()` chuyển đổi mảng ảnh `uint8 [0, 255]` sang `float32 [0.0, 1.0]`, chuyển trục không gian từ `[H, W, C]` sang `[C, H, W]`.
+  4. *ImageNet Normalization:* Chuẩn hóa độc lập theo từng kênh màu dựa trên phân phối ImageNet: Mean $\mu = [0.485, 0.456, 0.406]$, Std $\sigma = [0.229, 0.224, 0.225]$, công thức $x_{norm} = \frac{x - \mu}{\sigma}$.
 
-### 1.2. DenseNet-121 (Densely Connected Networks - Huang et al., CVPR 2017)
-- **Vấn đề giải quyết:** Tái sử dụng đặc trưng tối đa và giảm thiểu số lượng tham số dư thừa.
-- **Cơ chế kết nối dày đặc (Dense Connectivity):** Mỗi tầng nhận toàn bộ bản đồ đặc trưng từ tất cả các tầng đi trước làm đầu vào thông qua phép ghép nối kênh (Channel Concatenation):
-  $$\mathbf{x}_\ell = H_\ell([\mathbf{x}_0, \mathbf{x}_1, \dots, \mathbf{x}_{\ell-1}])$$
-- **Tốc độ tăng trưởng kênh (Growth Rate $k=32$):** Mỗi dense layer chỉ sinh thêm đúng $k=32$ channels mới, giữ mô hình rất mỏng và tiết kiệm tham số.
-- **Cấu trúc DenseNet-121:**
-  - `denseblock1`: 6 dense layers
-  - `transition1`: Conv $1 \times 1$ + AvgPool $2 \times 2$ (giảm số kênh và kích thước không gian)
-  - `denseblock2`: 12 dense layers
-  - `transition2`
-  - `denseblock3`: 24 dense layers
-  - `transition3`
-  - `denseblock4`: 16 dense layers
-  - `norm5`: BatchNorm2d(1024) + ReLU + AdaptiveAvgPool2d((1, 1)) $\to$ Feature vector 1.024 chiều.
+### Output
+- **Output Type:** `torch.float32` (Tensor Logits chưa qua chuẩn hóa xác suất).
+- **Shape:** `[B, 10]` (Batch size $B$, 10 chiều logits tương ứng 10 lớp đối tượng đích của CIFAR-10).
+- **Interpretation:**
+  - *Logits:* Điểm số thô $\mathbf{z} \in \mathbb{R}^{10}$ cho từng lớp đối tượng: `[0: airplane, 1: automobile, 2: bird, 3: cat, 4: deer, 5: dog, 6: frog, 7: horse, 8: ship, 9: truck]`.
+  - *Xác suất dự đoán:* Áp dụng Softmax: $P(y = c \mid \mathbf{x}) = \frac{\exp(z_c)}{\sum_{j=1}^{10} \exp(z_j)}$, với $\sum_{c=1}^{10} P(y=c) = 1.0$.
+  - *Dự đoán nhãn (Predicted Class):* $\hat{y} = \arg\max_{c \in \{0, \dots, 9\}} z_c$.
+  - *Hàm mất mát (Training Loss):* `nn.CrossEntropyLoss()` kết hợp `log_softmax` và `NLLLoss` chống tràn số.
 
----
-
-## 2. TÙY BIẾN ĐẦU PHÂN LOẠI CHO CIFAR-10 (HEAD ADAPTATION)
-
-Cả hai mô hình gốc từ ImageNet-1K đều có đầu phân loại 1.000 lớp. Trong Lab 2, đầu phân loại cũ bị loại bỏ và thay thế bằng tầng phân loại tuyến tính mới kết thúc tại 10 lớp đích:
-
-```python
-# ResNet-18 Head:
-model.fc = nn.Linear(in_features=512, out_features=10)
-# Số tham số: 512 * 10 (weights) + 10 (bias) = 5.130 tham số
-
-# DenseNet-121 Head:
-model.classifier = nn.Linear(in_features=1024, out_features=10)
-# Số tham số: 1024 * 10 (weights) + 10 (bias) = 10.250 tham số
-```
-
----
-
-## 3. BẢNG PHÂN RÃ THAM SỐ CHI TIẾT (PARAMETER BREAKDOWN)
-
-Số liệu trích xuất chính xác 100% qua hàm `count_parameters()` trong [`src/lab2/models.py`](../src/lab2/models.py#L110-L135):
-
-| Thí nghiệm ID | Mô hình | Phương pháp | Tầng đóng băng (requires_grad=False) | Tầng huấn luyện (requires_grad=True) | Tổng tham số | Tham số Trainable | Tham số Frozen | Tỷ lệ Trainable |
-|:---|:---:|:---:|:---|:---|:---:|:---:|:---:|:---:|
-| `resnet18_transfer` | ResNet-18 | Transfer | `conv1`, `bn1`, `layer1`..`layer4` | `fc` (`Linear(512, 10)`) | 11.181.642 | **5.130** | 11.176.512 | **0,05%** |
-| `resnet18_finetune` | ResNet-18 | Fine-Tuning | `conv1`, `bn1`, `layer1`..`layer3` | `layer4` + `fc` | 11.181.642 | **8.398.858** | 2.782.784 | **75,11%** |
-| `densenet121_transfer` | DenseNet-121 | Transfer | Toàn bộ `features` | `classifier` (`Linear(1024, 10)`) | 6.964.106 | **10.250** | 6.953.856 | **0,15%** |
-| `densenet121_finetune` | DenseNet-121 | Fine-Tuning | `features` đến `transition3` | `denseblock4` + `norm5` + `classifier` | 6.964.106 | **2.170.378** | 4.793.728 | **31,17%** |
-| `resnet18_transfer_lr1e4` | ResNet-18 | Transfer | Toàn bộ backbone | `fc` | 11.181.642 | **5.130** | 11.176.512 | **0,05%** |
-| `resnet18_transfer_bs32` | ResNet-18 | Transfer | Toàn bộ backbone | `fc` | 11.181.642 | **5.130** | 11.176.512 | **0,05%** |
-
----
-
-## 4. PHÁT HIỆN KỸ THUẬT QUAN TRỌNG: HÀNH VI BATCHNORM BUFFER
-
-Trong quá trình thực nghiệm Transfer Learning, nhóm phát hiện sự khác biệt bản chất giữa **Tham số (Parameters)** và **Bộ đệm thống kê (Buffers)** của các tầng Batch Normalization:
-
-```python
-# Đóng băng tham số học được:
-for param in model.parameters():
-    param.requires_grad = False
-```
-
-- **Vấn đề:** Lệnh `requires_grad = False` chỉ vô hiệu hóa gradient đối với trọng số tự do `weight` ($\gamma$) và độ lệch `bias` ($\beta$). Lệnh này **không hề đóng băng các buffer thống kê** (`running_mean`, `running_var`, `num_batches_tracked`).
-- **Thực nghiệm kiểm chứng ([`scripts/check_frozen_bn.py`](../scripts/check_frozen_bn.py)):**
-  - Khi gọi `model.train()`: Các tầng BatchNorm trong backbone dù đã set `requires_grad = False` vẫn tự động cập nhật running mean và running variance theo batch dữ liệu CIFAR-10 hiện tại:
-    - ResNet-18: **60/60 buffers** thay đổi giá trị.
-    - DenseNet-121: **363/363 buffers** thay đổi giá trị.
-  - Khi gọi `model.eval()`: Các buffer hoàn toàn đóng băng (**0 buffer thay đổi**).
-- **Ý nghĩa:** Điều này lý giải tại sao mô hình Transfer Learning có thể thích nghi nhẹ phân phối đặc trưng sang CIFAR-10 ngay cả khi toàn bộ trọng số backbone đã bị khóa.
-
+## 7. Source Files
+| File | Responsibility |
+|---|---|
+| [`src/lab2/models.py`](../src/lab2/models.py) | Định nghĩa hàm khởi tạo `build_resnet18()`, `build_densenet121()`, `build_model()`, cơ chế đóng băng/mở khóa tham số `requires_grad`, thay thế Classifier Head 10 lớp, và hàm đếm tham số `count_parameters()`. |
+| [`scripts/inspect_models.py`](../scripts/inspect_models.py) | Công cụ CLI phục vụ Bước 3: In kiến trúc mạng PyTorch (`--print-model`), phân tích bóc tách các khối tầng (`--layers`), khảo sát chi tiết tensor tham số và gradient (`--params`), và xuất bảng tổng hợp. |
+| [`configs/config.yaml`](../configs/config.yaml) | Quản lý cấu hình tập trung cho toàn bộ 6 thí nghiệm (`resnet18_transfer`, `resnet18_finetune`, `densenet121_transfer`, `densenet121_finetune`, `lr1e4`, `bs32`). |
+| [`src/lab2/train.py`](../src/lab2/train.py) | Vòng lặp huấn luyện chu trình 6 bước chuẩn, phân tách Differential Learning Rate (`create_optimizer`), giám sát Loss/Accuracy, và kiểm tra NaN/Inf loss. |
+| [`src/lab2/checkpoint.py`](../src/lab2/checkpoint.py) | Quản lý lưu trữ trọng số mô hình nguyên tử an toàn (`atomic_save` qua `.tmp`), kiểm toán tính toàn vẹn checkpoint, phân tách `_best.pth`, `_latest.pth` và cắt tỉa checkpoint cũ. |
+| [`src/lab2/evaluate.py`](../src/lab2/evaluate.py) | Engine đánh giá checkpoint độc lập trên tập Test 10.000 ảnh, tính toán Loss, Top-1 Accuracy, Per-class Accuracy, và sinh Ma trận nhầm lẫn (Confusion Matrix). |
+| [`scripts/check_frozen_bn.py`](../scripts/check_frozen_bn.py) | Kịch bản kiểm chứng độc lập hành vi cập nhật bộ đệm thống kê (`running_mean`, `running_var`) của các tầng BatchNorm trong backbone khi chạy ở chế độ `train` và `eval`. |
+| [`tests/test_models.py`](../tests/test_models.py) | Bộ kiểm thử tự động kiểm tra cơ chế đóng băng trọng số, đếm tham số trainable/frozen, và kích thước tensor đầu ra của các mô hình. |

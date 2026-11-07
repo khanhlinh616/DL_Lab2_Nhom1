@@ -112,7 +112,7 @@ Quy trình thực nghiệm được tổ chức khép kín qua 6 giai đoạn k�
     cells.append(nbf.v4.new_code_cell("""from IPython.display import Image, display
 import os
 
-workflow_fig = os.path.join(os.path.abspath(''), '..', 'docs', 'figures', 'pipeline_workflow.png')
+workflow_fig = os.path.join(os.path.abspath(''), '..', 'outputs', 'figures', 'pipeline_workflow.png')
 if os.path.exists(workflow_fig):
     print("=== Sơ đồ Quy trình Thực nghiệm Tổng thể (Pipeline Workflow) ===")
     display(Image(filename=workflow_fig, width=850))
@@ -458,33 +458,74 @@ plt.show()"""))
     cells.append(nbf.v4.new_markdown_cell("""---
 # PHẦN 5. Xây Dựng Mô Hình (Model Development)
 
-### 5.1. Lựa chọn kiến trúc mô hình
-- **ResNet-18:** Đại diện cho mạng dư học sâu với 18 tầng, giải quyết suy biến gradient bằng kết nối tắt.
-- **DenseNet-121:** Đại diện cho mạng kết nối dày đặc với 121 tầng, tối đa hóa việc tái sử dụng đặc trưng.
+### 5.1. Lựa chọn kiến trúc mô hình & Lý do lựa chọn cho bài toán CIFAR-10
+Hai kiến trúc **ResNet-18** và **DenseNet-121** được lựa chọn làm đối chứng trọng tâm cho bài toán CIFAR-10 dựa trên 4 căn cứ kỹ thuật:
+1. **Đại diện cho 2 triết lý thiết kế mạng sâu đối lập:**
+   - *ResNet-18:* Đường tắt cộng dư $\\mathbf{y} = \\mathcal{F}(\\mathbf{x}) + \\mathbf{x}$ giải quyết triệt để suy biến gradient.
+   - *DenseNet-121:* Ghép nối kênh đặc trưng liên tục $\\mathbf{x}_\\ell = H_\\ell([\\mathbf{x}_0, \\dots, \\mathbf{x}_{\\ell-1}])$ tối đa hóa khả năng tái sử dụng đặc trưng.
+2. **Tương thích quy mô CIFAR-10 ($32 \\times 32$ pixels) & Chống Overfitting:**
+   - Các biến thể lớn như ResNet-50 (25.6M) hay DenseNet-201 (20M) có dung lượng quá lớn, rất dễ học vẹt trên 45.000 mẫu train.
+   - ResNet-18 (11.2M) và DenseNet-121 (7.0M) là các biến thể nhẹ nhất, bảo toàn độ sâu trích xuất ImageNet nhưng kiểm soát tốt nguy cơ quá khớp.
+3. **Khảo sát Trade-off giữa Số lượng tham số và Chi phí tính toán:**
+   - DenseNet-121 ít tham số hơn 37.7% so với ResNet-18 nhưng tính toán lâu hơn do thao tác ghép nối tensor chiếm nhiều băng thông RAM.
+4. **Cấu trúc tầng phân cấp lý tưởng:**
+   - Cả hai mô hình đều có 4 giai đoạn rõ rệt, cho phép đóng băng toàn bộ backbone hoặc mở khóa chọn lọc đúng 1 khối sâu nhất khi fine-tune.
 - *Lý do loại bỏ VGG-16:* VGG-16 có kích thước mô hình quá lớn (138 triệu tham số, trong đó 3 tầng FC chiếm hơn 120 triệu tham số), tốc độ tính toán chậm gấp 4–6 lần trên CPU và có nguy cơ quá khớp rất cao trên dữ liệu ảnh nhỏ.
 
-### 5.2. Mô hình cơ sở (Baseline Model)
+### 5.2. Bước 3: Khám phá kiến trúc mô hình (Explore the Model Architecture)
+Theo yêu cầu kỹ thuật của bài thực hành, quy trình khám phá kiến trúc mô hình gồm 3 bước:
+1. **In cấu trúc mô hình ra màn hình (`print(model)`):** Quan sát trực quan toàn bộ các tầng `Conv2d`, `BatchNorm2d`, `ReLU`, `MaxPool2d`, khối `BasicBlock` / `_DenseBlock` và `Linear`.
+2. **Xác định các lớp (Layers) và phân cấp:** Kiểm tra danh sách các khối con cấp cao qua `model.named_children()`.
+3. **Xác định các tham số của mô hình:** Liệt kê từng tensor tham số `(W, b)`, kích thước `shape`, số phần tử `numel()`, và cờ `requires_grad`.
+
+Đoạn mã dưới đây thực hiện in cấu trúc phân cấp và kiểm tra phân bổ tham số của ResNet-18 và DenseNet-121:"""))
+
+    # Code cell cho Bước 3: Khám phá kiến trúc mô hình
+    cells.append(nbf.v4.new_code_cell("""from lab2.models import build_model
+
+# 1. Khởi tạo mô hình và in cấu trúc tổng quan (print(model))
+print("=== BƯỚC 3.1: IN CẤU TRÚC TỔNG QUAN RESNET-18 ===")
+resnet_sample = build_model("resnet18", method="transfer", num_classes=10, pretrained=False)
+print(resnet_sample)
+
+# 2. Xác định các khối tầng (Layers) và đếm tham số từng khối
+print("\\n=== BƯỚC 3.2: XÁC ĐỊNH CÁC KHỐI TẦNG (LAYERS) ===")
+print(f"{'Child Layer':<24} | {'Layer Type':<28} | {'Params':<12} | {'Trainable Params'}")
+print("-" * 80)
+for name, child in resnet_sample.named_children():
+    total_p = sum(p.numel() for p in child.parameters())
+    train_p = sum(p.numel() for p in child.parameters() if p.requires_grad)
+    print(f"{name:<24} | {child.__class__.__name__:<28} | {total_p:<12,d} | {train_p:<12,d}")
+
+# 3. Xác định chi tiết một số tensor tham số tiêu biểu
+print("\\n=== BƯỚC 3.3: XÁC ĐỊNH THAM SỐ TIÊU BIỂU (TENSOR SHAPE & GRADIENT) ===")
+print(f"{'Parameter Name':<32} | {'Tensor Shape':<24} | {'Requires Grad'}")
+print("-" * 75)
+for name, param in list(resnet_sample.named_parameters())[:6] + list(resnet_sample.named_parameters())[-2:]:
+    print(f"{name:<32} | {str(list(param.shape)):<24} | {param.requires_grad}")"""))
+
+    cells.append(nbf.v4.new_markdown_cell("""### 5.3. Mô hình cơ sở (Baseline Model)
 Mô hình **ResNet-18 áp dụng Feature Extraction thuần túy** (`resnet18_transfer`) được chọn làm mô hình cơ sở (Baseline Model) để đối chiếu hiệu năng với các biến thể cải tiến.
 
-### 5.3. Khởi tạo mô hình và cấu hình đầu ra
+### 5.4. Khởi tạo mô hình và cấu hình đầu ra
 Thay thế tầng phân loại cuối cùng (Classifier Head) của mô hình gốc ImageNet (1.000 lớp) bằng tầng tuyến tính mới với 10 đầu ra tương ứng 10 lớp của CIFAR-10:
 - ResNet-18: `model.fc = nn.Linear(512, 10)`
 - DenseNet-121: `model.classifier = nn.Linear(1024, 10)`
 
-### 5.4. Hàm mất mát (Loss Function)
+### 5.5. Hàm mất mát (Loss Function)
 Sử dụng hàm **CrossEntropyLoss** của PyTorch:
 $$\\mathcal{L}_{CE} = -\\sum_{c=1}^{10} y_c \\log(\\hat{y}_c)$$
 Hàm tích hợp sẵn LogSoftmax và NLLLoss, đảm bảo độ ổn định số học cao và ngăn ngừa hiện tượng tràn số trong quá trình tính toán gradient.
 
-### 5.5. Bộ tối ưu hóa (Optimizer)
+### 5.6. Bộ tối ưu hóa (Optimizer)
 Sử dụng thuật toán **Adam** với các hệ số mô-men mặc định $\\beta_1 = 0.9, \\beta_2 = 0.999$, điều chuẩn trọng số $L_2$ (`weight_decay = 1e-4`). Thuật toán Adam tự điều chỉnh tốc độ học theo từng tham số, giúp quá trình tối ưu hội tụ nhanh và ổn định hơn trên CPU.
 
-### 5.6. Bộ lập lịch tốc độ học (Learning Rate Scheduler)
+### 5.7. Bộ lập lịch tốc độ học (Learning Rate Scheduler)
 Áp dụng chiến lược **Differential Learning Rate**:
 - Trong Transfer Learning: Tốc độ học đồng nhất $\\eta = 10^{-3}$ cho Classifier Head.
 - Trong Fine-Tuning: Tốc độ học phân cấp với $\\eta_{backbone} = 10^{-4}$ cho các khối tích chập sâu mở khóa và $\\eta_{head} = 10^{-3}$ cho Classifier Head.
 
-### 5.7. Các kỹ thuật điều chuẩn và chống quá khớp
+### 5.8. Các kỹ thuật điều chuẩn và chống quá khớp
 1. Điều chuẩn suy giảm trọng số ($L_2$ Regularization với `weight_decay = 1e-4`).
 2. Đóng băng các tầng đặc trưng cấp thấp (Feature Freezing).
 3. Đánh giá kiểm định sớm và lưu checkpoint theo Validation Accuracy cao nhất.
@@ -492,7 +533,7 @@ Sử dụng thuật toán **Adam** với các hệ số mô-men mặc định $\
 ### 5.8. Transfer Learning và Fine-tuning (nếu áp dụng)
 Sơ đồ dưới đây minh họa sự khác biệt bản chất về cơ chế đóng băng/mở khóa tham số giữa Transfer Learning và Fine-Tuning:"""))
 
-    cells.append(nbf.v4.new_code_cell("""xfer_fig = os.path.join(os.path.abspath(''), '..', 'docs', 'figures', 'transfer_vs_finetune.png')
+    cells.append(nbf.v4.new_code_cell("""xfer_fig = os.path.join(os.path.abspath(''), '..', 'outputs', 'figures', 'transfer_vs_finetune.png')
 if os.path.exists(xfer_fig):
     display(Image(filename=xfer_fig, width=850))
 else:
@@ -520,7 +561,7 @@ for exp_id, m_name, method in exp_configs:
     print(f"{exp_id:<24} | {m_name:<12} | {method:<10} | {p['total']:<13,} | {p['trainable']:<12,} | {pct:.2f}%")
 
 # Hiển thị biểu đồ phân bổ tham số
-param_fig = os.path.join(os.path.abspath(''), '..', 'docs', 'figures', 'model_parameters_comparison.png')
+param_fig = os.path.join(os.path.abspath(''), '..', 'outputs', 'figures', 'model_parameters_comparison.png')
 if os.path.exists(param_fig):
     display(Image(filename=param_fig, width=800))"""))
 

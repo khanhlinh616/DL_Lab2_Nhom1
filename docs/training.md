@@ -2,7 +2,7 @@
 
 **Chủ đề:** Thiết kế vòng lặp huấn luyện, tối ưu hóa tốc độ học vi phân (Differential LR), kiểm soát an toàn nguyên tử (Atomic Checkpoint) và hệ thống giám sát TensorBoard  
 **Module triển khai:** [`src/lab2/train.py`](../src/lab2/train.py), [`src/lab2/checkpoint.py`](../src/lab2/checkpoint.py), [`src/lab2/tensorboard_logger.py`](../src/lab2/tensorboard_logger.py)  
-**Tệp sơ đồ:** [`outputs/figures/monitoring_architecture.png`](../outputs/figures/monitoring_architecture.png), [`outputs/figures/slide_08_train_validation_checkpoint.png`](../outputs/figures/slides/slide_08_train_validation_checkpoint.png)
+**Tệp sơ đồ:** [`outputs/figures/monitoring_architecture.png`](../outputs/figures/monitoring_architecture.png), [`outputs/figures/pipeline_workflow.png`](../outputs/figures/pipeline_workflow.png)
 
 ---
 

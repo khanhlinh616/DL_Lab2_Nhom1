@@ -902,6 +902,28 @@ def build_html():
                     <span class="sec-badge">COMPONENT TESTING</span>
                 </div>
 
+                <!-- Lý do lựa chọn mô hình -->
+                <div class="figure-explanation" style="margin-bottom: 20px;">
+                    <h3 class="sub-title" style="margin-top: 0;">LÝ DO LỰA CHỌN RESNET-18 VÀ DENSENET-121 CHO BÀI TOÁN CIFAR-10</h3>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Đại diện cho hai triết lý thiết kế CNN đối lập:</strong> ResNet-18 đại diện cho trường phái <em>đường tắt cộng dồn (Additive Skip Connections)</em> <code>y = F(x) + x</code> giải quyết suy biến gradient; DenseNet-121 đại diện cho trường phái <em>tái sử dụng đặc trưng liên tục (Feature Reuse via Channel Concatenation)</em> <code>x<sub>l</sub> = H([x<sub>0</sub>, ..., x<sub>l-1</sub>])</code>.</li>
+                        <li><strong>Tương thích quy mô CIFAR-10 &amp; Chống Overfitting:</strong> CIFAR-10 là ảnh nhỏ (32&times;32, 45k train). Các mô hình quá sâu như ResNet-50/101 (25.6M - 44.5M) hay DenseNet-201 (20M) rất dễ gây Overfitting nặng. ResNet-18 (11.2M) và DenseNet-121 (7.0M) là các biến thể nhẹ nhất, bảo toàn chiều sâu ImageNet nhưng kiểm soát tốt phương sai.</li>
+                        <li><strong>Khảo sát Trade-off giữa Tham số và Băng thông tính toán:</strong> DenseNet-121 tiết kiệm 37.7% tham số so với ResNet-18 (6.96M vs 11.18M), nhưng thời gian huấn luyện lại lâu hơn (10m42s vs 7m15s) do thao tác ghép nối tensor chiếm nhiều băng thông RAM.</li>
+                        <li><strong>Cấu trúc phân tầng rõ ràng cho Transfer và Fine-tuning:</strong> Cả 2 mô hình đều gồm 4 khối phân cấp rõ rệt, cho phép dễ dàng đóng băng toàn bộ backbone hoặc mở khóa chọn lọc đúng 1 khối sâu nhất (<code>layer4</code> hoặc <code>denseblock4</code>).</li>
+                    </ul>
+                </div>
+
+                <!-- Bước 3: Khám phá kiến trúc mô hình -->
+                <div class="figure-explanation" style="margin-bottom: 20px; background: #fdfefe; border-left: 4px solid #16a085;">
+                    <h3 class="sub-title" style="margin-top: 0; color: #16a085;">BƯỚC 3: KHÁM PHÁ KIẾN TRÚC MÔ HÌNH (EXPLORE THE MODEL ARCHITECTURE)</h3>
+                    <p>Dự án đã triển khai đầy đủ quy trình Bước 3 qua công cụ <code>scripts/inspect_models.py</code> với 3 cấp độ kiểm tra:</p>
+                    <ol style="margin-left: 20px; line-height: 1.6;">
+                        <li><strong>In cấu trúc mô hình (<code>print(model)</code>):</strong> Lệnh <code>py scripts/inspect_models.py --print-model all</code> hiển thị toàn bộ cây module PyTorch từ Input Stem, 4 khối Stage đến Classifier Head.</li>
+                        <li><strong>Xác định các lớp (Layers) và phân cấp:</strong> Lệnh <code>py scripts/inspect_models.py --layers all</code> bóc tách từng khối con (<code>named_children()</code>), kiểu layer, số lượng tham số và trạng thái Frozen/Trainable.</li>
+                        <li><strong>Xác định các tham số và trạng thái gradient:</strong> Lệnh <code>py scripts/inspect_models.py --params all</code> kiểm tra từng tensor tham số (<code>named_parameters()</code>), shape, số phần tử <code>numel()</code>, và cờ <code>requires_grad</code>.</li>
+                    </ol>
+                </div>
+
                 <div class="figure-block">
                     <img src="{img_base}/model_parameters_comparison.png" alt="Model Parameters Comparison">
                     <div class="figure-caption">Hình 5: Biểu đồ đối sánh tham số khả huấn (Trainable) và tham số đóng băng (Frozen) giữa ResNet-18 và DenseNet-121</div>

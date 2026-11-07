@@ -140,16 +140,23 @@ python -m pip install -r requirements.txt
 
 ### 6.2. Chạy bộ kiểm thử tự động (Unit Tests)
 
-Chạy toàn bộ 51 test cases độc lập trong khoảng 10 giây:
+Chạy toàn bộ 53 test cases độc lập trong khoảng 10 giây:
 ```bash
 python -m pytest -v
 ```
 
-### 6.3. Kiểm tra kiến trúc và tham số mô hình
+### 6.3. Khám phá kiến trúc và kiểm tra tham số mô hình (Bước 3)
 
-In bảng kiểm đếm tham số trainable và frozen của các mô hình:
+In bảng kiểm đếm tham số trainable và frozen, in toàn bộ kiến trúc mô hình hoặc phân tích theo từng tầng:
 ```bash
+# In bảng tổng hợp số lượng tham số 4 cấu hình
 python scripts/inspect_models.py
+
+# In cấu trúc phân tầng chi tiết của mô hình (print(model))
+python scripts/inspect_models.py --print-model all
+
+# Xác định các lớp (layers) và trạng thái đóng băng
+python scripts/inspect_models.py --layers all
 ```
 
 ### 6.4. Kiểm tra nhanh toàn bộ luồng huấn luyện (Smoke Test)

@@ -6,7 +6,7 @@ PROJECT AUDIT REPORT: PRACTICE 2 - PRETRAINED MODELS, TRANSFER LEARNING & FINE-T
 Document ID     : AUD-LAB2-2026-V1.4               Classification : Internal Technical Audit
 Target System   : CIFAR-10 Classification Engine    Framework      : PyTorch 2.14.1+cpu / Torchvision 0.29.1
 Host Machine    : DESKTOP-24R30PF (Win11 x86_64)   Verification   : Automated Test-Driven (DoD 100%)
-Repository Ref  : vongocgiavy/DL_Lab-2 @ 4274b92   Execution Log  : logs/training.log | runs/
+Repository Ref  : khanhlinh616/DL_Lab2_Nhom1         Execution Log  : logs/training.log | runs/
 ===================================================================================================
 ```
 
@@ -23,7 +23,7 @@ Repository Ref  : vongocgiavy/DL_Lab-2 @ 4274b92   Execution Log  : logs/trainin
 | **Tăng tốc phần cứng** | CPU Mode / CUDA-Ready (Torch compile & fallback sẵn sàng) | CPU execution cho toàn bộ baseline và unit tests |
 | **Phiên bản Runtime** | Python 3.14.0 (CPython 64-bit launcher `C:\WINDOWS\py.exe`) | Đã qua kiểm tra khả năng tương thích toàn bộ thư viện lõi |
 | **Framework học sâu** | `torch == 2.14.1+cpu`, `torchvision == 0.29.1+cpu` | Tối ưu hóa Tensor operations và nạp pretrained ImageNet-1K V1 |
-| **Quản trị mã nguồn** | Git 2.47+ / Repository: `vongocgiavy/DL_Lab-2` | Cam kết Conventional Commits, đồng bộ tuyệt đối với remote |
+| **Quản trị mã nguồn** | Git 2.47+ / Repository: `khanhlinh616/DL_Lab2_Nhom1` | Cam kết Conventional Commits, đồng bộ tuyệt đối với remote |
 
 ---
 

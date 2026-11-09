@@ -79,18 +79,20 @@ Cấu trúc thư mục được trích xuất trực tiếp từ kho lưu trữ 
 │   └── .gitkeep                       # Nơi lưu trữ dữ liệu CIFAR-10
 ├── docs/
 │   ├── audit-log.md                   # Nhật ký kiểm toán 5 giai đoạn (Description -> Gen -> Smoke -> Run -> Check)
-│   ├── data.md                        # Đặc tả dữ liệu CIFAR-10, tiền xử lý và trực quan hóa
+│   ├── data.md                        # Đặc tả dữ liệu CIFAR-10, tiền xử lý và trực quan hóa (10 phần)
 │   ├── demo.md                        # Hướng dẫn chạy thực nghiệm nhanh và giao diện demo
 │   ├── evaluation.md                  # Đánh giá độc lập trên tập Test và ma trận nhầm lẫn
 │   ├── labs2.md                       # Báo cáo khoa học chuẩn 12 phần (Master Rule)
-│   ├── model.md                       # Kiến trúc ResNet-18 và DenseNet-121 chi tiết
+│   ├── model.md                       # Kiến trúc ResNet-18 và DenseNet-121 chi tiết (Master Rule)
 │   ├── plan-progress-status.md        # Kế hoạch thực nghiệm, rủi ro, tiến độ 12 mốc và DoD
 │   └── training.md                    # Vòng lặp huấn luyện, Differential LR và BatchNorm
 ├── notebooks/
 │   ├── Lab2.html                      # Báo cáo HTML thẩm định kỹ thuật chuyên nghiệp (Senior Test & QA)
 │   └── Lab2_Practice2_Main.ipynb      # Báo cáo thực nghiệm chuyên sâu toàn diện 13 phần
 ├── outputs/
-│   ├── figures/                       # Hình ảnh ma trận nhầm lẫn (*.png)
+│   ├── Lab2_Report.html               # Báo cáo khoa học HTML độc lập
+│   ├── results_table.md               # Bảng tổng hợp số liệu thực nghiệm Markdown
+│   ├── figures/                       # Hình ảnh EDA, PCA và ma trận nhầm lẫn (*.png)
 │   └── metrics/                       # Kết quả JSON (*.json) và bảng tổng hợp (summary.csv)
 ├── checkpoints/                       # Nơi lưu trữ checkpoints mô hình (*.pth)
 ├── runs/                              # Nơi lưu trữ log sự kiện TensorBoard

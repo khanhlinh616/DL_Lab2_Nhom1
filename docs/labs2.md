@@ -56,9 +56,10 @@ Với tốc độ tăng trưởng (Growth Rate) $k = 32$, mỗi tầng chỉ sin
 - **Hàm mất mát Cross-Entropy Đa lớp:**
 $$\mathcal{L}_{CE} = -\frac{1}{N} \sum_{i=1}^N \sum_{c=1}^{C} y_{i, c} \log(\hat{p}_{i, c})$$
 với $\hat{p}_{i, c} = \frac{e^{z_{i, c}}}{\sum_{j=1}^C e^{z_{i, j}}}$.
-- **Tối ưu hóa SGD kết hợp Momentum:**
-$$v_{t+1} = \beta v_t + \nabla_\theta \mathcal{L}(\theta_t), \quad \theta_{t+1} = \theta_t - \eta v_{t+1}$$
-với hệ số động lượng $\beta = 0.9$.
+- **Tối ưu hóa Adam (Adaptive Moment Estimation):**
+$$m_{t+1} = \beta_1 m_t + (1 - \beta_1) g_t, \quad v_{t+1} = \beta_2 v_t + (1 - \beta_2) g_t^2$$
+$$\hat{m}_{t+1} = \frac{m_{t+1}}{1 - \beta_1^{t+1}}, \quad \hat{v}_{t+1} = \frac{v_{t+1}}{1 - \beta_2^{t+1}}, \quad \theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\hat{v}_{t+1}} + \epsilon} \hat{m}_{t+1}$$
+với $\beta_1 = 0.9, \beta_2 = 0.999$, kết hợp hệ số Weight Decay $10^{-4}$. Mô hình cũng hỗ trợ bộ tối ưu hóa SGD kết hợp Momentum ($0.9$).
 - **Tốc độ học phân tầng (Differential Learning Rates):**
 $$\eta_{\text{backbone}} = 0.1 \times \eta_{\text{head}}$$
 Ngăn ngừa hiện tượng phá vỡ đặc trưng tiền huấn luyện (Catastrophic Forgetting) ở các tầng trích xuất đặc trưng sâu.
@@ -113,7 +114,7 @@ py scripts/inspect_models.py --params resnet18 --method transfer
 ### 6.2. Cấu hình siêu tham số (Hyperparameters)
 - **Số epoch:** 5 epochs cho tất cả các mô hình.
 - **Kích thước lô (Batch Size):** 16 (mặc định), 32 (thử nghiệm ablation).
-- **Bộ tối ưu hóa:** SGD với Momentum = 0.9, Weight Decay = $10^{-4}$.
+- **Bộ tối ưu hóa:** Adam (mặc định trong `config.yaml`) với Weight Decay = $10^{-4}$ (hỗ trợ SGD Momentum = 0.9).
 - **Tốc độ học (Learning Rate):**
   - Feature Extraction: $\eta = 0.001$ (toàn bộ phân loại).
   - Fine-Tuning: $\eta_{\text{head}} = 0.001$, $\eta_{\text{backbone}} = 0.0001$ (Differential LR).

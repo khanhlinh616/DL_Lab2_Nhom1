@@ -2,7 +2,6 @@
 
 ```
 ===================================================================================================
-TÓM TẮT DỰ ÁN (EXECUTIVE SUMMARY)
 Mục tiêu    : Chuyển giao tri thức ImageNet-1K sang phân loại 10 lớp CIFAR-10.
 Mô hình     : ResNet-18 (Residual Addition) vs. DenseNet-121 (Dense Concatenation).
 Phương pháp : Transfer Learning (Feature Extraction) vs. Fine-Tuning (Differential LR).
@@ -23,7 +22,7 @@ Kết quả     : Fine-Tuning đạt Test Acc 90.24% (ResNet-18) và 90.65% (Den
 
 ---
 
-## 2. VÍ DỤ ĐẦU VÀO - ĐẦU RA CỤ THỂ (EXAMPLE IN - OUT)
+## 2. ĐẦU VÀO - ĐẦU RA CỤ THỂ (EXAMPLE IN - OUT)
 
 Hệ thống nhận ảnh thô, tiền xử lý và trả về nhãn phân loại độc lập ngoài terminal/file:
 

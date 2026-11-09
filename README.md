@@ -82,7 +82,7 @@ Cấu trúc thư mục được trích xuất trực tiếp từ kho lưu trữ 
 │   ├── data.md                        # Đặc tả dữ liệu CIFAR-10, tiền xử lý và trực quan hóa
 │   ├── demo.md                        # Hướng dẫn chạy thực nghiệm nhanh và giao diện demo
 │   ├── evaluation.md                  # Đánh giá độc lập trên tập Test và ma trận nhầm lẫn
-│   ├── labs2-description.md           # Mô tả tổng quan bài toán và đối chiếu rubric
+│   ├── labs2.md                       # Báo cáo khoa học chuẩn 12 phần (Master Rule)
 │   ├── model.md                       # Kiến trúc ResNet-18 và DenseNet-121 chi tiết
 │   ├── plan-progress-status.md        # Kế hoạch thực nghiệm, rủi ro, tiến độ 12 mốc và DoD
 │   └── training.md                    # Vòng lặp huấn luyện, Differential LR và BatchNorm

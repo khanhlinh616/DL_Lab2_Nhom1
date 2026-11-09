@@ -69,7 +69,7 @@ flowchart LR
 #### Nhật ký thực thi Giai đoạn 1:
 | Thời điểm | Lệnh / Hành động | Host / PID | Kết quả thực thi | Bằng chứng kiểm toán |
 |:---|:---|:---:|:---|:---|
-| 2026-10-26 20:30:15 | Đối soát rubric Practice 2, rà soát cấu trúc CIFAR-10 và phân tích yêu cầu 2 kiến trúc mạng | `DESKTOP-24R30PF` | Xác lập ma trận thí nghiệm 6 cấu hình độc lập; thông qua nguyên tắc đánh giá độc lập | `docs/labs2-description.md` |
+| 2026-10-26 20:30:15 | Đối soát rubric Practice 2, rà soát cấu trúc CIFAR-10 và phân tích yêu cầu 2 kiến trúc mạng | `DESKTOP-24R30PF` | Xác lập ma trận thí nghiệm 6 cấu hình độc lập; thông qua nguyên tắc đánh giá độc lập | `docs/labs2.md` |
 | 2026-10-26 21:15:40 | Thiết lập file cấu hình thí nghiệm trung tâm [`configs/config.yaml`](../configs/config.yaml) | `DESKTOP-24R30PF` | Cấu hình hóa toàn bộ tham số core, hparams, checkpoint dirs và seed=42 | `configs/config.yaml` |
 | 2026-10-26 22:45:00 | Xây dựng tài liệu đặc tả dữ liệu, tiền xử lý và pipeline augmentation | `DESKTOP-24R30PF` | Hoàn thiện đặc tả Resize 128x128, ImageNet Normalize và RandomCrop/Flip | `docs/data.md` |
 

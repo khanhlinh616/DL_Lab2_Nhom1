@@ -144,6 +144,12 @@ Số liệu xuất bản tự động từ [`scripts/make_results_table.py`](../
 | **resnet18_transfer_lr1e4** | 5 | 16 | 0.0001 | 5.130 | 0.7605 / 73.96% | 77.56% (ep 5) | 0.6643 | **78.32%** | 01m 12s | 06m 03s |
 | **resnet18_transfer_bs32** | 5 | 32 | 0.001 | 5.130 | 0.7029 / 76.12% | 78.92% (ep 4) | 0.6276 | **79.04%** | 01m 04s | 05m 21s |
 
+> [!IMPORTANT]
+> **TỔNG KẾT ĐỈNH HIỆU NĂNG (BEST METRICS SUMMARY):**
+> - **Best Validation Accuracy (Best Val Acc):** Đạt cao nhất **91,68%** tại Epoch 4 trên mô hình **`resnet18_finetune`** (vị trí thứ 2 là `densenet121_finetune` đạt **90,78%** tại Epoch 5).
+> - **Best Test Accuracy (Best Test Acc):** Đạt cao nhất **90,65%** trên mô hình **`densenet121_finetune`** (vị trí thứ 2 là `resnet18_finetune` đạt **90,24%**).
+> - **Cơ chế chọn Checkpoint:** Best Checkpoint được lưu tự động dựa trên metric `val_acc` cao nhất (`is_best=True`) để loại trừ nguy cơ thiên kiến và chống Overfitting.
+
 ### 7.2. Biểu đồ đối chứng hiệu năng thực nghiệm
 Tất cả các biểu đồ đều được kết xuất ngoài notebook và lưu trữ tại [`outputs/figures/`](../outputs/figures/):
 

@@ -59,9 +59,14 @@ Khi sử dụng AI hỗ trợ, cần ghi nhận đầy đủ:
   - Folder structure (Cấu trúc thư mục).
   - Installation / Run / Test (Hướng dẫn cài đặt, chạy và kiểm thử).
   - Model & Knowledge Distillation (Chi tiết mô hình, chưng cất tri thức nếu áp dụng).
-- **Tài liệu chi tiết khác:**
-  - `Project description.md`
-  - `Project design.md`
+- **Hệ thống Tài liệu Khoa học chuẩn hóa trong `docs/`:**
+  - `docs/labs2.md`: Báo cáo khoa học Deep Learning chuẩn 12 phần (Master Rule).
+  - `docs/data.md`: Báo cáo khoa học Dataset CIFAR-10 và trực quan hóa EDA chuẩn 10 phần kèm PCA (Master Rule).
+  - `docs/model.md`: Báo cáo đặc tả kiến trúc mô hình bảo toàn 100% thông tin kỹ thuật (Master Rule).
+  - `docs/training.md`: Vòng lặp huấn luyện 6 bước, Differential Learning Rate và kiểm toán BatchNorm.
+  - `docs/evaluation.md`: Đánh giá độc lập trên tập Test và ma trận nhầm lẫn.
+  - `docs/audit-log.md`: Nhật ký kiểm toán vòng đời kỹ thuật 5 giai đoạn (Description -> Gen -> Smoke -> Run -> Check).
+  - `docs/plan-progress-status.md`: Kế hoạch thực nghiệm, rủi ro và tiêu chuẩn Definition of Done.
 
 ### 9. Build MVP – Triển khai Module by Module
 - **Ưu tiên MVP trước:** Xây dựng sản phẩm khả dụng tối thiểu trước.
@@ -231,3 +236,58 @@ Khi các yêu cầu mâu thuẫn nhau, ưu tiên theo thứ tự:
 - Trước khi thực hiện bất kỳ thay đổi nào, hãy hiểu rõ trạng thái hiện tại và mục tiêu cần đạt.
 - Ưu tiên tính chính xác, khả năng kiểm chứng, thay đổi tối thiểu và kết quả thực tế. Không bịa, không tự ý mở rộng phạm vi, không phá vỡ phần đang hoạt động tốt và không tạo thêm nội dung chỉ để làm dự án trông phức tạp hơn.
 - Hãy thực hiện công việc trực tiếp khi đủ thông tin. Chỉ dừng lại để hỏi người dùng khi có vấn đề quan trọng không thể giải quyết an toàn hoặc chính xác bằng thông tin hiện có.
+
+---
+
+## PHẦN III: MASTER RULES CHO BÁO CÁO HỌC THUẬT & TÀI LIỆU KHOA HỌC
+
+### 1. Master Rule — Deep Learning Scientific Report (Áp dụng cho `docs/labs2.md`)
+- **Chuẩn học thuật (Academic Standard):** Trình bày theo phong cách bài báo nghiên cứu khoa học; công thức toán học và thuật ngữ chuẩn chuyên môn; phân biệt rạch ròi lý thuyết, phương pháp và kết quả thực nghiệm.
+- **Quy tắc giao tiếp (Communication Rule):** Sử dụng Technical Keywords; diễn giải ngắn gọn, trực tiếp, đúng trọng tâm; ưu tiên câu đơn, cô đọng; không lặp lại nội dung giữa các chương; cấu trúc phân cấp tinh gọn.
+- **Cấu trúc 12 phần chuẩn:**
+  1. *Abstract:* Tóm tắt nghiên cứu.
+  2. *Introduction:* Bối cảnh, mục tiêu, vấn đề.
+  3. *Related Work:* Nghiên cứu liên quan (He 2016, Huang 2017, Yosinski 2014).
+  4. *Theoretical Background:* Cơ sở lý thuyết Deep Learning, Residual Shortcuts, Dense Concatenation, CrossEntropyLoss, Adam Optimizer, Differential LR.
+  5. *Methodology:* Dataset CIFAR-10, Preprocessing pipeline, Kiến trúc mô hình, Bước 3 bóc tách tầng (Layer breakdown).
+  6. *Experimental Setup:* Môi trường CPU-First, Cấu hình siêu tham số, Metrics đánh giá.
+  7. *Results & Evaluation:* Bảng kết quả thực nghiệm 6 cấu hình, liên kết đồ thị trực quan ngoài notebook.
+  8. *Comparative Analysis:* Thực nghiệm đối chứng (Transfer vs. Fine-tuning, ResNet-18 vs. DenseNet-121, LR $10^{-3}$ vs. $10^{-4}$, Batch Size 16 vs. 32).
+  9. *Discussion & Limitations:* Phân tích ma trận nhầm lẫn (cặp `cat`/`dog`, `automobile`/`truck`), giới hạn phần cứng và độ phân giải ảnh.
+  10. *Conclusion & Future Work:* Kết luận và hướng mở rộng (Knowledge Distillation, CutMix/MixUp).
+  11. *References:* 5 tài liệu tham khảo chuẩn quốc tế.
+  12. *Appendix:* Cấu trúc thư mục Output Rule và lệnh CLI tái lập kết quả.
+- **Quy tắc xuất kết quả (Output Rule):** Bắt buộc phân tách Notebook và Báo cáo độc lập. Kết quả thực nghiệm phải lưu trữ tại `outputs/figures/`, `outputs/metrics/`, `outputs/results_table.md` và `outputs/Lab2_Report.html`.
+
+### 2. Master Rule — Model Documentation (Áp dụng cho `docs/model.md`)
+- **Nguyên tắc bất biến:** *"Preserve 100% Technical Information – Improve Presentation Only"*.
+- **Các thành phần bắt buộc bảo toàn:**
+  - *Purpose:* Objective, Task, Expected Outcome.
+  - *Initial Model & Source:* ResNet-18, DenseNet-121, Research Papers, Pretrained Weights `IMAGENET1K_V1`, Torchvision official source.
+  - *Initialization Strategy:* Kaiming Uniform (`weight` & `bias` $\sim \mathcal{U}(-\sqrt{k}, \sqrt{k})$), Freeze/Unfreeze mechanisms, Differential LR ($\eta_{\text{backbone}} = 0.1 \times \eta_{\text{head}}$).
+  - *Architecture & Layers:* Stem, 4 Stages / Blocks, Global Pooling, Classifier Heads.
+  - *Parameter Counts:* Bảng phân bổ chính xác Total, Trainable, Frozen parameters cho 4 cấu hình cốt lõi.
+  - *BatchNorm Behavior:* Phân biệt Parameters (`weight`, `bias` có `requires_grad`) và Buffers (`running_mean`, `running_var`). Ở `train()` mode buffer vẫn cập nhật; ở `eval()` mode buffer đóng băng tĩnh hoàn toàn.
+  - *Input / Output:* Tensor shape, Data type `torch.float32`, Preprocessing (Bilinear Resize 128, Augmentation, ImageNet Normalization), Output Logits `[B, 10]`, Softmax, `nn.CrossEntropyLoss()`.
+  - *Source Files:* Ánh xạ chính xác các file mã nguồn thực thi và trách nhiệm kỹ thuật tương ứng.
+  - *Verification:* Script kiểm tra kiến trúc (`scripts/inspect_models.py`), script kiểm toán BatchNorm buffer (`scripts/check_frozen_bn.py`), và bộ test suite 53 pytest.
+
+### 3. Master Rule — Scientific Dataset Presentation (Áp dụng cho `docs/data.md`)
+- **Cấu trúc 10 phần chuẩn khoa học:**
+  1. *Tổng quan Dataset (Dataset Overview):* Tên CIFAR-10, lĩnh vực Computer Vision, mục đích benchmark, phạm vi 60.000 ảnh 10 lớp.
+  2. *Nguồn gốc và phương pháp thu thập (Data Source):* Nguồn MIT 80 Million Tiny Images, ĐH Toronto (Krizhevsky, Hinton, 2009), WordNet, gán nhãn thủ công.
+  3. *Cấu trúc dữ liệu (Data Structure):* Bảng thành phần (Rows, Columns, Observations, Features, Target, Dtypes) và Bảng Class Mapping chi tiết.
+  4. *Đánh giá chất lượng dữ liệu (Data Quality Assessment):* Bảng kiểm toán 6 tiêu chí: Missing (0%), Duplicates (0%), Outliers (0%), Inconsistent (0%), Invalid values (0%), Dtype issues (0%).
+  5. *Tiền xử lý dữ liệu (Data Preprocessing):* Split 45k/5k/10k (seed=42), Resize 128x128 song tuyến, Data Augmentation (Train), `ToTensor()`, ImageNet Normalize; Bảng so sánh dữ liệu thô vs. sau tiền xử lý.
+  6. *Phân tích khám phá dữ liệu (EDA):* 6.1 Thống kê mô tả (Mean, Std, Min, Q1, Median, Q3, Max, Mode cho R, G, B); 6.2 Phân tích phân phối; 6.3 Phân tích mối quan hệ và tương quan liên kênh ($r > 0.88$).
+  7. *Trực quan hóa dữ liệu (Data Visualization):* Đầy đủ 7 dạng biểu đồ (Mục đích, Lý do chọn, Biến sử dụng, Nhận xét kết quả, Ý nghĩa):
+     - Bar Chart (Phân bố lớp và chia tập cân bằng).
+     - Histogram (Mật độ cường độ pixel RGB).
+     - Box Plot (Độ sáng trung vị và ngoại lệ theo lớp).
+     - Heatmap (Ma trận tương quan liên kênh quang phổ).
+     - Scatter Plot (Tương quan điểm ảnh kênh Đỏ vs. Lam).
+     - Line Chart (Tích lũy phương sai PCA / Scree Plot).
+     - **PCA 2D (Bắt buộc):** Giảm chiều 3.072D về 2D, chứng minh hiện tượng chồng lấn đa tạp (Manifold Entanglement) và tính bất khả phân tách tuyến tính trên pixel thô.
+  8. *Phát hiện và nhận xét (Key Findings):* 5 phát hiện then chốt định hình giải pháp Deep Learning.
+  9. *Hạn chế của Dataset (Dataset Limitations):* Kích thước nhỏ $32 \times 32$, nguy cơ overfit khi fine-tune sâu, thiếu thông tin bounding box.
+  10. *Kết luận (Conclusion):* Khẳng định tính chuẩn mực của dataset cho chuyển giao tri thức và đề xuất hướng mở rộng.

@@ -81,7 +81,7 @@ Ngăn ngừa hiện tượng phá vỡ đặc trưng tiền huấn luyện (Cata
    - `RandomHorizontalFlip(p=0.5)`.
 3. **ToTensor & ImageNet Normalization:** Ánh xạ pixel về dải $[0.0, 1.0]$, sau đó chuẩn hóa theo phân phối ImageNet ($\mu = [0.485, 0.456, 0.406]$, $\sigma = [0.229, 0.224, 0.225]$).
 
-### 5.3. Khám phá kiến trúc mô hình (Explore Architecture - Bước 3)
+### 5.3. Khám phá kiến trúc mô hình (Explore Architecture )
 Công cụ dòng lệnh độc lập: [`scripts/inspect_models.py`](../scripts/inspect_models.py).
 
 ```bash

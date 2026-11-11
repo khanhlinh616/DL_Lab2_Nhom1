@@ -177,42 +177,134 @@ def build_html():
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 20px;
+            padding: 16px;
             position: sticky;
             top: 24px;
             height: calc(100vh - 48px);
             overflow-y: auto;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }}
-        .sidebar h3 {{
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 14px;
+        /* Sleek custom scrollbar */
+        .sidebar::-webkit-scrollbar {{
+            width: 5px;
+        }}
+        .sidebar::-webkit-scrollbar-track {{
+            background: transparent;
+        }}
+        .sidebar::-webkit-scrollbar-thumb {{
+            background: #cbd5e1;
+            border-radius: 4px;
+        }}
+        .sidebar::-webkit-scrollbar-thumb:hover {{
+            background: #94a3b8;
+        }}
+
+        .sidebar-header {{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 8px;
+            gap: 8px;
+        }}
+        .sidebar-header h3 {{
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin: 0;
+            font-weight: 700;
+        }}
+        .sidebar-toggle-btn {{
+            background: #f1f5f9;
+            color: var(--text-muted);
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }}
+        .sidebar-toggle-btn:hover {{
+            background: #e2e8f0;
+            color: var(--text-main);
         }}
         .sidebar ul {{
             list-style: none;
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 4px;
+            margin: 0;
         }}
         .sidebar li {{
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }}
         .sidebar a {{
             color: var(--text-main);
             text-decoration: none;
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 500;
             display: block;
             padding: 6px 10px;
             border-radius: 6px;
             transition: all 0.2s ease;
+            line-height: 1.35;
         }}
         .sidebar a:hover {{
             background: var(--primary-light);
             color: var(--primary-dark);
             font-weight: 600;
+        }}
+        .sidebar a.active {{
+            background: #e8f0fe;
+            color: #1a73e8;
+            font-weight: 700;
+            border-left: 3px solid #1a73e8;
+        }}
+
+        /* Floating Expand Button when collapsed */
+        .sidebar-floating-toggle {{
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 1000;
+            background: #1a73e8;
+            color: #ffffff;
+            border: none;
+            border-radius: 24px;
+            padding: 9px 16px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(26, 115, 232, 0.35);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }}
+        .sidebar-floating-toggle:hover {{
+            background: #1557b0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(26, 115, 232, 0.45);
+        }}
+
+        .container.sidebar-collapsed {{
+            grid-template-columns: minmax(0, 1fr);
+            max-width: 1560px;
+        }}
+        .container.sidebar-collapsed .sidebar {{
+            display: none !important;
+        }}
+        .container.sidebar-collapsed ~ .sidebar-floating-toggle {{
+            display: inline-flex;
         }}
 
         /* Content Area */
@@ -597,8 +689,14 @@ def build_html():
 
     <div class="container">
         <!-- Sidebar Table of Contents -->
-        <nav class="sidebar">
-            <h3>NỘI DUNG THẨM ĐỊNH</h3>
+        <nav class="sidebar" id="sidebar-nav">
+            <div class="sidebar-header">
+                <h3>NỘI DUNG THẨM ĐỊNH</h3>
+                <button type="button" id="sidebar-collapse-btn" class="sidebar-toggle-btn" title="Thu gọn mục lục để mở rộng không gian">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <span>Thu gọn</span>
+                </button>
+            </div>
             <ul>
                 <li><a href="#sec-kpi">1. Executive QA Dashboard &amp; KPI</a></li>
                 <li><a href="#sec-master-table">2. Master Evaluation Matrix (Best Val Acc)</a></li>
@@ -1996,6 +2094,81 @@ for name, module in frozen_bn_layers:
         </main>
     </div>
 
+    <!-- Floating Expand Button (Hiển thị khi mục lục bị thu gọn) -->
+    <button type="button" id="sidebar-expand-btn" class="sidebar-floating-toggle" title="Mở rộng mục lục điều hướng">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <span>Mục lục</span>
+    </button>
+
+    <script>
+        (function() {{
+            const collapseBtn = document.getElementById('sidebar-collapse-btn');
+            const expandBtn = document.getElementById('sidebar-expand-btn');
+            const container = document.querySelector('.container');
+            const STORAGE_KEY = 'lab2_sidebar_collapsed';
+
+            function setSidebarCollapsed(collapsed) {{
+                if (collapsed) {{
+                    container.classList.add('sidebar-collapsed');
+                    if (expandBtn) expandBtn.style.display = 'inline-flex';
+                    localStorage.setItem(STORAGE_KEY, 'true');
+                }} else {{
+                    container.classList.remove('sidebar-collapsed');
+                    if (expandBtn) expandBtn.style.display = 'none';
+                    localStorage.setItem(STORAGE_KEY, 'false');
+                }}
+            }}
+
+            if (collapseBtn) {{
+                collapseBtn.addEventListener('click', function(e) {{
+                    e.preventDefault();
+                    setSidebarCollapsed(true);
+                }});
+            }}
+
+            if (expandBtn) {{
+                expandBtn.addEventListener('click', function(e) {{
+                    e.preventDefault();
+                    setSidebarCollapsed(false);
+                }});
+            }}
+
+            // Restore user preference
+            if (localStorage.getItem(STORAGE_KEY) === 'true') {{
+                setSidebarCollapsed(true);
+            }}
+
+            // Active ScrollSpy for TOC links
+            const navLinks = document.querySelectorAll('.sidebar a');
+            const sections = [];
+            navLinks.forEach(link => {{
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('#')) {{
+                    const target = document.querySelector(href);
+                    if (target) {{
+                        sections.push({{ link, target }});
+                    }}
+                }}
+            }});
+
+            window.addEventListener('scroll', function() {{
+                const scrollPos = window.scrollY + 140;
+                let activeFound = false;
+                for (let i = sections.length - 1; i >= 0; i--) {{
+                    if (sections[i].target.offsetTop <= scrollPos) {{
+                        navLinks.forEach(l => l.classList.remove('active'));
+                        sections[i].link.classList.add('active');
+                        activeFound = true;
+                        break;
+                    }}
+                }}
+                if (!activeFound && navLinks.length > 0) {{
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    navLinks[0].classList.add('active');
+                }}
+            }});
+        }})();
+    </script>
 </body>
 </html>
 """

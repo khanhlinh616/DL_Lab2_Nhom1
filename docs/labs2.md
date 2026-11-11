@@ -150,20 +150,49 @@ Số liệu xuất bản tự động từ [`scripts/make_results_table.py`](../
 > - **Best Test Accuracy (Best Test Acc):** Đạt cao nhất **90,65%** trên mô hình **`densenet121_finetune`** (vị trí thứ 2 là `resnet18_finetune` đạt **90,24%**).
 > - **Cơ chế chọn Checkpoint:** Best Checkpoint được lưu tự động dựa trên metric `val_acc` cao nhất (`is_best=True`) để loại trừ nguy cơ thiên kiến và chống Overfitting.
 
-### 7.2. Biểu đồ đối chứng hiệu năng thực nghiệm
+### 7.2. Biểu đồ đối chứng hiệu năng thực nghiệm (Tách biệt từng đồ thị độc lập)
+
 Tất cả các biểu đồ đều được kết xuất ngoài notebook và lưu trữ tại [`outputs/figures/`](../outputs/figures/):
 
-1. **So sánh Transfer Learning vs. Fine-Tuning:** [`outputs/figures/transfer_vs_finetune.png`](../outputs/figures/transfer_vs_finetune.png)
-   - Fine-tuning cải thiện Test Accuracy của ResNet-18 thêm **+12.26%** (từ 77.98% lên 90.24%).
-   - Fine-tuning cải thiện Test Accuracy của DenseNet-121 thêm **+9.31%** (từ 81.34% lên 90.65%).
-2. **Cơ cấu phân bổ tham số:** [`outputs/figures/model_parameters_comparison.png`](../outputs/figures/model_parameters_comparison.png)
-   - ResNet-18: 11.18M tổng tham số, 8.40M trainable khi fine-tune (75.1%).
-   - DenseNet-121: 6.96M tổng tham số, 2.17M trainable khi fine-tune (31.2%).
-3. **Ma trận nhầm lẫn chi tiết từng cấu hình:**
-   - [`resnet18_transfer_confusion_matrix.png`](../outputs/figures/resnet18_transfer_confusion_matrix.png)
-   - [`resnet18_finetune_confusion_matrix.png`](../outputs/figures/resnet18_finetune_confusion_matrix.png)
-   - [`densenet121_transfer_confusion_matrix.png`](../outputs/figures/densenet121_transfer_confusion_matrix.png)
-   - [`densenet121_finetune_confusion_matrix.png`](../outputs/figures/densenet121_finetune_confusion_matrix.png)
+#### 1. Sơ đồ Kiến trúc Transfer Learning vs. Fine-Tuning
+![Transfer vs Fine-Tuning](../outputs/figures/transfer_vs_finetune.png)
+- 📌 **Ý nghĩa:** Trực quan hóa cơ chế giữ đông toàn bộ backbone (Transfer) so với việc mở khóa các tầng tích chập sâu nhất kết hợp Differential LR (Fine-Tuning).
+- 💡 **Điểm then chốt:** Fine-Tuning giúp bứt phá giới hạn hội tụ, tăng Test Accuracy của ResNet-18 thêm **+12.26%** (77.98% &rarr; 90.24%) và DenseNet-121 thêm **+9.31%** (81.34% &rarr; 90.65%).
+
+#### 2. Cơ cấu phân bổ tham số khả huấn và đóng băng
+![Model Parameters Comparison](../outputs/figures/model_parameters_comparison.png)
+- 📌 **Ý nghĩa:** So sánh quy mô mô hình và tỷ lệ tham số cập nhật trên CPU.
+- 💡 **Điểm then chốt:** Ở Transfer Learning, chỉ 0.05% - 0.15% tham số được học. Khi Fine-Tuning, số tham số cập nhật là 8.40M (75.1% ở ResNet-18) và 2.17M (31.2% ở DenseNet-121). DenseNet-121 tiết kiệm 37.7% tổng tham số so với ResNet-18.
+
+#### 3. Ma trận nhầm lẫn: ResNet-18 Transfer (Test Acc: 77.98%)
+![ResNet18 Transfer CM](../outputs/figures/resnet18_transfer_confusion_matrix.png)
+- 📌 **Ý nghĩa:** Đánh giá năng lực của bộ trích xuất đặc trưng tĩnh kết hợp Linear Head.
+- 💡 **Điểm then chốt:** Các lớp xe cộ đạt khá tốt (`automobile` 85.6%, `ship` 88.5%). Lớp `cat` chỉ đạt 56.4% do nhầm sang `dog` 19.4% và `bird` 7.5%.
+
+#### 4. Ma trận nhầm lẫn: ResNet-18 Fine-Tuning (Test Acc: 90.24%)
+![ResNet18 Fine-tune CM](../outputs/figures/resnet18_finetune_confusion_matrix.png)
+- 📌 **Ý nghĩa:** Đánh giá hiệu quả khi mở khóa Layer 4 với tốc độ học $\eta_{\text{backbone}} = 10^{-4}$.
+- 💡 **Điểm then chốt:** Độ chính xác tăng vọt lên 90.24%. Đường chéo chính sắc nét; `airplane` đạt 95.0%, `ship` đạt 96.0%. Độ nhầm lẫn lớp động vật giảm mạnh.
+
+#### 5. Ma trận nhầm lẫn: DenseNet-121 Transfer (Test Acc: 81.34%)
+![DenseNet121 Transfer CM](../outputs/figures/densenet121_transfer_confusion_matrix.png)
+- 📌 **Ý nghĩa:** Đánh giá ưu thế trích xuất đặc trưng của cơ chế ghép nối kênh (Dense Feature Reuse).
+- 💡 **Điểm then chốt:** Đạt 81.34% (+3.36% so với ResNet-18 Transfer). Lớp `ship` đạt 89.9%, `automobile` đạt 85.7%.
+
+#### 6. Ma trận nhầm lẫn: DenseNet-121 Fine-Tuning (Best Test Acc: 90.65%)
+![DenseNet121 Fine-tune CM](../outputs/figures/densenet121_finetune_confusion_matrix.png)
+- 📌 **Ý nghĩa:** Thẩm định cấu hình tối ưu nhất toàn dự án khi mở khóa DenseBlock 4.
+- 💡 **Điểm then chốt:** Đạt Test Accuracy cao nhất dự án (**90.65%**). Phân loại xuất sắc cả 10 lớp: `ship` 96.0%, `truck` 94.0%, `airplane` 94.0%, `automobile` 93.0%.
+
+#### 7. Ma trận nhầm lẫn: ResNet-18 Transfer (LR $10^{-4}$) (Test Acc: 78.32%)
+![ResNet18 LR1e4 CM](../outputs/figures/resnet18_transfer_lr1e4_confusion_matrix.png)
+- 📌 **Ý nghĩa:** Khảo sát ảnh hưởng khi giảm learning rate xuống $10^{-4}$ trên head phân loại.
+- 💡 **Điểm then chốt:** Đạt 78.32% (+0.34% so với baseline), biên độ dao động loss thấp hơn, hội tụ mượt mà.
+
+#### 8. Ma trận nhầm lẫn: ResNet-18 Transfer (Batch Size 32) (Test Acc: 79.04%)
+![ResNet18 BS32 CM](../outputs/figures/resnet18_transfer_bs32_confusion_matrix.png)
+- 📌 **Ý nghĩa:** Khảo sát ảnh hưởng của mini-batch size lớn hơn (32 so với 16).
+- 💡 **Điểm then chốt:** Đạt 79.04% (+1.06%), ước lượng phương sai gradient chuẩn xác hơn và thông lượng xử lý tăng lên 103 ảnh/giây.
 
 ---
 

@@ -168,18 +168,21 @@ Toàn bộ các biểu đồ dưới đây được kết xuất độc lập v�
 ![Bộ trực quan hóa EDA CIFAR-10](../outputs/figures/cifar10_eda_suite.png)
 
 ```
-File đồ họa tham chiếu:
-- outputs/figures/cifar10_eda_suite.png (Bộ 6 biểu đồ EDA toàn diện)
-- outputs/figures/cifar10_raw_samples_grid.png (Lưới 60 ảnh mẫu 10 lớp)
-- outputs/figures/cifar10_raw_distribution.png (Phân bố lớp & kênh màu)
-- outputs/figures/cifar10_raw_pca.png (Phân tích giảm chiều PCA 2D & Scree plot)
+Danh mục các biểu đồ phân tích độc lập:
+1. outputs/figures/cifar10_eda_1_bar_distribution.png (Biểu đồ cột: Phân bố số lượng mẫu theo lớp)
+2. outputs/figures/cifar10_eda_2_histogram_rgb.png (Biểu đồ tần suất: Hàm mật độ điểm ảnh 3 kênh RGB)
+3. outputs/figures/cifar10_eda_3_boxplot_brightness.png (Biểu đồ hộp: Độ sáng trung bình 10 lớp)
+4. outputs/figures/cifar10_eda_4_heatmap_correlation.png (Bản đồ nhiệt: Tương quan chéo kênh quang phổ)
+5. outputs/figures/cifar10_eda_5_scatter_rgb.png (Biểu đồ phân tán: Tương quan cường độ Red vs Blue)
+6. outputs/figures/cifar10_eda_6_line_pca_scree.png (Biểu đồ đường: Tích lũy phương sai PCA Scree plot)
+7. outputs/figures/cifar10_eda_7_pca_2d_scatter.png (Biểu đồ phân tán 2D: Chiếu không gian 3.072D về PC1 & PC2)
 ```
 
 ---
 
 ### 7.1. Biểu đồ cột (Bar Chart) – Phân bố số lượng mẫu theo lớp & phân tập
 
-![Phân bố mẫu](../outputs/figures/cifar10_raw_distribution.png)
+![Biểu đồ cột phân bố mẫu](../outputs/figures/cifar10_eda_1_bar_distribution.png)
 
 - **Mục đích phân tích:** Kiểm tra tính cân bằng của các lớp mục tiêu và tính khách quan trong việc chia tập Train/Val/Test.
 - **Lý do lựa chọn biểu đồ:** Biểu đồ cột ghép (Grouped Bar Chart) là công cụ trực quan tốt nhất để so sánh biến rời rạc dạng danh mục (Categorical Variable).
@@ -191,6 +194,8 @@ File đồ họa tham chiếu:
 
 ### 7.2. Biểu đồ tần suất (Histogram) – Phân phối cường độ điểm ảnh 3 kênh RGB
 
+![Histogram phân phối RGB](../outputs/figures/cifar10_eda_2_histogram_rgb.png)
+
 - **Mục đích phân tích:** Khảo sát hàm mật độ xác suất (Probability Density) của cường độ pixel trên từng kênh quang phổ.
 - **Lý do lựa chọn biểu đồ:** Histogram kết hợp đường cong ước lượng mật độ nhân (KDE) giúp quan sát hình dạng phân phối liên tục.
 - **Các biến được sử dụng:** Trục hoành ($X$): Cường độ pixel chuẩn hóa $[0.0, 1.0]$; Trục tung ($Y$): Mật độ xác suất (Density); Màu sắc: Đỏ, Lục, Lam.
@@ -200,6 +205,8 @@ File đồ họa tham chiếu:
 ---
 
 ### 7.3. Biểu đồ hộp (Box Plot) – Độ sáng trung bình theo từng lớp đối tượng
+
+![Boxplot độ sáng](../outputs/figures/cifar10_eda_3_boxplot_brightness.png)
 
 - **Mục đích phân tích:** Đánh giá trung vị, độ phân tán tứ phân vị và các điểm ngoại lệ về độ sáng của từng lớp đối tượng.
 - **Lý do lựa chọn biểu đồ:** Box Plot tóm tắt 5 chỉ số thống kê (Min, Q1, Median, Q3, Max) và hiển thị trực quan các điểm dị biệt (Whiskers & Outliers).
@@ -214,6 +221,8 @@ File đồ họa tham chiếu:
 
 ### 7.4. Bản đồ nhiệt (Heatmap) – Ma trận tương quan chéo giữa các kênh màu
 
+![Heatmap tương quan kênh](../outputs/figures/cifar10_eda_4_heatmap_correlation.png)
+
 - **Mục đích phân tích:** Đo lường mức độ phụ thuộc tuyến tính và tính dư thừa thông tin giữa các kênh quang phổ RGB.
 - **Lý do lựa chọn biểu đồ:** Heatmap thể hiện trực quan ma trận số thực bằng dải màu sắc (Color Intensity Gradient).
 - **Các biến được sử dụng:** Kênh Red, Kênh Green, Kênh Blue; Ô ma trận hiển thị hệ số tương quan Pearson ($r \in [-1.0, +1.0]$).
@@ -227,6 +236,8 @@ File đồ họa tham chiếu:
 
 ### 7.5. Biểu đồ phân tán (Scatter Plot) – Tương quan cường độ Red vs. Blue
 
+![Scatter plot tương quan màu](../outputs/figures/cifar10_eda_5_scatter_rgb.png)
+
 - **Mục đích phân tích:** Khảo sát sự phân bố điểm ảnh trong không gian 2 kênh màu đại diện và khả năng tách biệt cụm sơ bộ giữa các lớp.
 - **Lý do lựa chọn biểu đồ:** Scatter Plot thể hiện vị trí của từng bức ảnh cụ thể và sự đan xen giữa các lớp đối tượng.
 - **Các biến được sử dụng:** Trục hoành ($X$): Cường độ kênh Red trung bình; Trục tung ($Y$): Cường độ kênh Blue trung bình; Nhãn màu: 10 lớp phân loại.
@@ -237,7 +248,7 @@ File đồ họa tham chiếu:
 
 ### 7.6. Biểu đồ đường (Line Chart) – Tích lũy phương sai PCA (Scree Plot)
 
-![PCA Phân tích](../outputs/figures/cifar10_raw_pca.png)
+![PCA Scree plot](../outputs/figures/cifar10_eda_6_line_pca_scree.png)
 
 - **Mục đích phân tích:** Xác định tốc độ suy giảm phương sai và đánh giá lượng thông tin được giữ lại khi giảm chiều dữ liệu thô.
 - **Lý do lựa chọn biểu đồ:** Line Chart kết hợp biểu đồ cột phương sai riêng lẻ (Scree Plot) là tiêu chuẩn kỹ thuật để lựa chọn số thành phần chính trong phân tích đa biến.
@@ -252,6 +263,8 @@ File đồ họa tham chiếu:
 ---
 
 ### 7.7. Phân tích thành phần chính (PCA) – Chiếu không gian 3.072D về 2D
+
+![PCA 2D Projection](../outputs/figures/cifar10_eda_7_pca_2d_scatter.png)
 
 Script thực thi độc lập: [`scripts/visualize_raw_pca.py`](../scripts/visualize_raw_pca.py).  
 Tệp kết xuất: [`outputs/figures/cifar10_raw_pca.png`](../outputs/figures/cifar10_raw_pca.png).

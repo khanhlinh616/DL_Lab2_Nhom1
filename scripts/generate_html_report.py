@@ -410,6 +410,95 @@ def build_html():
             border-left: 3px solid var(--primary);
         }}
 
+        /* Dedicated Standalone Chart Card */
+        .chart-standalone-card {{
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 22px;
+            margin: 24px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }}
+        .chart-standalone-card:hover {{
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        }}
+        .chart-standalone-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+        }}
+        .chart-standalone-header h3 {{
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 0;
+        }}
+        .chart-badge {{
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: #e3f2fd;
+            color: #0d47a1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }}
+        .chart-badge.success {{
+            background: #e8f5e9;
+            color: #1b5e20;
+        }}
+        .chart-badge.warning {{
+            background: #fff3e0;
+            color: #e65100;
+        }}
+        .chart-image-wrap {{
+            text-align: center;
+            background: #fafafa;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #edf2f7;
+            margin-bottom: 14px;
+        }}
+        .chart-image-wrap img {{
+            max-width: 100%;
+            height: auto;
+            max-height: 560px;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            display: block;
+            margin: 0 auto;
+        }}
+        .chart-caption {{
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            text-align: center;
+        }}
+        .chart-explanation-box {{
+            background: #f8fafc;
+            border-left: 4px solid var(--primary);
+            border-radius: 6px;
+            padding: 14px 18px;
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #334155;
+        }}
+        .chart-explanation-box strong {{
+            color: #0f172a;
+        }}
+        .chart-takeaway-list {{
+            margin-top: 6px;
+            margin-left: 20px;
+        }}
+        .chart-takeaway-list li {{
+            margin-bottom: 4px;
+        }}
+
         /* Grid for Multi-Image */
         .image-grid-2 {{
             display: grid;
@@ -775,20 +864,41 @@ def build_html():
                     <span class="sec-badge">CRASH-SAFE INFRASTRUCTURE</span>
                 </div>
 
-                <div class="image-grid-2">
-                    <div class="figure-block">
-                        <img src="{img_base}/monitoring_architecture.png" alt="Monitoring Architecture">
-                        <div class="figure-caption">Hình 2A: Kiến trúc điều phối giám sát đa luồng (Monitoring Architecture)</div>
-                        <div class="figure-explanation">
-                            <strong>Phân tích luồng Telemetry:</strong> Huấn luyện viên (Training Engine) phân tách 2 kênh dữ liệu: Kênh vi mô (Batch-level Telemetry) ghi nhận loss thời gian thực; Kênh vĩ mô (Epoch-level Telemetry) đẩy metrics vào TensorBoard và kích hoạt bộ quản lý Checkpoint an toàn nguyên tử.
-                        </div>
+                <!-- Chart 2A: Kiến trúc điều phối giám sát -->
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <h3>Biểu đồ 2A: Kiến trúc điều phối giám sát đa luồng (Monitoring Architecture)</h3>
+                        <span class="chart-badge">Telemetry Routing</span>
                     </div>
-                    <div class="figure-block">
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/monitoring_architecture.png" alt="Monitoring Architecture">
+                        <div class="chart-caption">Hình 2A: Kiến trúc điều phối 2 kênh dữ liệu vi mô (Batch) và vĩ mô (Epoch)</div>
+                    </div>
+                    <div class="chart-explanation-box">
+                        <p><strong>📌 Ý nghĩa:</strong> Mô tả cơ chế phân luồng vi mô (Batch-level Loss) và vĩ mô (Epoch-level Metrics &amp; Checkpoint) nhằm duy trì độ trễ thấp và an toàn dữ liệu trên CPU.</p>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Phân luồng độc lập:</strong> Batch logs ghi nhận biến thiên gradient thời gian thực; Epoch telemetry đồng bộ hóa sang TensorBoard.</li>
+                            <li><strong>Tối ưu hóa:</strong> Không làm chậm vòng lặp huấn luyện chính nhờ cơ chế ghi đệm bất đồng bộ.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Chart 2B: Sơ đồ chi tiết các khối giám sát -->
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <h3>Biểu đồ 2B: Sơ đồ chi tiết các khối giám sát (Monitors Diagram)</h3>
+                        <span class="chart-badge success">Atomic State Engine</span>
+                    </div>
+                    <div class="chart-image-wrap">
                         <img src="{img_base}/monitors_diagram.png" alt="Monitors Diagram">
-                        <div class="figure-caption">Hình 2B: Sơ đồ chi tiết các khối giám sát (Monitors Diagram)</div>
-                        <div class="figure-explanation">
-                            <strong>Hộp điều phối (Atomic Write Mechanism):</strong> Checkpoint không bao giờ được ghi đè trực tiếp lên file đích. Quá trình lưu tuân thủ quy tắc ghi file tạm `.tmp` &rarr; kiểm tra `torch.load` toàn vẹn &rarr; `os.replace()` nguyên tử cấp hệ điều hành.
-                        </div>
+                        <div class="chart-caption">Hình 2B: Sơ đồ tương tác giữa Scalars, Images, Histograms và bộ ghi nguyên tử Checkpoint</div>
+                    </div>
+                    <div class="chart-explanation-box">
+                        <p><strong>📌 Ý nghĩa:</strong> Phân định rõ trách nhiệm của 4 luồng TensorBoard và cơ chế lưu trữ trọng số an toàn nguyên tử chống hỏng file khi gặp sự cố.</p>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Ghi nguyên tử (Atomic Replace):</strong> Trọng số được ghi ra file tạm <code>.tmp</code> &rarr; kiểm tra <code>torch.load</code> tính toàn vẹn &rarr; gọi <code>os.replace()</code> tức thời cấp hệ điều hành.</li>
+                            <li><strong>Toàn vẹn tuyệt đối:</strong> Loại bỏ 100% rủi ro checkpoint bị cắt cụt (corrupted) nếu hệ thống bị ngắt nguồn đột xuất.</li>
+                        </ul>
                     </div>
                 </div>
 
@@ -823,20 +933,117 @@ def build_html():
                     <span class="sec-badge">NO DATA LEAKAGE</span>
                 </div>
 
-                <div class="image-grid-2">
-                    <div class="figure-block">
-                        <img src="{img_base}/cifar10_raw_samples_grid.png" alt="CIFAR-10 Samples Grid">
-                        <div class="figure-caption">Hình 3A: Lưới 50 mẫu ảnh thô đại diện 10 lớp CIFAR-10 (<math xmlns="http://www.w3.org/1998/Math/MathML"><mn>32</mn><mo>&times;</mo><mn>32</mn></math>)</div>
-                        <div class="figure-explanation">
-                            <strong>Thẩm định chất lượng mẫu:</strong> Ảnh <math xmlns="http://www.w3.org/1998/Math/MathML"><mn>32</mn><mo>&times;</mo><mn>32</mn></math> pixels có độ phân giải rất thấp. Khi nạp vào mạng ImageNet (<math xmlns="http://www.w3.org/1998/Math/MathML"><mn>224</mn><mo>&times;</mo><mn>224</mn></math> mặc định), hệ thống áp dụng kỹ thuật phóng to song tuyến (Bilinear Interpolation) lên <math xmlns="http://www.w3.org/1998/Math/MathML"><mn>128</mn><mo>&times;</mo><mn>128</mn></math>, vừa đảm bảo không mất mát ngữ nghĩa cấu trúc, vừa cân bằng tốc độ tính toán trên CPU/GPU.
-                        </div>
+                <!-- Chart 3A: Lưới ảnh mẫu -->
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <h3>Biểu đồ 3A: Lưới 60 mẫu ảnh thô đại diện 10 lớp CIFAR-10 (32x32)</h3>
+                        <span class="chart-badge">Visual Inspection</span>
                     </div>
-                    <div class="figure-block">
-                        <img src="{img_base}/cifar10_raw_distribution.png" alt="CIFAR-10 Class Distribution">
-                        <div class="figure-caption">Hình 3B: Phân bố số lượng mẫu và cân bằng lớp trên các phân vùng tập dữ liệu</div>
-                        <div class="figure-explanation">
-                            <strong>Kiểm tra phân vùng:</strong> Tập thô gồm chính xác 60.000 ảnh (6.000 ảnh/lớp, đúng 10.0%). Phân chia bằng <code>random_split</code> với <code>seed=42</code> tạo ra: Tập Train 45.000 ảnh (75.0%), Validation 5.000 ảnh (8.33%), Test 10.000 ảnh (16.67%).
-                        </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/cifar10_raw_samples_grid.png" alt="CIFAR-10 Samples Grid">
+                        <div class="chart-caption">Hình 3A: Lưới 60 ảnh mẫu (10 lớp &times; 6 mẫu/lớp) ở độ phân giải gốc 32x32 pixels</div>
+                    </div>
+                    <div class="chart-explanation-box">
+                        <p><strong>📌 Ý nghĩa:</strong> Kiểm tra trực quan các mẫu ảnh thực tế nhằm phát hiện đặc điểm thị giác, góc chụp và mức độ nhòe vi mô của ảnh kích thước nhỏ.</p>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Độ phân giải thấp:</strong> Kích thước 32&times;32 làm mất mát các chi tiết vân vi mô (kết cấu lông, mắt thú); bắt buộc mô hình phải học đặc trưng hình thái tổng quát.</li>
+                            <li><strong>Phóng to song tuyến:</strong> Áp dụng Bilinear Interpolation lên 128&times;128 để phù hợp với 5 tầng giảm mẫu của ResNet/DenseNet mà không làm biến dạng tỷ lệ khung hình.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Chart 3B: Phân bố lớp và phân vùng -->
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <h3>Biểu đồ 3B: Phân bố số lượng mẫu theo 10 lớp và phân vùng dữ liệu</h3>
+                        <span class="chart-badge success">Zero Bias Balanced</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/cifar10_eda_1_bar_distribution.png" alt="CIFAR-10 Class Distribution">
+                        <div class="chart-caption">Hình 3B: Biểu đồ cột kiểm tra tính cân bằng giữa 10 lớp và 3 phân vùng (Train 45k, Val 5k, Test 10k)</div>
+                    </div>
+                    <div class="chart-explanation-box">
+                        <p><strong>📌 Ý nghĩa:</strong> Đánh giá mức độ đồng đều giữa các lớp để loại trừ nguy cơ thiên lệch mô hình (Class Imbalance Bias).</p>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Cân bằng tuyệt đối:</strong> Đúng 6.000 ảnh/lớp (chiếm chính xác 10.0% mỗi lớp). Train: 4.500 ảnh/lớp, Val: 500 ảnh/lớp, Test: 1.000 ảnh/lớp.</li>
+                            <li><strong>Độ tin cậy:</strong> Cho phép dùng Accuracy và Macro F1 làm thước đo đánh giá khách quan, không cần dùng weighted loss.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Chart 3C: Histogram RGB -->
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <h3>Biểu đồ 3C: Phân phối mật độ cường độ điểm ảnh 3 kênh màu (RGB)</h3>
+                        <span class="chart-badge">Spectrum Density</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/cifar10_eda_2_histogram_rgb.png" alt="CIFAR-10 RGB Histogram">
+                        <div class="chart-caption">Hình 3C: Biểu đồ tần suất mật độ xác suất chuẩn hóa của 3 kênh Red, Green, Blue</div>
+                    </div>
+                    <div class="chart-explanation-box">
+                        <p><strong>📌 Ý nghĩa:</strong> Khảo sát hàm mật độ xác suất (PDF) của quang phổ pixel để xác thực tính liên tục và kiểm tra hiện tượng cháy sáng/tối.</p>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Dạng chuông đơn đỉnh:</strong> Cả 3 kênh đều có phân phối Gaussian đơn đỉnh tập trung quanh dải [0.45, 0.50]; không bị bão hòa trần (1.0) hay sàn (0.0).</li>
+                            <li><strong>ImageNet Normalization:</strong> Phù hợp hoàn hảo để chuẩn hóa dữ liệu về tâm phân phối 0.0, giúp gradient hội tụ nhanh và ổn định.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Chart 3D: Box Plot độ sáng -->
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <h3>Biểu đồ 3D: Độ sáng trung bình của ảnh theo từng lớp đối tượng</h3>
+                        <span class="chart-badge">Luminance Dispersion</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/cifar10_eda_3_boxplot_brightness.png" alt="CIFAR-10 Brightness Boxplot">
+                        <div class="chart-caption">Hình 3D: Biểu đồ hộp thể hiện trung vị (Median), tứ phân vị (Q1-Q3) và các điểm ngoại lệ độ sáng</div>
+                    </div>
+                    <div class="chart-explanation-box">
+                        <p><strong>📌 Ý nghĩa:</strong> Phân tích mức độ phân tán độ sáng và phát hiện đặc thù bối cảnh chụp của từng lớp đối tượng.</p>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Phương tiện sáng hơn:</strong> <code>airplane</code> và <code>ship</code> có trung vị độ sáng cao nhất (~0.54) do nền trời xanh và mặt biển phản xạ ánh sáng.</li>
+                            <li><strong>Sinh vật tối hơn:</strong> <code>deer</code> và <code>frog</code> có trung vị thấp hơn (~0.43) do màu da ngụy trang và môi trường tự nhiên râm mát.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Chart 3E: Heatmap tương quan kênh -->
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <h3>Biểu đồ 3E: Ma trận tương quan chéo giữa các kênh quang phổ RGB</h3>
+                        <span class="chart-badge">Channel Correlation</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/cifar10_eda_4_heatmap_correlation.png" alt="CIFAR-10 RGB Correlation Heatmap">
+                        <div class="chart-caption">Hình 3E: Bản đồ nhiệt hệ số tương quan Pearson giữa các kênh màu Red, Green, Blue</div>
+                    </div>
+                    <div class="chart-explanation-box">
+                        <p><strong>📌 Ý nghĩa:</strong> Đo lường mức độ phụ thuộc tuyến tính và tính dư thừa thông tin giữa các kênh màu sắc trong ảnh tự nhiên.</p>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Tương quan cực cao:</strong> Hệ số tương quan Pearson đều vượt 0.88 (r<sub>RG</sub> = 0.935, r<sub>GB</sub> = 0.928, r<sub>RB</sub> = 0.884).</li>
+                            <li><strong>Hiệu quả CNN:</strong> Các bộ lọc tích chập đa kênh 3&times;3 và 1&times;1 trong CNN nén và trích xuất đặc trưng không gian đa kênh cực kỳ hiệu quả.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Chart 3F: Scatter Red vs Blue -->
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <h3>Biểu đồ 3F: Tương quan cường độ kênh Red vs. Kênh Blue theo lớp</h3>
+                        <span class="chart-badge">Bivariate Dispersion</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/cifar10_eda_5_scatter_rgb.png" alt="CIFAR-10 Red vs Blue Scatter">
+                        <div class="chart-caption">Hình 3F: Biểu đồ phân tán thể hiện sự phân bố của 10 lớp trong không gian 2 kênh màu</div>
+                    </div>
+                    <div class="chart-explanation-box">
+                        <p><strong>📌 Ý nghĩa:</strong> Kiểm tra xem không gian màu sắc 2 chiều đơn thuần có đủ khả năng phân tách sơ bộ các lớp hay không.</p>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Dải elip đồng phương:</strong> Toàn bộ điểm dữ liệu tạo thành elip dốc theo đường y = x; các lớp sinh vật co cụm dày đặc ở vùng trung tâm.</li>
+                            <li><strong>Chồng lấn cao:</strong> Hai chiều màu sắc không thể tách biệt các lớp; bắt buộc phải có tầng trích xuất đặc trưng hình thái sâu.</li>
+                        </ul>
                     </div>
                 </div>
 
@@ -879,17 +1086,59 @@ def build_html():
                     <span class="sec-badge">UNSUPERVISED CLUSTERING</span>
                 </div>
 
-                <div class="figure-block">
-                    <img src="{img_base}/cifar10_raw_pca.png" alt="CIFAR-10 Raw PCA Analysis">
-                    <div class="figure-caption">Hình 4: Phân tích 2 thành phần chính (PC1 vs PC2) và phương sai tích lũy trên tập dữ liệu CIFAR-10 thô</div>
-                    <div class="figure-explanation">
-                        <strong>Quan sát phân tích phương sai:</strong> 
-                        <ul style="margin-left: 20px; margin-top: 6px;">
-                            <li>PC1 giải thích <strong>14.2%</strong> phương sai toàn cục; PC2 giải thích <strong>8.7%</strong> phương sai. Hai thành phần đầu nắm giữ gần 23% độ biến thiên thông tin của 3.072 chiều pixel thô.</li>
-                            <li><strong>Phân tách ngữ nghĩa tự nhiên:</strong> Biểu đồ phân tán (Scatter Plot) cho thấy sự phân hóa rõ nét giữa hai siêu nhóm: 
-                                <em>Nhóm Sinh vật</em> (<code>bird</code>, <code>cat</code>, <code>deer</code>, <code>dog</code>, <code>frog</code>, <code>horse</code>) co cụm đậm đặc ở vùng trung tâm và bên phải; 
-                                <em>Nhóm Phương tiện</em> (<code>airplane</code>, <code>automobile</code>, <code>ship</code>, <code>truck</code>) phân tán rộng về phía biên trái với phương sai cường độ pixel lớn.
-                            </li>
+                <!-- Chart 4A: Line Scree Plot -->
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <h3>Biểu đồ 4A: Biểu đồ đường tích lũy phương sai PCA (Scree Plot 50 thành phần)</h3>
+                        <span class="chart-badge">Variance Explained</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/cifar10_eda_6_line_pca_scree.png" alt="PCA Scree Plot">
+                        <div class="chart-caption">Hình 4A: Đường cong phương sai tích lũy (%) và biểu đồ cột phương sai từng thành phần chính</div>
+                    </div>
+                    <div class="chart-explanation-box">
+                        <p><strong>📌 Ý nghĩa:</strong> Xác định tốc độ suy giảm thông tin và đánh giá lượng phương sai giữ lại khi giảm chiều từ 3.072 chiều pixel thô.</p>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Phân tán cực cao:</strong> PC1 chỉ giải thích 28.7%, PC2 giải thích 11.2%; 2 thành phần đầu chỉ nắm giữ 39.9% thông tin toàn cục.</li>
+                            <li><strong>Không thể nén tuyến tính:</strong> Cần tới 12 thành phần để đạt 50% và gần 60 thành phần mới đạt 80% phương sai. Không gian pixel thô không có vài chiều chủ đạo đơn giản.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Chart 4B: PCA 2D Scatter -->
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <h3>Biểu đồ 4B: Biểu đồ phân tích giảm chiều PCA 2D (PC1 vs. PC2) &amp; Manifold Entanglement</h3>
+                        <span class="chart-badge warning">Linearly Inseparable</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/cifar10_eda_7_pca_2d_scatter.png" alt="PCA 2D Projection">
+                        <div class="chart-caption">Hình 4B: Chiếu không gian 3.072D về 2D (PC1 vs. PC2) kèm vị trí tâm cụm (Centroids) của 10 lớp</div>
+                    </div>
+                    <div class="chart-explanation-box">
+                        <p><strong>📌 Ý nghĩa:</strong> Kiểm tra xem các lớp đối tượng có thể phân tách tuyến tính trực tiếp trên không gian điểm ảnh thô hay không.</p>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Chồng lấn đa tạp (Manifold Entanglement):</strong> Điểm dữ liệu của 10 lớp nằm đan xen dày đặc ở vùng trung tâm. Tâm cụm 6 lớp sinh vật (cat, dog, deer, bird, frog, horse) bị dồn ép trong phạm vi hẹp x &in; [-4, 0], y &in; [0.5, 2.0].</li>
+                            <li><strong>Bằng chứng toán học:</strong> Bất khả phân tách tuyến tính trên pixel thô. Bắt buộc phải dùng các tầng tích chập phi tuyến tính sâu (CNNs) để ánh xạ sang không gian đặc trưng phân tách cao.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Chart 4C: Bộ phân tích 4 khung nhìn PCA -->
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <h3>Biểu đồ 4C: Bộ phân tích mở rộng 4 khung nhìn PCA &amp; Eigen-CIFAR</h3>
+                        <span class="chart-badge">Eigenvector Visuals</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/cifar10_raw_pca.png" alt="CIFAR-10 Raw PCA Full Analysis">
+                        <div class="chart-caption">Hình 4C: Toàn cảnh phân tích PCA gồm 2D Scatter, Scree Plot, Bar Chart tỷ lệ và các vector riêng Eigen-CIFAR</div>
+                    </div>
+                    <div class="chart-explanation-box">
+                        <p><strong>📌 Ý nghĩa:</strong> Chiếu ngược các eigenvector đầu tiên về dạng ảnh 32x32 để hiểu bản chất thông tin mà PCA nắm giữ.</p>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Bản chất Eigen-CIFAR:</strong> PC1 phản ánh độ sáng tổng thể khung cảnh; PC2 phản ánh dải màu phân cách theo chiều dọc (trời xanh phía trên, đất/cỏ phía dưới).</li>
+                            <li><strong>Thiếu ngữ nghĩa:</strong> PCA tuyến tính hoàn toàn không bắt được các chi tiết cấu trúc cục bộ như mắt, tai, bánh xe, cánh máy bay.</li>
                         </ul>
                     </div>
                 </div>
@@ -924,59 +1173,73 @@ def build_html():
                     </ol>
                 </div>
 
-                <div class="figure-block">
-                    <img src="{img_base}/model_parameters_comparison.png" alt="Model Parameters Comparison">
-                    <div class="figure-caption">Hình 5: Biểu đồ đối sánh tham số khả huấn (Trainable) và tham số đóng băng (Frozen) giữa ResNet-18 và DenseNet-121</div>
-                    <div class="figure-explanation">
-                        <strong>Bảng đối soát tham số cấp độ QA:</strong>
-                        <div class="table-responsive" style="margin-top: 10px;">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Cấu hình mô hình</th>
-                                        <th>Tham số khả huấn (Trainable)</th>
-                                        <th>Tham số đóng băng (Frozen)</th>
-                                        <th>Tổng số tham số</th>
-                                        <th>Tỷ lệ Trainable</th>
-                                        <th>Cấu trúc Head phân loại</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><strong>ResNet-18 Transfer</strong></td>
-                                        <td><strong>5,130</strong></td>
-                                        <td>11,176,512</td>
-                                        <td>11,181,642</td>
-                                        <td><strong>0.05%</strong></td>
-                                        <td><code>Linear(in_features=512, out_features=10)</code></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>ResNet-18 Fine-Tuning</strong></td>
-                                        <td><strong>8,398,858</strong></td>
-                                        <td>2,782,784</td>
-                                        <td>11,181,642</td>
-                                        <td><strong>75.11%</strong></td>
-                                        <td>Unfrozen: <code>layer4</code> + <code>fc</code></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>DenseNet-121 Transfer</strong></td>
-                                        <td><strong>10,250</strong></td>
-                                        <td>6,953,856</td>
-                                        <td>6,964,106</td>
-                                        <td><strong>0.15%</strong></td>
-                                        <td><code>Linear(in_features=1024, out_features=10)</code></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>DenseNet-121 Fine-Tuning</strong></td>
-                                        <td><strong>2,170,378</strong></td>
-                                        <td>4,793,728</td>
-                                        <td>6,964,106</td>
-                                        <td><strong>31.17%</strong></td>
-                                        <td>Unfrozen: <code>denseblock4</code> + <code>norm5</code> + <code>classifier</code></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 5: Phân bổ Tham số Khả huấn (Trainable) và Đóng băng (Frozen)</span>
+                        <span class="chart-badge">PARAMETER PROFILE</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/model_parameters_comparison.png" alt="Model Parameters Comparison">
+                    </div>
+                    <div class="chart-caption">So sánh tỷ lệ tham số cập nhật giữa ResNet-18 và DenseNet-121 trong 2 chiến lược chuyển giao</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> Định lượng quy mô mô hình, số lượng trọng số cần tối ưu và mức độ chiếm dụng bộ nhớ khi huấn luyện trên CPU.</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Transfer Learning:</strong> ResNet-18 chỉ mở 5,130 params (0.05%), DenseNet-121 chỉ mở 10,250 params (0.15%) &rarr; Tiết kiệm bộ nhớ tối đa, tính toán nhanh.</li>
+                            <li><strong>Fine-Tuning:</strong> Mở khóa khối cuối cùng (`layer4` / `denseblock4`), số tham số cần cập nhật tăng lên 8.40M (75.11% ở ResNet-18) và 2.17M (31.17% ở DenseNet-121) để thích ứng sâu với CIFAR-10.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="figure-explanation" style="margin-top: 15px;">
+                    <strong>Bảng đối soát tham số cấp độ QA:</strong>
+                    <div class="table-responsive" style="margin-top: 10px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cấu hình mô hình</th>
+                                    <th>Tham số khả huấn (Trainable)</th>
+                                    <th>Tham số đóng băng (Frozen)</th>
+                                    <th>Tổng số tham số</th>
+                                    <th>Tỷ lệ Trainable</th>
+                                    <th>Cấu trúc Head phân loại</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>ResNet-18 Transfer</strong></td>
+                                    <td><strong>5,130</strong></td>
+                                    <td>11,176,512</td>
+                                    <td>11,181,642</td>
+                                    <td><strong>0.05%</strong></td>
+                                    <td><code>Linear(in_features=512, out_features=10)</code></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ResNet-18 Fine-Tuning</strong></td>
+                                    <td><strong>8,398,858</strong></td>
+                                    <td>2,782,784</td>
+                                    <td>11,181,642</td>
+                                    <td><strong>75.11%</strong></td>
+                                    <td>Unfrozen: <code>layer4</code> + <code>fc</code></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DenseNet-121 Transfer</strong></td>
+                                    <td><strong>10,250</strong></td>
+                                    <td>6,953,856</td>
+                                    <td>6,964,106</td>
+                                    <td><strong>0.15%</strong></td>
+                                    <td><code>Linear(in_features=1024, out_features=10)</code></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DenseNet-121 Fine-Tuning</strong></td>
+                                    <td><strong>2,170,378</strong></td>
+                                    <td>4,793,728</td>
+                                    <td>6,964,106</td>
+                                    <td><strong>31.17%</strong></td>
+                                    <td>Unfrozen: <code>denseblock4</code> + <code>norm5</code> + <code>classifier</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -1022,14 +1285,20 @@ def build_html():
                     <span class="sec-badge">STRATEGY COMPARISON</span>
                 </div>
 
-                <div class="figure-block">
-                    <img src="{img_base}/transfer_vs_finetune.png" alt="Transfer vs Fine-Tuning Architecture">
-                    <div class="figure-caption">Hình 6: Sơ đồ cấu trúc tầng khóa và tầng mở khóa trong Transfer Learning vs Fine-Tuning</div>
-                    <div class="figure-explanation">
-                        <strong>Phân tích cơ chế thích nghi đặc trưng:</strong>
-                        <ul style="margin-left: 20px; margin-top: 6px;">
-                            <li><strong>Transfer Learning:</strong> Xem toàn bộ backbone là một bộ trích xuất đặc trưng tĩnh (Frozen Feature Extractor). Mô hình chỉ tối ưu mặt phẳng siêu phẳng phân chia 10 lớp trong không gian đặc trưng sẵn có. Ưu điểm: tính toán cực nhanh, chi phí bộ nhớ tối thiểu, không có nguy cơ làm hỏng trọng số ImageNet.</li>
-                            <li><strong>Fine-Tuning:</strong> Mở khóa các tầng tích chập sâu nhất (<code>layer4</code> ở ResNet, <code>denseblock4</code> ở DenseNet). Các bộ lọc tại đây được tinh chỉnh trực tiếp để thích ứng với ngữ nghĩa cụ thể của CIFAR-10. Kết quả Test Accuracy tăng vọt từ 77.98% lên 90.24% (+12.26% trên ResNet) và từ 81.34% lên 90.65% (+9.31% trên DenseNet).</li>
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 6: Sơ đồ Kiến trúc Transfer Learning vs. Fine-Tuning</span>
+                        <span class="chart-badge">STRATEGY COMPARISON</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/transfer_vs_finetune.png" alt="Transfer vs Fine-Tuning Architecture">
+                    </div>
+                    <div class="chart-caption">Sơ đồ bóc tách các tầng bị đóng băng (Frozen) và các tầng mở khóa (Unfrozen) trong 2 phương pháp</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> So sánh trực quan cơ chế giữ nguyên đặc trưng nền tảng (Frozen Backbone) so với việc tinh chỉnh thích nghi đặc trưng cấp cao (Unfrozen Stages) cho tập dữ liệu CIFAR-10.</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Transfer Learning:</strong> Chỉ cập nhật Linear Head (5.1k tham số). Tốc độ huấn luyện nhanh, tiêu tốn ít RAM, nhưng bị giới hạn biểu diễn ở mức ~78% accuracy.</li>
+                            <li><strong>Fine-Tuning:</strong> Mở khóa khối tích chập sâu nhất (Layer 4 / DenseBlock 4) kết hợp Differential LR (1e-4 cho backbone, 1e-3 cho head). Độ chính xác tăng vọt lên 90.24% - 90.65% (+9.3% đến +12.3%).</li>
                         </ul>
                     </div>
                 </div>
@@ -1156,14 +1425,20 @@ for name, module in frozen_bn_layers:
                     <span class="sec-badge">CONVERGENCE AUDIT</span>
                 </div>
 
-                <div class="figure-block">
-                    <img src="{img_base}/tensorboard_scalar/tensorboard_scalars.png" alt="TensorBoard Scalar Curves">
-                    <div class="figure-caption">Hình 7: Đồ thị Loss &amp; Accuracy thời gian thực qua 5 epochs cho toàn bộ 6 cấu hình thí nghiệm</div>
-                    <div class="figure-explanation">
-                        <strong>Phân tích đường cong động học (Dynamic Trajectory Analysis):</strong>
-                        <ul style="margin-left: 20px; margin-top: 6px;">
-                            <li><strong>Hiện tượng Underfitting ở Transfer Learning:</strong> Ở ResNet-18 Transfer, Train Loss chỉ giảm từ ~1.2 xuống ~0.77 và dừng lại; Validation Loss nhanh chóng đi ngang quanh mức 0.66. Do chỉ có 5,130 tham số được học, mô hình bị giới hạn năng lực biểu diễn và đạt trần tại ~78% accuracy.</li>
-                            <li><strong>Sự tăng tốc vượt bậc ở Fine-Tuning:</strong> Cả ResNet-18 và DenseNet-121 Fine-Tuning đều có bước nhảy vọt ngay từ Epoch 1 (Train Acc &gt; 81%, Val Acc &gt; 88%). Đến Epoch 4, ResNet-18 đạt Best Val Acc <strong>91.68%</strong> (Val Loss: 0.2555). Sang Epoch 5, Val Loss tăng nhẹ lên 0.3007 &rarr; Dấu hiệu bắt đầu quá khớp nhẹ (Overfitting), khẳng định quyết định chọn Checkpoint Epoch 4 là chuẩn xác!</li>
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 7: Đồ thị Hội tụ Loss &amp; Accuracy thời gian thực qua TensorBoard</span>
+                        <span class="chart-badge">SCALAR CONVERGENCE</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/tensorboard_scalar/tensorboard_scalars.png" alt="TensorBoard Scalar Curves">
+                    </div>
+                    <div class="chart-caption">Động học 4 đường cong (Train/Val Loss, Train/Val Accuracy) qua 5 epochs cho toàn bộ 6 cấu hình thí nghiệm</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> Theo dõi động thái tối ưu hóa, giám sát hiện tượng Underfitting/Overfitting và xác định chính xác epoch lưu mô hình tốt nhất.</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Underfitting ở Transfer Learning:</strong> Train Loss đi ngang ở ~0.77 - 0.79 và Val Loss dừng ở ~0.66 do Linear Head không đủ dung lượng học sâu biểu diễn CIFAR-10.</li>
+                            <li><strong>Hội tụ vượt bậc ở Fine-Tuning:</strong> Cả 2 mô hình đạt Val Acc &gt; 88% ngay từ Epoch 1. ResNet-18 đạt Best Val Acc <strong>91.68%</strong> ở Epoch 4 (Val Loss: 0.2555). Sang Epoch 5 Val Loss tăng nhẹ lên 0.3007 &rarr; Dấu hiệu chớm Overfitting, khẳng định Checkpoint Epoch 4 là tối ưu nhất.</li>
                         </ul>
                     </div>
                 </div>
@@ -1176,28 +1451,79 @@ for name, module in frozen_bn_layers:
                     <span class="sec-badge">INTERNAL STATE AUDIT</span>
                 </div>
 
-                <h3 class="sub-title">11.1. Phân phối Trọng số &amp; Độ lệch (Weight &amp; Bias Histograms) của Head:</h3>
-                <div class="image-grid-2">
-                    <div class="figure-block">
+                <h3 class="sub-title">11.1. Phân phối Trọng số &amp; Độ lệch (Weight &amp; Bias Histograms) của Classification Head:</h3>
+
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 8A: Phân phối Trọng số ResNet-18 FC Weight (512 &times; 10)</span>
+                        <span class="chart-badge">WEIGHT HISTOGRAM</span>
+                    </div>
+                    <div class="chart-image-wrap">
                         <img src="{img_base}/tensorboard_histogram/fc_weight.png" alt="ResNet-18 FC Weight Histogram">
-                        <div class="figure-caption">Hình 8A: Phân phối trọng số ResNet-18 FC Weight (512x10) qua các epoch</div>
                     </div>
-                    <div class="figure-block">
-                        <img src="{img_base}/tensorboard_histogram/fc_bias.png" alt="ResNet-18 FC Bias Histogram">
-                        <div class="figure-caption">Hình 8B: Phân phối độ lệch ResNet-18 FC Bias (10) qua các epoch</div>
-                    </div>
-                    <div class="figure-block">
-                        <img src="{img_base}/tensorboard_histogram/classifier_weight.png" alt="DenseNet-121 Classifier Weight Histogram">
-                        <div class="figure-caption">Hình 8C: Phân phối trọng số DenseNet-121 Classifier Weight (1024x10)</div>
-                    </div>
-                    <div class="figure-block">
-                        <img src="{img_base}/tensorboard_histogram/classifier_bias.png" alt="DenseNet-121 Classifier Bias Histogram">
-                        <div class="figure-caption">Hình 8D: Phân phối độ lệch DenseNet-121 Classifier Bias (10)</div>
+                    <div class="chart-caption">Phân phối ma trận trọng số tầng Fully Connected của ResNet-18 xuyên suốt quá trình huấn luyện</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> Kiểm tra độ ổn định số học và phát hiện sớm hiện tượng bùng nổ hoặc triệt tiêu gradient trên ma trận trọng số phân loại.</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Kiểm soát phương sai:</strong> Trọng số duy trì dạng phân phối Gaussian hẹp tập trung quanh 0 với biên độ [-0.10, +0.10], chứng minh Weight Decay (1e-4) phát huy hiệu quả điều chuẩn tốt.</li>
+                        </ul>
                     </div>
                 </div>
-                <div class="callout callout-info">
+
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 8B: Phân phối Độ lệch ResNet-18 FC Bias (10)</span>
+                        <span class="chart-badge">BIAS HISTOGRAM</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/tensorboard_histogram/fc_bias.png" alt="ResNet-18 FC Bias Histogram">
+                    </div>
+                    <div class="chart-caption">Phân phối vector hệ số tự do (bias) 10 lớp của ResNet-18</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> Đánh giá mức độ dịch chuyển ngưỡng kích hoạt phân loại độc lập cho từng nhãn trong CIFAR-10.</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Cân bằng nhãn:</strong> Giá trị bias phân bổ đối xứng trong khoảng [-0.05, +0.05], không có lớp nào bị thiên vị (bias shift) bất thường.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 8C: Phân phối Trọng số DenseNet-121 Classifier Weight (1024 &times; 10)</span>
+                        <span class="chart-badge">WEIGHT HISTOGRAM</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/tensorboard_histogram/classifier_weight.png" alt="DenseNet-121 Classifier Weight Histogram">
+                    </div>
+                    <div class="chart-caption">Phân phối ma trận trọng số tầng Classifier của DenseNet-121 (1024 kênh vào)</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> Đánh giá trọng số kết nối từ 1,024 kênh đặc trưng tổng hợp của DenseNet sang 10 lớp đầu ra.</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Phân bố mịn màng:</strong> Đường cong mật độ dạng hình chuông cân đối hoàn hảo trong dải [-0.08, +0.08], phản ánh quá trình lan truyền ngược ổn định.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 8D: Phân phối Độ lệch DenseNet-121 Classifier Bias (10)</span>
+                        <span class="chart-badge">BIAS HISTOGRAM</span>
+                    </div>
+                    <div class="chart-image-wrap">
+                        <img src="{img_base}/tensorboard_histogram/classifier_bias.png" alt="DenseNet-121 Classifier Bias Histogram">
+                    </div>
+                    <div class="chart-caption">Phân phối vector bias của DenseNet-121 classifier head</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> Giám sát ngưỡng kích hoạt của 10 lớp đầu ra trên kiến trúc DenseNet.</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Ổn định không thiên vị:</strong> Các giá trị hội tụ ổn định gần 0, đảm bảo xác suất dự báo phân bổ đều theo đúng bản chất tập dữ liệu cân bằng.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="callout callout-info" style="margin-top: 15px;">
                     <div>
-                        <strong>Xác nhận chuẩn mực phân phối (Distribution Check):</strong> Trọng số được phân bổ chuẩn Gaussian hẹp, không xuất hiện hiện tượng triệt tiêu gradient (Vanishing Gradient) hay bùng nổ gradient (Exploding Gradient). Tham số Weight Decay (<math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>10</mn><mrow><mo>&minus;</mo><mn>4</mn></mrow></msup></math>) đã kiểm soát hiệu quả biên độ trọng số trong khoảng <math xmlns="http://www.w3.org/1998/Math/MathML"><mo>[</mo><mo>&minus;</mo><mn>0.1</mn><mo>,</mo><mn>0.1</mn><mo>]</mo></math>.
+                        <strong>Xác nhận chuẩn mực phân phối (Distribution Check):</strong> Toàn bộ trọng số được phân bổ chuẩn Gaussian hẹp, không xuất hiện hiện tượng triệt tiêu gradient (Vanishing Gradient) hay bùng nổ gradient (Exploding Gradient). Tham số Weight Decay (<math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>10</mn><mrow><mo>&minus;</mo><mn>4</mn></mrow></msup></math>) đã kiểm soát hiệu quả biên độ trọng số trong khoảng <math xmlns="http://www.w3.org/1998/Math/MathML"><mo>[</mo><mo>&minus;</mo><mn>0.1</mn><mo>,</mo><mn>0.1</mn><mo>]</mo></math>.
                     </div>
                 </div>
 
@@ -1205,27 +1531,27 @@ for name, module in frozen_bn_layers:
                 <div class="image-grid-3">
                     <div class="figure-block">
                         <img src="{img_base}/tensorboard_image/resnet18_transfer.png" alt="ResNet18 Transfer Batch">
-                        <div class="figure-caption">Batch ảnh ResNet-18 Transfer</div>
+                        <div class="figure-caption">Batch ảnh: ResNet-18 Transfer</div>
                     </div>
                     <div class="figure-block">
                         <img src="{img_base}/tensorboard_image/resnet18_finetune.png" alt="ResNet18 Fine-tune Batch">
-                        <div class="figure-caption">Batch ảnh ResNet-18 Fine-Tune</div>
+                        <div class="figure-caption">Batch ảnh: ResNet-18 Fine-Tune</div>
                     </div>
                     <div class="figure-block">
                         <img src="{img_base}/tensorboard_image/densenet121_transfer.png" alt="DenseNet121 Transfer Batch">
-                        <div class="figure-caption">Batch ảnh DenseNet-121 Transfer</div>
+                        <div class="figure-caption">Batch ảnh: DenseNet-121 Transfer</div>
                     </div>
                     <div class="figure-block">
                         <img src="{img_base}/tensorboard_image/densenet121_finetune.png" alt="DenseNet121 Fine-tune Batch">
-                        <div class="figure-caption">Batch ảnh DenseNet-121 Fine-Tune</div>
+                        <div class="figure-caption">Batch ảnh: DenseNet-121 Fine-Tune</div>
                     </div>
                     <div class="figure-block">
                         <img src="{img_base}/tensorboard_image/resnet18_transfer_lr1e4.png" alt="ResNet18 LR1e4 Batch">
-                        <div class="figure-caption">Batch ảnh ResNet-18 LR 1e-4</div>
+                        <div class="figure-caption">Batch ảnh: ResNet-18 LR 1e-4</div>
                     </div>
                     <div class="figure-block">
                         <img src="{img_base}/tensorboard_image/resnet18_transfer_bs32.png" alt="ResNet18 BS32 Batch">
-                        <div class="figure-caption">Batch ảnh ResNet-18 Batch 32</div>
+                        <div class="figure-caption">Batch ảnh: ResNet-18 Batch 32</div>
                     </div>
                 </div>
 
@@ -1265,30 +1591,109 @@ for name, module in frozen_bn_layers:
                     <span class="sec-badge">PER-CLASS EVALUATION</span>
                 </div>
 
-                <div class="image-grid-2">
-                    <div class="figure-block">
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 9A: Ma trận Nhầm lẫn &mdash; ResNet-18 Transfer</span>
+                        <span class="chart-badge">TEST ACC: 77.98%</span>
+                    </div>
+                    <div class="chart-image-wrap">
                         <img src="{img_base}/resnet18_transfer_confusion_matrix.png" alt="ResNet18 Transfer Confusion Matrix">
-                        <div class="figure-caption">Ma trận nhầm lẫn: ResNet-18 Transfer (Test Acc: 77.98%)</div>
                     </div>
-                    <div class="figure-block">
+                    <div class="chart-caption">Ma trận nhầm lẫn chuẩn hóa trên tập Test độc lập (10,000 ảnh) &mdash; ResNet-18 Transfer Learning</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> Phản ánh năng lực phân loại của bộ trích xuất đặc trưng tĩnh ImageNet kết hợp linear head mới.</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Lớp tốt:</strong> <code>automobile</code> (85.6%), <code>ship</code> (88.5%), <code>truck</code> (85.4%).</li>
+                            <li><strong>Lớp nhầm nhiều:</strong> <code>cat</code> chỉ đạt 56.4% (bị nhầm sang <code>dog</code> 19.4% và <code>bird</code> 7.5%) do đặc trưng động vật phức tạp chưa được fine-tune.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 9B: Ma trận Nhầm lẫn &mdash; ResNet-18 Fine-Tuning</span>
+                        <span class="chart-badge">TEST ACC: 90.24%</span>
+                    </div>
+                    <div class="chart-image-wrap">
                         <img src="{img_base}/resnet18_finetune_confusion_matrix.png" alt="ResNet18 Fine-tune Confusion Matrix">
-                        <div class="figure-caption">Ma trận nhầm lẫn: ResNet-18 Fine-Tuning (Test Acc: 90.24%)</div>
                     </div>
-                    <div class="figure-block">
+                    <div class="chart-caption">Ma trận nhầm lẫn khi mở khóa Layer 4 và áp dụng Differential Learning Rate</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> Đo lường sự cải thiện nhận diện sau khi tinh chỉnh các bộ lọc sâu nhất cho CIFAR-10.</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Bứt phá toàn diện:</strong> Test Acc tăng vọt lên <strong>90.24%</strong> (+12.26%). Lớp <code>airplane</code> đạt 95.0%, <code>ship</code> đạt 96.0%.</li>
+                            <li><strong>Khắc phục nhầm lẫn:</strong> Lớp <code>cat</code> cải thiện từ 56.4% lên 78.0%, nhầm lẫn sang <code>dog</code> giảm hơn một nửa.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 9C: Ma trận Nhầm lẫn &mdash; DenseNet-121 Transfer</span>
+                        <span class="chart-badge">TEST ACC: 81.34%</span>
+                    </div>
+                    <div class="chart-image-wrap">
                         <img src="{img_base}/densenet121_transfer_confusion_matrix.png" alt="DenseNet121 Transfer Confusion Matrix">
-                        <div class="figure-caption">Ma trận nhầm lẫn: DenseNet-121 Transfer (Test Acc: 81.34%)</div>
                     </div>
-                    <div class="figure-block">
+                    <div class="chart-caption">Ma trận nhầm lẫn của DenseNet-121 Transfer Learning với 1,024 kênh đặc trưng</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> Đánh giá ưu thế trích xuất đặc trưng của cơ chế ghép nối kênh (Dense Feature Reuse).</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Ưu thế trích xuất:</strong> Đạt <strong>81.34%</strong> (vượt ResNet-18 Transfer +3.36%). Lớp <code>automobile</code> đạt 85.7%, <code>ship</code> đạt 89.9%.</li>
+                            <li><strong>Điểm nghẽn:</strong> Vẫn tồn tại nhầm lẫn giữa <code>cat</code> (64.5%) và <code>dog</code> (15.5%) do hạn chế của linear classifier đơn tầng.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 9D: Ma trận Nhầm lẫn &mdash; DenseNet-121 Fine-Tuning</span>
+                        <span class="chart-badge" style="background: #e8f5e9; color: #2e7d32;">BEST ACC: 90.65%</span>
+                    </div>
+                    <div class="chart-image-wrap">
                         <img src="{img_base}/densenet121_finetune_confusion_matrix.png" alt="DenseNet121 Fine-tune Confusion Matrix">
-                        <div class="figure-caption">Ma trận nhầm lẫn: DenseNet-121 Fine-Tuning (Test Acc: 90.65%)</div>
                     </div>
-                    <div class="figure-block">
+                    <div class="chart-caption">Ma trận nhầm lẫn của mô hình đạt độ chính xác cao nhất toàn dự án &mdash; DenseNet-121 Fine-Tuning</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> Thẩm định cấu hình tối ưu nhất dự án khi kết hợp DenseBlock 4 unfrozen với Differential LR.</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Độ chính xác kỷ lục:</strong> Đạt <strong>90.65%</strong> trên toàn bộ 10,000 ảnh test. Đường chéo chính đồng đều và đậm nét ở mọi lớp.</li>
+                            <li><strong>Nhận diện xuất sắc:</strong> <code>automobile</code> đạt 93.0%, <code>truck</code> đạt 94.0%, <code>airplane</code> đạt 94.0%, <code>ship</code> đạt 96.0%. Độ nhầm lẫn thấp nhất toàn dự án.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 9E: Ma trận Nhầm lẫn &mdash; ResNet-18 Transfer (LR 1e-4)</span>
+                        <span class="chart-badge">TEST ACC: 78.32%</span>
+                    </div>
+                    <div class="chart-image-wrap">
                         <img src="{img_base}/resnet18_transfer_lr1e4_confusion_matrix.png" alt="ResNet18 LR1e4 Confusion Matrix">
-                        <div class="figure-caption">Ma trận nhầm lẫn: ResNet-18 LR 1e-4 (Test Acc: 78.32%)</div>
                     </div>
-                    <div class="figure-block">
+                    <div class="chart-caption">Ma trận nhầm lẫn khảo sát siêu tham số Learning Rate nhỏ hơn (1e-4)</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> Kiểm chứng độ nhạy của quá trình học khi giảm learning rate từ 1e-3 xuống 1e-4 trên head phân loại.</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Hội tụ ổn định:</strong> Đạt <strong>78.32%</strong> (+0.34% so với LR 1e-3). Bước học nhỏ giúp mặt phẳng phân loại phẳng hơn, giảm nhẹ dao động.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="chart-standalone-card">
+                    <div class="chart-standalone-header">
+                        <span class="chart-title">Hình 9F: Ma trận Nhầm lẫn &mdash; ResNet-18 Transfer (Batch Size 32)</span>
+                        <span class="chart-badge">TEST ACC: 79.04%</span>
+                    </div>
+                    <div class="chart-image-wrap">
                         <img src="{img_base}/resnet18_transfer_bs32_confusion_matrix.png" alt="ResNet18 BS32 Confusion Matrix">
-                        <div class="figure-caption">Ma trận nhầm lẫn: ResNet-18 Batch 32 (Test Acc: 79.04%)</div>
+                    </div>
+                    <div class="chart-caption">Ma trận nhầm lẫn khảo sát siêu tham số Mini-batch Size lớn hơn (32 so với 16)</div>
+                    <div class="chart-explanation-box">
+                        <div class="chart-purpose">📌 <strong>Ý nghĩa:</strong> Đánh giá ảnh hưởng của kích thước mini-batch đến độ mịn của gradient và năng lực tổng quát hóa.</div>
+                        <ul class="chart-takeaway-list">
+                            <li><strong>Gradient mịn hơn:</strong> Đạt <strong>79.04%</strong> (+1.06% so với BS 16). Kích thước batch 32 cho ước lượng thống kê phương sai gradient tốt hơn và tăng tốc độ xử lý trên CPU.</li>
+                        </ul>
                     </div>
                 </div>
 

@@ -372,6 +372,58 @@ plt.suptitle("Ảnh mẫu gốc CIFAR-10 (Độ phân giải gốc 32x32 pixels)
 plt.tight_layout()
 plt.show()"""))
 
+    cells.append(nbf.v4.new_markdown_cell("""### 3.9.1. Khám phá Toàn diện EDA qua 7 Biểu đồ Độc lập (Standalone EDA Suite)
+Mỗi khía cạnh phân phối dữ liệu được tách biệt thành từng đồ thị chuyên biệt kèm giải thích ngắn gọn:
+
+#### 1. Biểu đồ Cột (Bar Chart): Phân bố số lượng mẫu theo lớp & phân tập
+![Phân bố mẫu](../outputs/figures/cifar10_eda_1_bar_distribution.png)
+- 📌 **Ý nghĩa:** Kiểm tra tính cân bằng của các lớp mục tiêu và tính khách quan trong việc chia tập Train/Val/Test.
+- 💡 **Kết quả then chốt:** Cả 10 lớp cân bằng tuyệt đối ($6.000$ ảnh/lớp; Train $4.500$, Val $500$, Test $1.000$), loại trừ hoàn toàn rủi ro thiên lệch nhãn.
+
+#### 2. Biểu đồ Tần suất (Histogram): Mật độ cường độ điểm ảnh 3 kênh RGB
+![Histogram RGB](../outputs/figures/cifar10_eda_2_histogram_rgb.png)
+- 📌 **Ý nghĩa:** Khảo sát hàm mật độ xác suất của pixel trên 3 kênh quang phổ.
+- 💡 **Kết quả then chốt:** Cả 3 kênh đều tạo hình chuông đơn đỉnh tập trung quanh $[0.45, 0.50]$, không bị cháy sáng hay tối đen cực đoan.
+
+#### 3. Biểu đồ Hộp (Box Plot): Độ sáng trung bình theo 10 lớp
+![Boxplot Độ sáng](../outputs/figures/cifar10_eda_3_boxplot_brightness.png)
+- 📌 **Ý nghĩa:** Đánh giá trung vị, dải tứ phân vị và các giá trị ngoại lệ của độ sáng trên từng lớp.
+- 💡 **Kết quả then chốt:** Lớp `airplane`, `ship` có độ sáng cao nhất ($\approx 0.54$); `deer`, `frog` tối hơn ($\approx 0.43$) do bối cảnh tự nhiên.
+
+#### 4. Bản đồ Nhiệt (Heatmap): Tương quan chéo giữa các kênh màu
+![Heatmap Tương quan](../outputs/figures/cifar10_eda_4_heatmap_correlation.png)
+- 📌 **Ý nghĩa:** Đo lường mức độ phụ thuộc tuyến tính và tính dư thừa thông tin giữa các kênh quang phổ RGB.
+- 💡 **Kết quả then chốt:** Tương quan Pearson rất cao ($r > 0.88$; cao nhất $r(R, G) = 0.9354$), khẳng định tính đồng nhất không gian thích hợp cho CNN đa kênh.
+
+#### 5. Biểu đồ Phân tán (Scatter Plot): Tương quan cường độ Red vs. Blue
+![Scatter Plot Red vs Blue](../outputs/figures/cifar10_eda_5_scatter_rgb.png)
+- 📌 **Ý nghĩa:** Khảo sát sự phân bố điểm ảnh trong không gian 2 kênh màu đại diện.
+- 💡 **Kết quả then chốt:** Điểm dữ liệu tạo dải elip chéo dốc lên theo $y = x$, chồng lấn dày đặc, cho thấy không thể tách lớp đơn thuần bằng kênh màu.
+
+#### 6. Biểu đồ Đường (Line Chart): Tích lũy phương sai PCA (Scree Plot)
+![PCA Scree Plot](../outputs/figures/cifar10_eda_6_line_pca_scree.png)
+- 📌 **Ý nghĩa:** Xác định tốc độ suy giảm phương sai khi giảm chiều không gian pixel thô (3.072 chiều).
+- 💡 **Kết quả then chốt:** 2 thành phần đầu chỉ giải thích được $39.9\\%$ phương sai (PC1 28.7%, PC2 11.2%). Cần 12 thành phần để đạt 50% và 60 thành phần để đạt 80%.
+
+#### 7. Biểu đồ Phân tán 2D (Scatter Plot): Chiếu không gian 3.072D về PC1 & PC2
+![PCA 2D Scatter](../outputs/figures/cifar10_eda_7_pca_2d_scatter.png)
+- 📌 **Ý nghĩa:** Kiểm tra giả thuyết liệu các lớp có thể phân tách tuyến tính trên không gian pixel thô hay không.
+- 💡 **Kết quả then chốt:** Các lớp chồng lấn mạnh mẽ (Manifold Entanglement). Bằng chứng toán học khẳng định dữ liệu không thể phân tách tuyến tính, bắt buộc phải dùng Deep CNNs."""))
+
+    cells.append(nbf.v4.new_code_cell("""# Xác nhận kiểm tra sự tồn tại của toàn bộ 7 biểu đồ EDA độc lập
+eda_figs = [
+    "outputs/figures/cifar10_eda_1_bar_distribution.png",
+    "outputs/figures/cifar10_eda_2_histogram_rgb.png",
+    "outputs/figures/cifar10_eda_3_boxplot_brightness.png",
+    "outputs/figures/cifar10_eda_4_heatmap_correlation.png",
+    "outputs/figures/cifar10_eda_5_scatter_rgb.png",
+    "outputs/figures/cifar10_eda_6_line_pca_scree.png",
+    "outputs/figures/cifar10_eda_7_pca_2d_scatter.png",
+]
+for p in eda_figs:
+    assert os.path.exists(p), f"Thiếu tệp: {p}"
+print(f"Thẩm định thành công toàn bộ {len(eda_figs)} tệp đồ họa EDA độc lập.")"""))
+
     cells.append(nbf.v4.new_markdown_cell("""### 3.10. Phân chia dữ liệu Train, Validation và Test
 Tập Train gốc gồm 50.000 mẫu được chia theo tỷ lệ 9:1 thành **45.000 mẫu Train** và **5.000 mẫu Validation** với hạt giống cố định `seed=42`. Tập Test gồm 10.000 mẫu được giữ biệt lập hoàn toàn."""))
 
@@ -814,16 +866,51 @@ if per_class_data:
   2. **Automobile (Ô tô con) $\\leftrightarrow$ Truck (Xe tải):** Đều là phương tiện giao thông trên đường, chứa các đặc trưng cạnh bánh xe và khung kim loại giống nhau.
   3. **Airplane (Máy bay) $\\leftrightarrow$ Bird (Chim):** Cả hai đều có nền trời xanh phía sau và hình dáng dang cánh ngang tương đồng."""))
 
-    cells.append(nbf.v4.new_code_cell("""cm_figs = [
-    ("outputs/figures/resnet18_transfer_confusion_matrix.png", "Ma trận Nhầm lẫn — ResNet18 Transfer"),
-    ("outputs/figures/resnet18_finetune_confusion_matrix.png", "Ma trận Nhầm lẫn — ResNet18 Fine-Tuning"),
-    ("outputs/figures/densenet121_finetune_confusion_matrix.png", "Ma trận Nhầm lẫn — DenseNet121 Fine-Tuning")
-]
+    cells.append(nbf.v4.new_markdown_cell("""### 7.9.1. Ma trận Nhầm lẫn Toàn diện (6 Cấu hình Thí nghiệm Độc lập)
+Mỗi cấu hình mô hình được đánh giá ma trận nhầm lẫn riêng biệt kèm nhận xét cụ thể:
 
-for path, title in cm_figs:
-    if os.path.exists(path):
-        print(f"=== {title} ===")
-        display(Image(filename=path, width=550))"""))
+#### 1. Ma trận Nhầm lẫn: ResNet-18 Transfer (Test Acc: 77.98%)
+![ResNet-18 Transfer CM](../outputs/figures/resnet18_transfer_confusion_matrix.png)
+- 📌 **Ý nghĩa:** Đo lường năng lực phân loại của Linear Head trên không gian đặc trưng tĩnh ImageNet.
+- 💡 **Điểm then chốt:** Phân loại tốt xe cộ (`automobile` 85.6%, `ship` 88.5%). Điểm nghẽn ở `cat` (56.4%) do nhầm lẫn cao sang `dog` (19.4%).
+
+#### 2. Ma trận Nhầm lẫn: ResNet-18 Fine-Tuning (Test Acc: 90.24%)
+![ResNet-18 Fine-Tune CM](../outputs/figures/resnet18_finetune_confusion_matrix.png)
+- 📌 **Ý nghĩa:** Đo lường hiệu quả thích nghi khi mở khóa Layer 4 với Differential LR.
+- 💡 **Điểm then chốt:** Test Acc bứt phá lên 90.24% (+12.26%). `ship` đạt 96.0%, `airplane` 95.0%. Nhầm lẫn `cat`/`dog` giảm mạnh, `cat` tăng lên 78.0%.
+
+#### 3. Ma trận Nhầm lẫn: DenseNet-121 Transfer (Test Acc: 81.34%)
+![DenseNet-121 Transfer CM](../outputs/figures/densenet121_transfer_confusion_matrix.png)
+- 📌 **Ý nghĩa:** Đánh giá ưu thế trích xuất đặc trưng của cơ chế ghép nối kênh (Dense Feature Reuse).
+- 💡 **Điểm then chốt:** Đạt 81.34% (+3.36% so với ResNet-18 Transfer). Lớp `ship` đạt 89.9%, `automobile` đạt 85.7%.
+
+#### 4. Ma trận Nhầm lẫn: DenseNet-121 Fine-Tuning (Best Test Acc: 90.65%)
+![DenseNet-121 Fine-Tune CM](../outputs/figures/densenet121_finetune_confusion_matrix.png)
+- 📌 **Ý nghĩa:** Đánh giá cấu hình tối ưu nhất toàn dự án khi mở khóa DenseBlock 4.
+- 💡 **Điểm then chốt:** Đạt Test Accuracy cao nhất dự án (**90.65%**). Phân loại xuất sắc cả 10 lớp: `ship` 96.0%, `truck` 94.0%, `airplane` 94.0%, `automobile` 93.0%.
+
+#### 5. Ma trận Nhầm lẫn: ResNet-18 Transfer (LR $10^{-4}$) (Test Acc: 78.32%)
+![ResNet-18 LR1e4 CM](../outputs/figures/resnet18_transfer_lr1e4_confusion_matrix.png)
+- 📌 **Ý nghĩa:** Khảo sát ảnh hưởng khi giảm learning rate xuống $10^{-4}$ trên classification head.
+- 💡 **Điểm then chốt:** Đạt 78.32% (+0.34% so với LR 1e-3). Bước học nhỏ giúp mặt phẳng phân loại ổn định hơn.
+
+#### 6. Ma trận Nhầm lẫn: ResNet-18 Transfer (Batch Size 32) (Test Acc: 79.04%)
+![ResNet-18 BS32 CM](../outputs/figures/resnet18_transfer_bs32_confusion_matrix.png)
+- 📌 **Ý nghĩa:** Khảo sát ảnh hưởng của kích thước mini-batch lớn hơn (32 so với 16).
+- 💡 **Điểm then chốt:** Đạt 79.04% (+1.06%), ước lượng phương sai gradient mịn hơn và tăng tốc độ xử lý CPU."""))
+
+    cells.append(nbf.v4.new_code_cell("""# Xác nhận kiểm tra sự tồn tại của toàn bộ 6 ma trận nhầm lẫn độc lập
+cm_figs = [
+    "outputs/figures/resnet18_transfer_confusion_matrix.png",
+    "outputs/figures/resnet18_finetune_confusion_matrix.png",
+    "outputs/figures/densenet121_transfer_confusion_matrix.png",
+    "outputs/figures/densenet121_finetune_confusion_matrix.png",
+    "outputs/figures/resnet18_transfer_lr1e4_confusion_matrix.png",
+    "outputs/figures/resnet18_transfer_bs32_confusion_matrix.png",
+]
+for p in cm_figs:
+    assert os.path.exists(p), f"Thiếu tệp: {p}"
+print(f"Thẩm định thành công toàn bộ {len(cm_figs)} tệp ma trận nhầm lẫn độc lập.")"""))
 
     cells.append(nbf.v4.new_markdown_cell("""### 7.10. Đánh giá chi phí tính toán và hiệu năng
 Bảng đối chiếu đánh đổi giữa số lượng tham số cần huấn luyện, thời gian tính toán và độ chính xác đạt được:

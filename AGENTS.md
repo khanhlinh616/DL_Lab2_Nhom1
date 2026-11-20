@@ -3,291 +3,109 @@
 ## PHẦN I: WORKFLOW & DEFINITION OF DONE
 
 ### 1. Definition of Done (DoD)
-Một task chỉ được coi là hoàn thành khi đáp ứng đầy đủ các tiêu chuẩn kỹ thuật sau:
+Task chỉ hoàn thành khi đáp ứng đầy đủ:
 - **Đủ yêu cầu:** Đạt đầy đủ các yêu cầu chức năng.
-- **Code chạy:** Code chạy được, thực thi không lỗi cú pháp hay runtime.
-- **Test passed:** Toàn bộ kiểm thử đều vượt qua.
-- **No secrets:** Không để lộ API key, token, mật khẩu hay bí mật trong code/commit.
-- **Code review:** Mã nguồn đã được tự rà soát, đánh giá chất lượng.
+- **Code chạy:** Thực thi không lỗi cú pháp hay runtime.
+- **Test passed:** Toàn bộ kiểm thử đều vượt qua (100% passed).
+- **No secrets:** Không để lộ API key, token, mật khẩu trong code/commit.
+- **Code review:** Mã nguồn được tự rà soát, đạt chuẩn chất lượng.
 - **GitHub:** Trạng thái mã nguồn đồng bộ với GitHub.
-- **Docs updated:** Tài liệu đã được cập nhật tương ứng với các thay đổi.
-- **Committed:** Thay đổi đã được commit theo chuẩn.
-> **Lưu ý cốt lõi:** Viết code xong phải kiểm tra, đánh giá kỹ lưỡng thay vì chỉ thấy chạy được là hoàn thành.  
-> **Implement – Plan:** Code trước, nhưng nếu mục tiêu lớn thì cần có các bước và ghi chú rõ ràng.  
-> **Progress status:** Luôn cập nhật trạng thái tiến độ vào file markdown (`.md`).
+- **Docs updated:** Tài liệu được cập nhật tương ứng thay đổi.
+- **Committed:** Đã commit theo chuẩn Conventional Commits.
+> **Lưu ý:** Viết code xong phải kiểm tra, đánh giá kỹ lưỡng thay vì chỉ thấy chạy được là xong. Cập nhật tiến độ vào file markdown (`.md`).
 
-### 2. Các mục bắt buộc trong báo cáo
-- **Example In-out:** Ví dụ cụ thể về đầu vào và đầu ra.
-- **Results:** Kết quả thực nghiệm/chạy thực tế kèm số liệu, biểu đồ hoặc minh chứng rõ ràng.
-- **Limitations:** Các giới hạn còn tồn tại của giải pháp/mô hình.
-- **Future Improvements:** Định hướng cải tiến trong tương lai.
-
-### 3. AI Usage (Báo cáo sử dụng AI - file md)
-Khi sử dụng AI hỗ trợ, cần ghi nhận đầy đủ:
-- **Tools used:** Các công cụ AI đã sử dụng.
-- **Main purposes:** Mục đích chính khi dùng AI.
-- **Student contributions:** Đóng góp thực tế của sinh viên/người phát triển.
-- **Important AI-generated components:** Các thành phần quan trọng do AI sinh ra.
-- **Prompt purpose:** Mục đích của các prompt đã đưa ra.
-- **Student modification:** Các chỉnh sửa, bổ sung do sinh viên thực hiện trên code AI sinh ra.
-- **Validation:** Phương pháp kiểm chứng và đánh giá lại kết quả của AI.
-- **Hội thoại & đối chiếu:** Lưu trữ tiến trình và ngữ cảnh làm việc minh bạch.
-
-### 4. Một số lưu ý quan trọng khi dùng AI
-- **Tuyệt đối không để AI đẩy code** mà không chạy thử hoặc không hiểu rõ cơ chế hoạt động.
-- **Tạo test suite** để pipeline kiểm thử luôn "passed" một cách minh bạch, thực chất.
-- **Bảo mật:** Không đưa API key/password lên GitHub. Không commit `.env`, token hoặc secrets vào git.
-- **Tạo rule check lại** trước khi commit.
-- **Tính trung thực:** Không thay đổi báo cáo tùy tiện, không sửa kết quả đánh giá thực nghiệm để làm đẹp số liệu.
-
-### 5. Nguyên tắc viết Prompt tốt
-- Cấu trúc: `Context nhỏ + Mục tiêu rõ ràng + Tiêu chí chung cụ thể`.
-
-### 6. Lập kế hoạch (Plan)
-- Xác định: `Mục tiêu + Input/Output + Feature`.
-- Phân tích: `Constraints → Architecture + Modules + Milestones + Risks → Chia nhỏ viết code`.
-
-### 7. Triển khai (Implement)
-- Định rõ cho từng thành phần: `Module + Code + In/Out + Interface + Constraints`.
-
-### 8. Sử dụng và Tài liệu (Usage và Document)
-- **README.md:**
-  - Project overview (Tổng quan dự án).
-  - Problem statement (Bài toán cần giải quyết).
-  - Main feature (Các tính năng chính).
-  - System architecture (Kiến trúc hệ thống).
-  - Folder structure (Cấu trúc thư mục).
-  - Installation / Run / Test (Hướng dẫn cài đặt, chạy và kiểm thử).
-  - Model & Knowledge Distillation (Chi tiết mô hình, chưng cất tri thức nếu áp dụng).
-- **Hệ thống Tài liệu Khoa học chuẩn hóa trong `docs/`:**
-  - `docs/labs2.md`: Báo cáo khoa học Deep Learning chuẩn 12 phần (Master Rule).
-  - `docs/data.md`: Báo cáo khoa học Dataset CIFAR-10 và trực quan hóa EDA chuẩn 10 phần kèm PCA (Master Rule).
-  - `docs/model.md`: Báo cáo đặc tả kiến trúc mô hình bảo toàn 100% thông tin kỹ thuật (Master Rule).
-  - `docs/training.md`: Vòng lặp huấn luyện 6 bước, Differential Learning Rate và kiểm toán BatchNorm.
-  - `docs/evaluation.md`: Đánh giá độc lập trên tập Test và ma trận nhầm lẫn.
-  - `docs/audit-log.md`: Nhật ký kiểm toán vòng đời kỹ thuật 5 giai đoạn (Description -> Gen -> Smoke -> Run -> Check).
-  - `docs/plan-progress-status.md`: Kế hoạch thực nghiệm, rủi ro và tiêu chuẩn Definition of Done.
-
-### 9. Build MVP – Triển khai Module by Module
-- **Ưu tiên MVP trước:** Xây dựng sản phẩm khả dụng tối thiểu trước.
-- **Quy trình module:** Nhận input → thực hiện chức năng chính → kiểm tra xem có đủ tính năng hay cần thêm tính năng phụ.
-- **Một module / một lần:** Xác định rõ mục tiêu, input, output, interface trước khi sửa code.
-- **Một thay đổi / một lần:** Không sửa nhiều module cùng lúc để tránh phân tán và khó kiểm soát.
-- **Chu trình phát triển chuẩn:**
-  `Describe → Generate → Review → Run (Smoke test) → Dry-run → Test → Refactor → Commit`
+### 2. Các mục bắt buộc trong báo cáo: Example In-out | Results | Limitations | Future Improvements.
+### 3. AI Usage: Ghi nhận Tools used, Main purposes, Student contributions, Important AI components, Prompt purpose, Student modification, Validation, Context đối chiếu.
+### 4. Lưu ý khi dùng AI: Không để AI đẩy code khi chưa chạy thử/chưa hiểu; tạo test suite passed thực chất; không lộ API key/token; không commit .env; không sửa số liệu thực nghiệm.
+### 5. Prompt tốt: `Context nhỏ + Mục tiêu rõ ràng + Tiêu chí chung cụ thể`.
+### 6. Plan: `Mục tiêu + In/Out + Feature` &rarr; `Constraints → Architecture + Modules + Milestones + Risks → Chia nhỏ viết code`.
+### 7. Implement: Xác định rõ `Module + Code + In/Out + Interface + Constraints`.
+### 8. Sử dụng và Tài liệu:
+- **README.md:** Overview, Problem, Features, Architecture, Folder structure, Install/Run/Test, Model, Results, Limitations, Improvements, AI Usage.
+- **Tài liệu trong `docs/`:** `labs2.md` (12 phần), `data.md` (10 phần), `model.md` (đặc tả 100% info), `training.md`, `evaluation.md`, `audit-log.md` (5 giai đoạn), `plan-progress-status.md`.
+### 9. Build MVP: MVP trước; một module/một lần; một thay đổi/một lần. Quy trình: `Describe → Generate → Review → Run (Smoke test) → Dry-run → Test → Refactor → Commit`.
 
 ---
 
 ## PHẦN II: MASTER RULES — QUY TẮC CHUNG CHO MỌI DỰ ÁN
 
 ### 1. Nguyên tắc làm việc
-- Đọc kỹ toàn bộ yêu cầu, tài liệu, đề bài, rubric và mã nguồn hiện có trước khi thực hiện.
-- Xác định rõ mục tiêu, phạm vi, đầu vào, đầu ra, ràng buộc kỹ thuật và tiêu chí hoàn thành.
-- Ưu tiên nội dung được cung cấp bởi người dùng, đề bài, giáo trình và tài liệu chính thức của dự án.
-- Không tự ý thêm yêu cầu, thay đổi mục tiêu hoặc mở rộng phạm vi nếu không có căn cứ.
-- Không bịa thông tin, kết quả, số liệu, nguồn trích dẫn, tính năng hoặc trạng thái hoàn thành.
-- Phân biệt rõ thông tin từ tài liệu, thông tin đã kiểm chứng, giả định và đề xuất kỹ thuật.
-- Khi thiếu thông tin quan trọng, kiểm tra những nguồn có sẵn trước; chỉ hỏi lại khi không thể đưa ra quyết định an toàn và chính xác.
-- Không tuyên bố đã đọc, kiểm tra, chạy, sửa hoặc xác minh điều gì nếu thực tế chưa thực hiện.
+- Đọc kỹ yêu cầu, rubric và mã nguồn trước khi làm; xác định rõ mục tiêu, phạm vi, I/O, ràng buộc kỹ thuật.
+- Ưu tiên tài liệu chính thức; không tự ý thêm yêu cầu hay mở rộng phạm vi; không bịa thông tin, số liệu, tính năng.
+- Phân biệt rõ thông tin tài liệu, kiểm chứng, giả định và đề xuất; kiểm tra nguồn có sẵn trước khi hỏi.
 
 ### 2. Đọc và tuân thủ tài liệu nguồn
-- Đọc đúng nội dung nguồn được cung cấp; không chỉ dựa vào tên file, mục lục, trích đoạn hoặc phần tóm tắt khi nhiệm vụ yêu cầu đọc đầy đủ.
-- Giữ nguyên thuật ngữ chuyên môn, công thức, ký hiệu, định nghĩa, cấu trúc lập luận và mức độ chi tiết quan trọng của tài liệu.
-- Không âm thầm thay thế nội dung nguồn bằng kiến thức bên ngoài, kể cả khi kiến thức bên ngoài có vẻ hợp lý hơn.
-- Không bỏ ý, đổi nghĩa, tự hòa giải những điểm mâu thuẫn hoặc bổ sung phần tài liệu không đề cập.
-- Nếu cần dùng kiến thức ngoài nguồn, phải phân biệt rõ với nội dung được trích xuất từ nguồn.
-- Khi đề bài có rubric hoặc yêu cầu cụ thể, kiểm tra từng tiêu chí tương ứng trước khi kết luận đã hoàn thành.
-- Với yêu cầu chính xác theo tài liệu, cần đối chiếu trực tiếp nội dung liên quan; không khẳng định chính xác hoàn toàn nếu chưa đủ căn cứ.
+- Đọc đúng nội dung nguồn; giữ nguyên thuật ngữ chuyên môn, công thức, ký hiệu, cấu trúc lập luận.
+- Không âm thầm thay thế nội dung nguồn bằng kiến thức ngoài; nếu bổ sung phải phân biệt rõ ràng.
+- Đối chiếu từng tiêu chí rubric trước khi kết luận hoàn thành; không khẳng định nếu chưa đủ căn cứ.
 
 ### 3. Quy tắc chỉnh sửa dự án có sẵn
-- Trước khi sửa, kiểm tra cấu trúc thư mục, file cấu hình, mã nguồn, tài liệu, test và trạng thái hiện tại của dự án.
-- Xác định vấn đề thực sự cần sửa trước khi thay đổi.
-- Ưu tiên chỉnh sửa tối thiểu, có mục tiêu và có thể kiểm chứng.
-- Giữ nguyên những phần đang hoạt động đúng, không liên quan đến yêu cầu.
-- Không xây dựng lại toàn bộ dự án chỉ để xử lý một vấn đề cục bộ.
-- Không tự ý đổi tên file, thư mục, hàm, class, biến, API, định dạng đầu vào hoặc đầu ra nếu không cần thiết.
-- Không xóa dữ liệu, checkpoint, kết quả thực nghiệm, cấu hình hoặc tài liệu có giá trị.
-- Trước khi sửa các thành phần có nguy cơ gây mất dữ liệu hoặc phá vỡ tính tương thích, phải xác định ảnh hưởng và có phương án bảo toàn.
-- Kiểm tra các thành phần phụ thuộc trước khi sửa một thành phần dùng chung.
-- Nếu dự án chưa có cấu trúc phù hợp, đề xuất hoặc xây dựng cấu trúc dựa trên yêu cầu thực tế; không áp đặt một mẫu kiến trúc cố định cho mọi dự án.
+- Kiểm tra cấu trúc, cấu hình, mã nguồn, tài liệu, test trước khi sửa; xác định đúng vấn đề cần sửa.
+- Ưu tiên chỉnh sửa tối thiểu, có mục tiêu, kiểm chứng được; giữ nguyên phần đang hoạt động đúng.
+- Không đổi tên file/hàm/biến/API/I/O nếu không cần thiết; không xóa dữ liệu, checkpoint, cấu hình có giá trị.
+- Đánh giá ảnh hưởng và phụ thuộc trước khi sửa thành phần dùng chung; cấu trúc dựa trên thực tế.
 
 ### 4. Quy tắc chất lượng mã nguồn
-- Viết code rõ ràng, nhất quán, có thể đọc, bảo trì và kiểm thử.
-- Tách các chức năng theo trách nhiệm hợp lý; tránh trùng lặp logic và phụ thuộc không cần thiết.
-- Sử dụng tên biến, hàm, class và module thể hiện đúng mục đích.
-- Xử lý các trường hợp đầu vào không hợp lệ, lỗi có thể xảy ra và tình huống biên phù hợp với phạm vi dự án.
-- Không thêm abstraction, framework, thư viện hoặc tầng kiến trúc chỉ để làm dự án trông phức tạp hơn.
-- Không lặp lại code, thêm file hoặc tạo cấu hình không mang lại giá trị rõ ràng.
-- Không hardcode thông tin nhạy cảm, mật khẩu, API key hoặc thông tin môi trường.
-- Tôn trọng phiên bản ngôn ngữ, thư viện, nền tảng và giới hạn tài nguyên hiện có.
-- Giữ tương thích với giao diện và hợp đồng của những thành phần liên quan.
-- Không sửa code đang đúng chỉ để tạo ra khác biệt về hình thức.
+- Code rõ ràng, nhất quán, dễ đọc, dễ bảo trì và kiểm thử; phân tách trách nhiệm hợp lý (SRP).
+- Tên biến/hàm/class thể hiện đúng mục đích; xử lý input không hợp lệ và trường hợp biên phù hợp.
+- Không thêm abstraction/thư viện thừa; không hardcode secrets; tôn trọng phiên bản ngôn ngữ và môi trường.
 
 ### 5. Quy tắc dữ liệu và kết quả
-- Xác định nguồn gốc, cấu trúc, kiểu dữ liệu, ý nghĩa và giới hạn của dữ liệu trước khi sử dụng.
-- Không tự tạo dữ liệu thực nghiệm hoặc sửa số liệu để kết quả trông tốt hơn.
-- Không xóa, lọc hoặc biến đổi dữ liệu mà không có lý do phù hợp với mục tiêu.
-- Kiểm tra dữ liệu thiếu, trùng lặp, sai kiểu, giá trị bất thường và các vấn đề liên quan khi chúng có ý nghĩa đối với bài toán.
-- Giữ lại dữ liệu gốc khi cần thiết để có thể truy xuất và kiểm tra.
-- Phân biệt dữ liệu huấn luyện, validation, test hoặc các tập dữ liệu có vai trò khác nhau khi dự án yêu cầu.
-- Tránh rò rỉ dữ liệu và các phép biến đổi sử dụng thông tin từ tập đánh giá.
-- Không suy diễn quan hệ nhân quả từ tương quan hoặc khẳng định kết luận vượt quá bằng chứng.
-- Mọi bảng, biểu đồ và kết luận định lượng phải dựa trên dữ liệu thực tế hoặc nguồn được ghi rõ.
+- Xác định rõ nguồn gốc, kiểu dữ liệu, ý nghĩa trước khi dùng; không tự tạo hay làm đẹp số liệu.
+- Kiểm tra missing, duplicates, outliers, kiểu dữ liệu khi có ý nghĩa; giữ lại dữ liệu gốc để kiểm tra.
+- Phân biệt train/val/test, chống rò rỉ dữ liệu (data leakage); mọi bảng/biểu đồ phải dựa trên dữ liệu thật.
 
 ### 6. Quy tắc lựa chọn giải pháp kỹ thuật
-- Chọn giải pháp dựa trên bài toán, tài liệu nguồn, yêu cầu, độ phức tạp, tài nguyên và khả năng kiểm chứng.
-- Phân biệt yêu cầu bắt buộc với lựa chọn kỹ thuật do người triển khai đề xuất.
-- Không mặc định một thuật toán, framework, mô hình hoặc kiến trúc là tốt nhất cho mọi trường hợp.
-- Giải thích ngắn gọn lý do chọn giải pháp khi quyết định đó ảnh hưởng đáng kể đến thiết kế.
-- Chỉ thêm tối ưu hóa khi có nhu cầu thực tế hoặc bằng chứng về vấn đề cần giải quyết.
-- Cân nhắc độ chính xác, khả năng bảo trì, độ phức tạp, hiệu năng và giới hạn môi trường.
-- Không thêm tính năng ngoài phạm vi chỉ vì chúng có thể hữu ích.
-- Không tự thay đổi phương pháp đã được đề bài yêu cầu bắt buộc.
+- Chọn giải pháp dựa trên bài toán, độ phức tạp, tài nguyên và khả năng kiểm chứng; giải thích lý do khi cần.
+- Không mặc định một thuật toán/framework là tốt nhất; chỉ tối ưu hóa khi có nhu cầu hoặc bằng chứng thực tế.
+- Cân nhắc độ chính xác, bảo trì, hiệu năng; không tự ý đổi phương pháp đề bài đã bắt buộc.
 
 ### 7. Kiểm thử và xác minh
-- Xác định cách kiểm tra phù hợp với từng loại dự án.
-- Ưu tiên chạy test hiện có trước khi sửa nếu điều kiện cho phép, để biết trạng thái ban đầu.
-- Sau khi sửa, chạy các test và kiểm tra có liên quan trực tiếp đến thay đổi.
-- Kiểm tra cả đầu vào hợp lệ, trường hợp biên và lỗi có thể xảy ra khi cần thiết.
-- Với dự án có nhiều thành phần, kiểm tra sự tương thích giữa các thành phần bị ảnh hưởng.
-- Không chỉ dựa vào việc code không báo lỗi cú pháp để kết luận chương trình hoạt động đúng.
-- Không bỏ qua lỗi, warning hoặc test thất bại có ý nghĩa.
-- Nếu không thể chạy test do thiếu thư viện, quyền truy cập, tài nguyên hoặc môi trường, phải nêu rõ giới hạn.
-- Báo cáo chính xác test nào đã chạy, kết quả thực tế và phần nào chưa được xác minh.
-- Không tuyên bố mọi thứ hoạt động hoàn hảo khi chỉ kiểm tra một phần.
+- Chạy test hiện có trước khi sửa để biết baseline; sau khi sửa, chạy test liên quan trực tiếp.
+- Kiểm tra cả input hợp lệ, trường hợp biên và lỗi; kiểm tra tương thích giữa các thành phần.
+- Không chỉ dựa vào cú pháp không lỗi; không bỏ qua warning/lỗi có ý nghĩa; báo cáo chính xác test đã chạy.
 
 ### 8. Quy tắc tài liệu và văn phong
-- Viết tài liệu phục vụ người đọc hiểu dự án, cách hoạt động, quyết định kỹ thuật và kết quả thực tế.
-- Dùng câu trực tiếp, rõ ràng, tự nhiên và vừa đủ.
-- Ưu tiên giải thích cơ chế, lý do hoặc kết quả cụ thể thay vì các tuyên bố chung chung.
-- Loại bỏ câu sáo rỗng, câu lặp ý, phần tự khen dự án và những đoạn không bổ sung thông tin.
-- Không lạm dụng các cụm như “đảm bảo tính tối ưu”, “tuân thủ đầy đủ”, “đáp ứng mọi yêu cầu”, “như đã đề cập ở trên” hoặc “dựa trên quy trình đã đối chiếu” khi không cần thiết.
-- Không viết câu chỉ để tuyên bố rằng dự án tuân thủ một quy trình, tiêu chuẩn hoặc yêu cầu mà không giải thích thông tin thực chất.
-- Không tự nhận xét mô hình, hệ thống hoặc kết quả là tốt, hiệu quả, chính xác hay tối ưu nếu chưa có bằng chứng tương ứng.
-- Giữ thuật ngữ nhất quán và giải thích thuật ngữ khi đối tượng đọc cần.
-- Không cố tình tạo lỗi ngữ pháp hoặc làm giảm tính chuyên nghiệp để thay đổi phong cách.
-- Giữ lại những câu tổng kết, chuyển ý hoặc giải thích nếu chúng thực sự cần thiết cho mạch nội dung.
-- Không thêm phần giới thiệu, kết luận, mục lục hoặc tài liệu tham khảo nếu chúng không cần thiết hoặc không được yêu cầu.
+- Tài liệu phục vụ người đọc hiểu cơ chế và kết quả; câu trực tiếp, tự nhiên, cô đọng, giàu thuật ngữ kỹ thuật.
+- Loại bỏ câu sáo rỗng, tự khen, lặp ý; không tự nhận xét mô hình tốt/tối ưu nếu chưa có bằng chứng.
+- Giữ thuật ngữ nhất quán; không thêm phần giới thiệu/kết luận thừa nếu đề không yêu cầu.
 
 ### 9. Quy tắc tổ chức dự án
-- Tổ chức file theo chức năng và mức độ phức tạp thực tế.
-- Phân biệt mã nguồn, dữ liệu, cấu hình, kiểm thử, tài liệu, kết quả và tài nguyên được sinh ra khi phù hợp.
-- Tránh cấu trúc quá sâu, quá nhiều file nhỏ hoặc nhiều tầng thư mục không cần thiết.
-- Không tạo file trùng lặp hoặc giữ nhiều phiên bản không rõ vai trò.
-- Không đưa file tạm, cache, môi trường ảo, dữ liệu lớn hoặc checkpoint không cần thiết vào gói bàn giao.
-- Bảo đảm các đường dẫn, cấu hình và hướng dẫn sử dụng nhất quán với cấu trúc thực tế.
-- Không giả định một cấu trúc thư mục duy nhất phù hợp với mọi loại dự án.
+- Tổ chức file theo chức năng thực tế; phân biệt source, data, config, test, docs, artifacts.
+- Tránh cấu trúc quá sâu hoặc quá nhiều tầng; không giữ file tạm, cache, bản sao trùng lặp trong bàn giao.
 
 ### 10. Tài nguyên và môi trường thực thi
-- Kiểm tra giới hạn phần cứng, bộ nhớ, dung lượng lưu trữ, thời gian chạy và môi trường triển khai.
-- Ưu tiên giải pháp có thể thực thi trong môi trường thực tế của người dùng.
-- Không mặc định có GPU, Internet, quyền quản trị hoặc khả năng cài đặt mọi thư viện.
-- Hạn chế tải lại dữ liệu, tính toán hoặc cài đặt không cần thiết.
-- Không xóa môi trường, dữ liệu hoặc tài nguyên đã tạo mà chưa đánh giá ảnh hưởng.
-- Nếu cần thay đổi dependency, kiểm tra tính tương thích và chỉ thêm những gói thực sự cần thiết.
-- Không tuyên bố đã chạy trên môi trường cụ thể nếu chưa thực sự kiểm tra.
+- Kiểm tra giới hạn phần cứng, RAM, storage, thời gian chạy; ưu tiên giải pháp chạy được trên máy người dùng.
+- Không mặc định có GPU/Internet/admin; hạn chế tải/tính toán lại; chỉ thêm dependency thực sự cần.
 
 ### 11. Bảo mật và độ tin cậy
-- Không để lộ thông tin xác thực, dữ liệu riêng tư hoặc thông tin nhạy cảm trong mã nguồn và tài liệu.
-- Không thực hiện thao tác phá hủy dữ liệu hoặc thay đổi môi trường có phạm vi rộng mà không đánh giá rủi ro.
-- Không chạy lệnh, script hoặc dependency không đáng tin cậy mà không xem xét tác động.
-- Kiểm tra các điểm có thể gây lỗi bảo mật phù hợp với loại dự án.
-- Không vô hiệu hóa kiểm tra, xử lý lỗi hoặc cơ chế bảo vệ chỉ để khiến test vượt qua.
-- Không che giấu lỗi hoặc sửa kết quả đầu ra để tạo ấn tượng rằng hệ thống hoạt động đúng.
+- Không để lộ thông tin xác thực, secrets trong mã nguồn và docs; không thực hiện thao tác phá hủy dữ liệu.
+- Không vô hiệu hóa kiểm tra/xử lý lỗi chỉ để pass test; không sửa output để giả mạo hệ thống đúng.
 
 ### 12. Quy trình thực hiện công việc
-Thực hiện theo trình tự phù hợp với nhiệm vụ:
-1. Tiếp nhận và phân tích yêu cầu.
-2. Đọc tài liệu và kiểm tra workspace.
-3. Xác định trạng thái hiện tại và các ràng buộc.
-4. Xác định phần cần làm hoặc cần sửa.
-5. Lựa chọn phương án phù hợp và tối thiểu.
-6. Thực hiện trực tiếp trên các file liên quan.
-7. Kiểm tra thay đổi và tính tương thích.
-8. Chạy test hoặc xác minh trong phạm vi có thể.
-9. Rà soát nội dung, cấu trúc và các vấn đề còn tồn tại.
-10. Báo cáo kết quả thực tế.
-*(Lưu ý: Đây là trình tự làm việc chung, không phải danh sách bắt buộc phải tạo thành các file hoặc mục tài liệu riêng trong dự án).*
+`Phân tích yêu cầu → Đọc tài liệu/workspace → Xác định trạng thái & ràng buộc → Xác định phần cần làm → Chọn phương án tối thiểu → Thực hiện trực tiếp → Kiểm tra tương thích → Chạy test → Rà soát → Báo cáo kết quả`.
 
 ### 13. Quy tắc báo cáo kết quả
-Sau khi hoàn thành, báo cáo ngắn gọn nhưng đủ thông tin:
-- Những gì đã thực hiện.
-- Những file hoặc thành phần đã thay đổi.
-- Các kiểm tra và test đã thực sự chạy.
-- Kết quả xác minh.
-- Những giới hạn, lỗi hoặc việc chưa hoàn thành.
-- Những quyết định cần người dùng xác nhận, nếu có.
-- Không liệt kê những việc chưa thực hiện như thể đã hoàn thành.
-- Không tự khẳng định dự án hoàn hảo, tối ưu tuyệt đối hoặc đáp ứng mọi tiêu chí khi chưa có bằng chứng.
-- Không tạo báo cáo dài dòng chỉ để mô tả lại từng thao tác nhỏ.
+Báo cáo ngắn gọn, đủ thông tin: Việc đã làm, file đã đổi, test thực tế đã chạy và kết quả, giới hạn còn tồn tại, quyết định cần xác nhận. Không bịa việc chưa làm thành đã làm; không viết dài dòng.
 
 ### 14. Quy tắc ưu tiên khi có xung đột
-Khi các yêu cầu mâu thuẫn nhau, ưu tiên theo thứ tự:
-1. An toàn, bảo mật và tính toàn vẹn dữ liệu.
-2. Yêu cầu bắt buộc của người dùng và đề bài.
-3. Tính chính xác của kiến thức, dữ liệu và kết quả.
-4. Khả năng hoạt động đúng và tương thích với hệ thống hiện có.
-5. Khả năng kiểm thử, bảo trì và tái sử dụng.
-6. Tính đơn giản, rõ ràng và hiệu quả.
-7. Sở thích về trình bày hoặc phong cách không ảnh hưởng đến các yêu cầu trên.
-> Không âm thầm bỏ qua xung đột quan trọng. Nếu không thể giải quyết mà không thay đổi mục tiêu hoặc vi phạm yêu cầu bắt buộc, hãy nêu rõ vấn đề.
+1. An toàn, bảo mật & toàn vẹn dữ liệu &rarr; 2. Yêu cầu bắt buộc của người dùng/đề bài &rarr; 3. Tính chính xác kiến thức/số liệu &rarr; 4. Khả năng chạy đúng & tương thích &rarr; 5. Kiểm thử & bảo trì &rarr; 6. Tính đơn giản & hiệu quả &rarr; 7. Sở thích trình bày. Nêu rõ vấn đề nếu có xung đột không thể tự giải quyết an toàn.
 
 ### 15. Chỉ dẫn cốt lõi cuối cùng
-- Trước khi thực hiện bất kỳ thay đổi nào, hãy hiểu rõ trạng thái hiện tại và mục tiêu cần đạt.
-- Ưu tiên tính chính xác, khả năng kiểm chứng, thay đổi tối thiểu và kết quả thực tế. Không bịa, không tự ý mở rộng phạm vi, không phá vỡ phần đang hoạt động tốt và không tạo thêm nội dung chỉ để làm dự án trông phức tạp hơn.
-- Hãy thực hiện công việc trực tiếp khi đủ thông tin. Chỉ dừng lại để hỏi người dùng khi có vấn đề quan trọng không thể giải quyết an toàn hoặc chính xác bằng thông tin hiện có.
+Ưu tiên tính chính xác, khả năng kiểm chứng, thay đổi tối thiểu và kết quả thực tế. Không bịa, không mở rộng phạm vi tùy tiện, không phá vỡ phần đang hoạt động tốt. Thực hiện trực tiếp khi đủ thông tin; chỉ hỏi khi cần quyết định quan trọng.
 
 ---
 
 ## PHẦN III: MASTER RULES CHO BÁO CÁO HỌC THUẬT & TÀI LIỆU KHOA HỌC
 
-### 1. Master Rule — Deep Learning Scientific Report (Áp dụng cho `docs/labs2.md`)
-- **Chuẩn học thuật (Academic Standard):** Trình bày theo phong cách bài báo nghiên cứu khoa học; công thức toán học và thuật ngữ chuẩn chuyên môn; phân biệt rạch ròi lý thuyết, phương pháp và kết quả thực nghiệm.
-- **Quy tắc giao tiếp (Communication Rule):** Sử dụng Technical Keywords; diễn giải ngắn gọn, trực tiếp, đúng trọng tâm; ưu tiên câu đơn, cô đọng; không lặp lại nội dung giữa các chương; cấu trúc phân cấp tinh gọn.
-- **Cấu trúc 12 phần chuẩn:**
-  1. *Abstract:* Tóm tắt nghiên cứu.
-  2. *Introduction:* Bối cảnh, mục tiêu, vấn đề.
-  3. *Related Work:* Nghiên cứu liên quan (He 2016, Huang 2017, Yosinski 2014).
-  4. *Theoretical Background:* Cơ sở lý thuyết Deep Learning, Residual Shortcuts, Dense Concatenation, CrossEntropyLoss, Adam Optimizer, Differential LR.
-  5. *Methodology:* Dataset CIFAR-10, Preprocessing pipeline, Kiến trúc mô hình, Bước 3 bóc tách tầng (Layer breakdown).
-  6. *Experimental Setup:* Môi trường CPU-First, Cấu hình siêu tham số, Metrics đánh giá.
-  7. *Results & Evaluation:* Bảng kết quả thực nghiệm 6 cấu hình, liên kết đồ thị trực quan ngoài notebook.
-  8. *Comparative Analysis:* Thực nghiệm đối chứng (Transfer vs. Fine-tuning, ResNet-18 vs. DenseNet-121, LR $10^{-3}$ vs. $10^{-4}$, Batch Size 16 vs. 32).
-  9. *Discussion & Limitations:* Phân tích ma trận nhầm lẫn (cặp `cat`/`dog`, `automobile`/`truck`), giới hạn phần cứng và độ phân giải ảnh.
-  10. *Conclusion & Future Work:* Kết luận và hướng mở rộng (Knowledge Distillation, CutMix/MixUp).
-  11. *References:* 5 tài liệu tham khảo chuẩn quốc tế.
-  12. *Appendix:* Cấu trúc thư mục Output Rule và lệnh CLI tái lập kết quả.
-- **Quy tắc xuất kết quả (Output Rule):** Bắt buộc phân tách Notebook và Báo cáo độc lập. Kết quả thực nghiệm phải lưu trữ tại `outputs/figures/`, `outputs/metrics/`, `outputs/results_table.md` và `outputs/Lab2_Report.html`.
+### 1. Master Rule — Deep Learning Scientific Report (`docs/labs2.md`)
+- **Chuẩn học thuật:** Phong cách bài báo khoa học, công thức toán học chuẩn, câu từ cô đọng, thuật ngữ kỹ thuật chính xác.
+- **12 phần bắt buộc:** (1) Abstract; (2) Introduction (Bối cảnh, Mục tiêu, Vấn đề); (3) Related Work; (4) Theoretical Background (Residual Shortcuts, Dense Concatenation, Loss, Adam, Differential LR); (5) Methodology (CIFAR-10, Preprocessing 128, Layer breakdown); (6) Experimental Setup (CPU-First, Hyperparameters, Metrics); (7) Results & Evaluation (Bảng 6 cấu hình, liên kết 8 biểu đồ); (8) Comparative Analysis (Transfer vs Fine-tuning, ResNet vs DenseNet, LR, Batch Size); (9) Discussion & Limitations (Ma trận nhầm lẫn cat/dog, automobile/truck; giới hạn CPU); (10) Conclusion & Future Work; (11) References; (12) Appendix (Output Rule & CLI commands).
+- **Output Rule:** Tách biệt Notebook và Báo cáo độc lập; kết quả lưu tại `outputs/figures/`, `outputs/metrics/`, `outputs/results_table.md`, `outputs/Lab2_Report.html`.
 
-### 2. Master Rule — Model Documentation (Áp dụng cho `docs/model.md`)
-- **Nguyên tắc bất biến:** *"Preserve 100% Technical Information – Improve Presentation Only"*.
-- **Các thành phần bắt buộc bảo toàn:**
-  - *Purpose:* Objective, Task, Expected Outcome.
-  - *Initial Model & Source:* ResNet-18, DenseNet-121, Research Papers, Pretrained Weights `IMAGENET1K_V1`, Torchvision official source.
-  - *Initialization Strategy:* Kaiming Uniform (`weight` & `bias` $\sim \mathcal{U}(-\sqrt{k}, \sqrt{k})$), Freeze/Unfreeze mechanisms, Differential LR ($\eta_{\text{backbone}} = 0.1 \times \eta_{\text{head}}$).
-  - *Architecture & Layers:* Stem, 4 Stages / Blocks, Global Pooling, Classifier Heads.
-  - *Parameter Counts:* Bảng phân bổ chính xác Total, Trainable, Frozen parameters cho 4 cấu hình cốt lõi.
-  - *BatchNorm Behavior:* Phân biệt Parameters (`weight`, `bias` có `requires_grad`) và Buffers (`running_mean`, `running_var`). Ở `train()` mode buffer vẫn cập nhật; ở `eval()` mode buffer đóng băng tĩnh hoàn toàn.
-  - *Input / Output:* Tensor shape, Data type `torch.float32`, Preprocessing (Bilinear Resize 128, Augmentation, ImageNet Normalization), Output Logits `[B, 10]`, Softmax, `nn.CrossEntropyLoss()`.
-  - *Source Files:* Ánh xạ chính xác các file mã nguồn thực thi và trách nhiệm kỹ thuật tương ứng.
-  - *Verification:* Script kiểm tra kiến trúc (`scripts/inspect_models.py`), script kiểm toán BatchNorm buffer (`scripts/check_frozen_bn.py`), và bộ test suite 53 pytest.
+### 2. Master Rule — Model Documentation (`docs/model.md`)
+- **Nguyên tắc:** *"Preserve 100% Technical Information – Improve Presentation Only"*.
+- **Bảo toàn đầy đủ:** Purpose, Pretrained source (`IMAGENET1K_V1`), Kaiming Uniform, Freeze/Unfreeze, Differential LR ($\eta_{\text{backbone}}=0.1\times\eta_{\text{head}}$), Architecture & Stages, Bảng Parameter Counts 4 cấu hình cốt lõi, BatchNorm behavior (`train` mode buffer cập nhật vs `eval` mode buffer tĩnh), I/O shapes, Source Files mapping, Verification commands.
 
-### 3. Master Rule — Scientific Dataset Presentation (Áp dụng cho `docs/data.md`)
-- **Cấu trúc 10 phần chuẩn khoa học:**
-  1. *Tổng quan Dataset (Dataset Overview):* Tên CIFAR-10, lĩnh vực Computer Vision, mục đích benchmark, phạm vi 60.000 ảnh 10 lớp.
-  2. *Nguồn gốc và phương pháp thu thập (Data Source):* Nguồn MIT 80 Million Tiny Images, ĐH Toronto (Krizhevsky, Hinton, 2009), WordNet, gán nhãn thủ công.
-  3. *Cấu trúc dữ liệu (Data Structure):* Bảng thành phần (Rows, Columns, Observations, Features, Target, Dtypes) và Bảng Class Mapping chi tiết.
-  4. *Đánh giá chất lượng dữ liệu (Data Quality Assessment):* Bảng kiểm toán 6 tiêu chí: Missing (0%), Duplicates (0%), Outliers (0%), Inconsistent (0%), Invalid values (0%), Dtype issues (0%).
-  5. *Tiền xử lý dữ liệu (Data Preprocessing):* Split 45k/5k/10k (seed=42), Resize 128x128 song tuyến, Data Augmentation (Train), `ToTensor()`, ImageNet Normalize; Bảng so sánh dữ liệu thô vs. sau tiền xử lý.
-  6. *Phân tích khám phá dữ liệu (EDA):* 6.1 Thống kê mô tả (Mean, Std, Min, Q1, Median, Q3, Max, Mode cho R, G, B); 6.2 Phân tích phân phối; 6.3 Phân tích mối quan hệ và tương quan liên kênh ($r > 0.88$).
-  7. *Trực quan hóa dữ liệu (Data Visualization):* Đầy đủ 7 dạng biểu đồ (Mục đích, Lý do chọn, Biến sử dụng, Nhận xét kết quả, Ý nghĩa):
-     - Bar Chart (Phân bố lớp và chia tập cân bằng).
-     - Histogram (Mật độ cường độ pixel RGB).
-     - Box Plot (Độ sáng trung vị và ngoại lệ theo lớp).
-     - Heatmap (Ma trận tương quan liên kênh quang phổ).
-     - Scatter Plot (Tương quan điểm ảnh kênh Đỏ vs. Lam).
-     - Line Chart (Tích lũy phương sai PCA / Scree Plot).
-     - **PCA 2D (Bắt buộc):** Giảm chiều 3.072D về 2D, chứng minh hiện tượng chồng lấn đa tạp (Manifold Entanglement) và tính bất khả phân tách tuyến tính trên pixel thô.
-  8. *Phát hiện và nhận xét (Key Findings):* 5 phát hiện then chốt định hình giải pháp Deep Learning.
-  9. *Hạn chế của Dataset (Dataset Limitations):* Kích thước nhỏ $32 \times 32$, nguy cơ overfit khi fine-tune sâu, thiếu thông tin bounding box.
-  10. *Kết luận (Conclusion):* Khẳng định tính chuẩn mực của dataset cho chuyển giao tri thức và đề xuất hướng mở rộng.
+### 3. Master Rule — Scientific Dataset Presentation (`docs/data.md`)
+- **10 phần chuẩn khoa học:** (1) Tổng quan Dataset; (2) Nguồn gốc (Toronto, Krizhevsky/Hinton 2009); (3) Cấu trúc dữ liệu & Class Mapping; (4) Đánh giá chất lượng 6 tiêu chí (0% lỗi); (5) Tiền xử lý (Split 45k/5k/10k, Resize 128, Augmentation, ToTensor, Normalize); (6) EDA (Bảng thống kê R/G/B, Phân phối, Tương quan $r>0.88$); (7) Trực quan hóa 7 dạng biểu đồ (Bar, Hist, Box, Heatmap, Scatter, Line Scree, PCA 2D Scatter chứng minh không thể phân tách tuyến tính trên pixel thô); (8) 5 Phát hiện then chốt; (9) Hạn chế dataset; (10) Kết luận.

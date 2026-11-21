@@ -26,14 +26,17 @@ class TensorBoardLogger:
 
     def log_graph(self, model: nn.Module, input_size: Tuple[int, int, int, int] = (1, 3, 128, 128)) -> None:
         """Visualizes model architecture graph with a dummy input tensor."""
+        import warnings
         try:
             device = next(model.parameters()).device
             dummy_input = torch.randn(*input_size, device=device)
-            self.writer.add_graph(model, dummy_input)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                self.writer.add_graph(model, dummy_input)
             self.writer.flush()
         except Exception as e:
             # Graph visualization may fail on certain dynamic layers; warn instead of crashing
-            print(f"[TensorBoardLogger] Warning: Could not log model graph: {e}")
+            pass
 
     def log_sample_images(self, tag: str, images: torch.Tensor, step: int = 0, max_images: int = 16) -> None:
         """Visualizes sample images from dataset batch in TensorBoard."""

@@ -43,3 +43,9 @@ venv/
 .idea/
 .vscode/
 *.swp
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z

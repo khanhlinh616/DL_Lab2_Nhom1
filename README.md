@@ -1,143 +1,200 @@
-# Lab 2: Pretrained Models, Transfer Learning & Fine-Tuning (CIFAR-10)
-Dự án tuân thủ nguyên tắc kỹ thuật: **Source-First, Design-First, Test-Driven, Reproducible và CPU-First**.
+# Lab 2: Pretrained Models, Transfer Learning & Fine‑Tuning (CIFAR‑10)
 
-## 1. Project Overview
-Nghiên cứu, thực nghiệm và so sánh đối chứng việc áp dụng các mô hình học sâu huấn luyện sẵn (`torchvision.models`) trên bộ dữ liệu ảnh CIFAR-10. Trọng tâm là làm rõ cơ chế thích nghi mô hình qua 2 phương pháp:
+![Python](https://img.shields.io/badge/Python-3.14-blue?logo=python&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch&logoColor=white)
+![TensorBoard](https://img.shields.io/badge/TensorBoard-logging-FF6F00?logo=tensorboard&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+## Overview
+
+So sánh hai phương pháp sử dụng pretrained models trên CIFAR‑10:
+
 - **Transfer Learning (Feature Extraction):** Đóng băng toàn bộ backbone, chỉ huấn luyện classifier head mới.
-- **Fine-Tuning:** Đóng băng các tầng đầu và mở khóa các khối tích chập sâu nhất kết hợp **Differential Learning Rate** ($\eta_{\text{backbone}} = 0.1 \times \eta_{\text{head}}$) để tinh chỉnh đặc trưng theo miền mới mà không làm mất tri thức học sẵn.
-Hệ thống tối ưu hóa cho CPU-First, modular mã nguồn, kịch bản CLI, xuất báo cáo tự động và 53 bài kiểm thử unit & integration.
+- **Fine‑Tuning:** Đóng băng các lớp đầu, mở khóa các block sâu nhất và áp dụng **Differential Learning Rate** ($\eta_{\text{backbone}} = 0.1 \times \eta_{\text{head}}$).
 
-## 2. Problem Statement
-- **Dữ liệu:** CIFAR-10 gồm 60.000 ảnh màu $32 \times 32$ thuộc 10 lớp phân loại cân bằng (6.000 ảnh/lớp).
-- **Thách thức kỹ thuật:**
-  1. *Khác biệt kích thước:* Ảnh $32 \times 32$ nhỏ hơn chuẩn $224 \times 224$ của ImageNet, cần resize song tuyến lên $128 \times 128$ và chuẩn hóa kênh màu ImageNet.
-  2. *Ràng buộc tài nguyên:* Thực thi trên CPU, cần tối ưu luồng dữ liệu, batch size và cờ `--smoke-test` để kiểm tra nhanh pipeline.
-  3. *Hành vi BatchNorm:* Khi `model.train()`, các tầng BatchNorm dù `requires_grad=False` vẫn cập nhật `running_mean`/`running_var`.
+Hai kiến trúc được thí nghiệm: **ResNet‑18** và **DenseNet‑121**, tổng cộng 6 cấu hình bao gồm các biến thể learning rate và batch size.
 
-## 3. Main Features
-- **Kiến trúc Modular:** Tách biệt cấu hình (`config.py`), dữ liệu (`data.py`), mô hình (`models.py`), huấn luyện (`train.py`), đánh giá (`evaluate.py`), checkpoint (`checkpoint.py`), và giám sát (`tensorboard_logger.py`).
-- **Quy trình chuẩn 6 bước:** `model.train()` $\to$ `zero_grad()` $\to$ forward pass $\to$ compute loss $\to$ backward pass $\to$ `optimizer.step()`.
-- **Hỗ trợ đầy đủ Practice 2:** So sánh ResNet-18 vs. DenseNet-121; khảo sát siêu tham số (LR $10^{-4}$, Batch Size 32); giám sát TensorBoard.
-- **Test-Driven:** 53 tests tự động bao phủ 100% logic (checkpoint, config, data, evaluate, models, training, frozen_bn, notebooks, reporting).
-- **Báo cáo tự động:** Script `make_results_table.py` xuất bảng CSV và Markdown đối chiếu tự động.
+## Features
 
-## 4. System Architecture
+- Mã nguồn module hóa: config, data pipeline, models, training loop, evaluation, checkpointing, TensorBoard logger.
+- 6 thí nghiệm cốt lõi (ResNet‑18 & DenseNet‑121 × Transfer & Fine‑Tuning, cộng biến thể LR và batch size).
+- 53 automated tests (unit & integration) qua pytest.
+- Script tự động sinh bảng kết quả CSV, Markdown và confusion matrix.
+- Hỗ trợ `--smoke-test` để kiểm tra nhanh (1 epoch).
+
+## Technology Stack
+
+| Thành phần | Công nghệ |
+|---|---|
+| Ngôn ngữ | Python 3.14 |
+| Deep Learning | PyTorch (CPU‑only), torchvision |
+| Visualization | matplotlib, seaborn, TensorBoard |
+| Data | pandas, numpy, Pillow |
+| Testing | pytest, pytest‑cov |
+| Config | PyYAML |
+| Notebook | Jupyter, nbformat, nbconvert |
+
+## System Architecture
+
 ```mermaid
 flowchart TD
-    A["configs/config.yaml"] --> B["src/lab2/config.py"]
-    B --> C["src/lab2/data.py (Resize 128x128, Split 45k/5k/10k)"]
-    B --> D["src/lab2/models.py (Freezing & Differential LR)"]
-    C & D --> E["src/lab2/train.py (6-step Loop & Val)"]
-    E --> F["src/lab2/checkpoint.py (*_best.pth)"] & G["outputs/metrics/*_history.json"]
-    F --> H["src/lab2/evaluate.py (Unbiased Test Set)"]
-    H --> I["outputs/metrics/*_test_metrics.json & outputs/figures/*_confusion_matrix.png"]
-    G & I --> J["scripts/make_results_table.py (summary.csv & results_table.md)"]
+    A["configs/config.yaml"] --> B["config.py"]
+    B --> C["data.py — Resize 128×128, Split 45k/5k/10k"]
+    B --> D["models.py — Freezing & Differential LR"]
+    C & D --> E["train.py — Training Loop & Validation"]
+    E --> F["checkpoint.py — *_best.pth"]
+    E --> G["outputs/metrics/*_history.json"]
+    F --> H["evaluate.py — Test Set Evaluation"]
+    H --> I["*_test_metrics.json & *_confusion_matrix.png"]
+    G & I --> J["make_results_table.py — summary.csv & results_table.md"]
 ```
 
-## 5. Folder Structure
+## Project Structure
+
 ```
 .
-├── configs/config.yaml                 # Cấu hình siêu tham số tập trung (core & hparam)
-├── docs/                               # labs2.md, data.md, model.md, audit-log.md, training.md, evaluation.md
-├── notebooks/                          # Lab2_Practice2_Main.ipynb, Lab2.html
+├── configs/config.yaml            # Hyperparameters (6 experiments)
+├── docs/                          # Lab reports & documentation
+│   ├── labs2.md                   #   Scientific report (12 sections)
+│   ├── data.md                    #   Dataset documentation
+│   ├── model.md                   #   Model documentation
+│   ├── training.md                #   Training documentation
+│   ├── evaluation.md              #   Evaluation documentation
+│   └── audit-log.md               #   Development audit log
+├── notebooks/
+│   └── Lab2_Practice2_Main.ipynb  # Jupyter notebook
 ├── outputs/
-│   ├── Lab2_Report.html & results_table.md
-│   ├── figures/                        # Trực quan hóa EDA, PCA và Confusion Matrix (*.png)
-│   └── metrics/                        # summary.csv, *_history.json, *_test_metrics.json
-├── checkpoints/                        # Checkpoint tốt nhất (*_best.pth)
-├── runs/                               # TensorBoard event logs
-├── scripts/                            # run_experiments.py, inspect_models.py, make_results_table.py, check_frozen_bn.py
-├── src/lab2/                           # config.py, data.py, models.py, train.py, evaluate.py, checkpoint.py, utils.py
-└── tests/                              # 53 test cases kiểm thử tự động
+│   ├── figures/                   #   PNG: confusion matrices, EDA, diagrams
+│   ├── metrics/                   #   JSON history, test metrics, summary.csv
+│   ├── results_table.md           #   Markdown results summary
+│   └── Lab2_Report.html           #   HTML report
+├── checkpoints/                   # Best & latest model checkpoints (.pth)
+├── runs/                          # TensorBoard event logs
+├── scripts/
+│   ├── run_experiments.py         #   Run training experiments
+│   ├── make_results_table.py      #   Generate results CSV & Markdown
+│   ├── inspect_models.py          #   Print model summaries & layer counts
+│   ├── evaluate_checkpoints.py    #   Evaluate saved checkpoints
+│   ├── check_frozen_bn.py         #   Verify frozen BatchNorm behavior
+│   └── visualize_*.py             #   EDA & data visualization scripts
+├── src/lab2/                      # Core source code
+│   ├── config.py                  #   Configuration loader
+│   ├── data.py                    #   Data pipeline & augmentation
+│   ├── models.py                  #   Model builder, freezing, differential LR
+│   ├── train.py                   #   Training loop
+│   ├── evaluate.py                #   Evaluation & confusion matrix
+│   ├── checkpoint.py              #   Checkpoint save/load
+│   ├── tensorboard_logger.py      #   TensorBoard logging wrapper
+│   ├── logger.py                  #   File logger
+│   └── utils.py                   #   Shared utilities
+├── tests/                         # 53 automated tests
+│   ├── test_config.py
+│   ├── test_data.py
+│   ├── test_models.py
+│   ├── test_training.py
+│   ├── test_checkpoint.py
+│   ├── test_evaluate.py
+│   ├── test_frozen_bn.py
+│   ├── test_reporting.py
+│   └── test_notebooks.py
+├── requirements.txt
+└── README.md
 ```
 
-## 6. Installation / Run / Test
+## Requirements
+
+- Python ≥ 3.14
+- Các dependency được liệt kê trong `requirements.txt`
+- Không yêu cầu GPU (toàn bộ thí nghiệm chạy trên CPU)
+
+## Installation
+
 ```bash
-# 1. Cài đặt thư viện phụ thuộc
+# Clone repository
+git clone https://github.com/khanhlinh616/DL_Lab2_Nhom1.git
+cd DL_Lab2_Nhom1
+
+# (Khuyến nghị) Tạo virtual environment
+python -m venv .venv
+.venv\Scripts\activate      # Windows
+# source .venv/bin/activate  # Linux/macOS
+
+# Cài đặt dependencies
 python -m pip install -r requirements.txt
+```
 
-# 2. Chạy toàn bộ 53 bài kiểm thử tự động
-python -m pytest -v
+## Usage
 
-# 3. Kiểm tra kiến trúc và đếm tham số mô hình
+**Chạy toàn bộ 6 thí nghiệm:**
+
+```bash
+python scripts/run_experiments.py --all
+```
+
+**Chạy smoke test (1 epoch, kiểm tra nhanh):**
+
+```bash
+python scripts/run_experiments.py --smoke-test --experiment resnet18_transfer
+```
+
+**Chạy nhóm hyperparameter sweep:**
+
+```bash
+python scripts/run_experiments.py --group hparam
+```
+
+**Xem cấu trúc model và số lượng parameters:**
+
+```bash
 python scripts/inspect_models.py --print-model all
 python scripts/inspect_models.py --layers all
+```
 
-# 4. Chạy nhanh 1 epoch kiểm thử toàn bộ luồng (Smoke Test)
-python scripts/run_experiments.py --smoke-test --experiment resnet18_transfer
+**Sinh bảng kết quả tổng hợp:**
 
-# 5. Huấn luyện 4 thí nghiệm cốt lõi hoặc toàn bộ
-python scripts/run_experiments.py --all
-python scripts/run_experiments.py --group hparam
-
-# 6. Xuất bảng kết quả và khởi chạy TensorBoard
+```bash
 python scripts/make_results_table.py
+```
+
+**Khởi chạy TensorBoard:**
+
+```bash
 tensorboard --logdir=runs
 ```
 
-## 7. Model (Experiment Matrix)
-| Experiment ID | Group | Kiến trúc | Phương pháp | Tầng Trainable | Tầng Bị đóng băng (Frozen) | Trainable Params | Tổng Params | Trainable % |
-|:---|:---:|:---:|:---:|:---|:---|:---:|:---:|:---:|
-| `resnet18_transfer` | core | ResNet18 | Transfer | Duy nhất `fc` | `conv1`, `bn1`, `layer1`..`layer4` | 5.130 | 11.181.642 | 0.05% |
-| `resnet18_finetune` | core | ResNet18 | Fine-Tuning | `layer4` + `fc` | `conv1`, `bn1`, `layer1`..`layer3` | 8.398.858 | 11.181.642 | 75.11% |
-| `densenet121_transfer` | core | DenseNet121 | Transfer | Duy nhất `classifier` | Toàn bộ `features` | 10.250 | 6.964.106 | 0.15% |
-| `densenet121_finetune` | core | DenseNet121 | Fine-Tuning | `denseblock4`+`norm5`+`classifier` | `conv0`..`denseblock3` | 2.170.378 | 6.964.106 | 31.17% |
-| `resnet18_transfer_lr1e4` | hparam | ResNet18 | Transfer (LR 1e-4) | Duy nhất `fc` | `conv1`, `bn1`, `layer1`..`layer4` | 5.130 | 11.181.642 | 0.05% |
-| `resnet18_transfer_bs32` | hparam | ResNet18 | Transfer (BS 32) | Duy nhất `fc` | `conv1`, `bn1`, `layer1`..`layer4` | 5.130 | 11.181.642 | 0.05% |
+## Testing
 
-## 8. Notebooks
-- **`notebooks/Lab2_Practice2_Main.ipynb`:** Triển khai tuần tự 7 bước và 3 bài tập của Practice 2; hỗ trợ cờ `SMOKE_TEST = True/False`; tự động liên kết dữ liệu và trực quan hóa kết quả. Thực thi kiểm thử:
-  `jupyter nbconvert --to notebook --execute --inplace notebooks/Lab2_Practice2_Main.ipynb`
-- **`notebooks/Lab2.html` & `outputs/Lab2_Report.html`:** Báo cáo HTML thẩm định độc lập.
-
-## 9. Example In-Out
-### Lệnh thực thi mẫu (Smoke Test trên CPU):
-`python scripts/run_experiments.py --smoke-test --experiment resnet18_transfer`
-### Trích xuất Console Output thực tế:
-```text
-EXPERIMENT RUNNER: resnet18_transfer | Smoke Test Mode: True
-Train samples: 120 | Val samples: 30 | Test samples: 30
-Model: resnet18 | Method: transfer | Trainable Params: 5,130 / 11,181,642 (0.05%)
-Epoch [01/01] Time: 00m 01s | Train Loss: 2.5788 - Acc: 11.67% | Val Loss: 2.2786 - Acc: 10.00% * [Best]
-Saved: ./checkpoints/resnet18_transfer_best.pth
-Evaluation Results: Test Loss: 2.4466 | Test Accuracy: 10.00%
-Metrics: ./outputs/metrics/resnet18_transfer_test_metrics.json | CM: ./outputs/figures/resnet18_transfer_confusion_matrix.png
-```
-### Trích đoạn kết quả JSON (`outputs/metrics/resnet18_transfer_test_metrics.json`):
-```json
-{
-  "experiment_name": "resnet18_transfer",
-  "checkpoint_path": "./checkpoints/resnet18_transfer_best.pth",
-  "best_epoch": 1,
-  "test_loss": 2.4466,
-  "test_accuracy": 10.0,
-  "total_test_samples": 30,
-  "per_class_accuracy": { "airplane": 0.0, "automobile": 0.0, "bird": 0.0, "cat": 0.0, "deer": 100.0, "dog": 0.0, "frog": 0.0, "horse": 0.0, "ship": 0.0, "truck": 0.0 }
-}
+```bash
+python -m pytest -v     # 53 tests
 ```
 
-## 10. Results
-Bảng kết quả thực nghiệm chính thức từ [`outputs/metrics/summary.csv`](outputs/metrics/summary.csv):
-| Experiment ID | Epochs | Batch | LR | Trainable Params | Train Loss / Acc | Best Val Acc (epoch) | Test Loss | Test Acc | TB/Epoch | Tổng thời gian |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| `resnet18_transfer` | 5 | 16 | 0.001 | 5.130 | 0.7718 / 73.85% | 77.94% (ep 2) | 0.6644 | **77.98%** | 01m 06s | 05m 35s |
-| `resnet18_finetune` | 5 | 16 | 0.001 | 8.398.858 | 0.2488 / 91.48% | 91.68% (ep 4) | 0.2989 | **90.24%** | 01m 26s | 07m 15s |
-| `densenet121_transfer` | 5 | 16 | 0.001 | 10.250 | 0.6860 / 76.89% | 81.84% (ep 5) | 0.5560 | **81.34%** | 01m 48s | 09m 03s |
-| `densenet121_finetune` | 5 | 16 | 0.001 | 2.170.378 | 0.2912 / 89.94% | 90.78% (ep 5) | 0.2982 | **90.65%** | 02m 08s | 10m 42s |
-| `resnet18_transfer_lr1e4` | 5 | 16 | 0.0001 | 5.130 | 0.7605 / 73.96% | 77.56% (ep 5) | 0.6643 | **78.32%** | 01m 12s | 06m 03s |
-| `resnet18_transfer_bs32` | 5 | 32 | 0.001 | 5.130 | 0.7029 / 76.12% | 78.92% (ep 4) | 0.6276 | **79.04%** | 01m 04s | 05m 21s |
+Phạm vi kiểm thử: configuration, data loading, model freezing, training loop, checkpointing, evaluation, reporting, notebook execution.
 
-## 11. Limitations
-1. **Ràng buộc CPU:** Huấn luyện trên CPU kéo dài thời gian, giới hạn số epoch ở mức 5 epochs cho toàn bộ 45.000 ảnh.
-2. **Nội suy phóng đại ảnh:** Bilinear resize $32 \times 32 \to 128 \times 128$ có thể làm mờ nhẹ một số đường viền biên sắc nét.
-3. **BatchNorm buffer trong backbone đóng băng:** Ở `train()` mode, buffer của 20 lớp BN (ResNet-18) và 121 lớp BN (DenseNet-121) vẫn cập nhật thống kê running stats theo batch dữ liệu mới (đã xác thực qua `scripts/check_frozen_bn.py`).
-4. **Giới hạn đơn seed:** Thực nghiệm cố định trên `seed=42`, chưa tính toán phương sai qua nhiều lần chạy ngẫu nhiên.
+## Results
 
-## 12. Future Improvements
-1. **Eval Mode cho BatchNorm đóng băng:** Giữ nguyên các lớp BatchNorm của backbone ở `module.eval()` trong transfer learning để bảo toàn thống kê ImageNet.
-2. **Learning Rate Scheduler:** Bổ sung `CosineAnnealingLR` hoặc `ReduceLROnPlateau` để tối ưu hóa sự hội tụ.
-3. **Data Augmentation nâng cao:** Bổ sung RandAugment hoặc CutMix/MixUp nhằm nâng cao độ bền vững.
-4. **Thực nghiệm đa seed:** Chạy thực nghiệm lặp lại trên 3–5 seeds để báo cáo kết quả kèm khoảng tin cậy $\mu \pm \sigma$.
+Kết quả đầy đủ: [`outputs/metrics/summary.csv`](outputs/metrics/summary.csv)
 
-## 13. AI Usage
-Khai báo chi tiết công cụ, mục đích và đóng góp của sinh viên được trình bày tại [docs/plan-progress-status.md](docs/plan-progress-status.md#5-báo-cáo-sử-dụng-ai-minh-bạch-ai-usage-log).
+| Experiment | Method | Batch | LR | Test Acc | Thời gian |
+|---|---|---|---|---|---|
+| resnet18_transfer | Transfer | 16 | 0.001 | 77.98 % | 05m 35s |
+| resnet18_finetune | Fine‑Tune | 16 | 0.001 | 90.24 % | 07m 15s |
+| densenet121_transfer | Transfer | 16 | 0.001 | 81.34 % | 09m 03s |
+| densenet121_finetune | Fine‑Tune | 16 | 0.001 | 90.65 % | 10m 42s |
+| resnet18_transfer_lr1e4 | Transfer | 16 | 0.0001 | 78.32 % | 06m 03s |
+| resnet18_transfer_bs32 | Transfer | 32 | 0.001 | 79.04 % | 05m 21s |
+
+**Nhận xét:** Fine‑tuning đạt ~90 % test accuracy, vượt transfer learning (~78–81 %) trên cả hai kiến trúc. DenseNet‑121 transfer (81.34 %) cao hơn ResNet‑18 transfer (77.98 %), nhưng fine‑tuning cho kết quả tương đương (~90 %).
+
+## Limitations
+
+1. **CPU‑only** — giới hạn ở 5 epochs, không mở rộng được số epoch hoặc model lớn hơn.
+2. **Resize 32→128** — upsampling có thể làm mờ chi tiết ảnh gốc.
+3. **BatchNorm buffers** vẫn cập nhật khi model ở `train()` mode dù backbone bị freeze (đã kiểm chứng bằng `scripts/check_frozen_bn.py`).
+4. **Single seed** (`seed=42`) — chưa đánh giá variance qua nhiều lần chạy.
+
+## References
+
+- [PyTorch Documentation](https://pytorch.org/docs/)
+- [CIFAR‑10 Dataset](https://www.cs.toronto.edu/~kriz/cifar.html) — Krizhevsky, 2009
+- [torchvision.models](https://pytorch.org/vision/stable/models.html) — Pretrained weights (`IMAGENET1K_V1`)
+- Tài liệu chi tiết: [`docs/`](docs/)
